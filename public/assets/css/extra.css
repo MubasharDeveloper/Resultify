@@ -177,7 +177,7 @@ table.dataTable td.dt-type-date {
 }
 
 .sidebar-menu li > a.active-page:hover {
-  color: var(--text-primary-light);
+  color: #fff;
 }
 .me-8 {
   margin-right: 8px;

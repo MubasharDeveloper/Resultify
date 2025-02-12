@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import ThemeToggleButton from "../helper/ThemeToggleButton";
+// import ThemeToggleButton from "../helper/ThemeToggleButton";
 
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
@@ -93,8 +93,8 @@ const MasterLayout = ({ children }) => {
           sidebarActive
             ? "sidebar active "
             : mobileMenu
-            ? "sidebar sidebar-open"
-            : "sidebar"
+              ? "sidebar sidebar-open"
+              : "sidebar"
         }
       >
         <button
@@ -112,11 +112,6 @@ const MasterLayout = ({ children }) => {
               className='light-logo'
             />
             <img
-              src='assets/images/logo-light.png'
-              alt='site logo'
-              className='dark-logo'
-            />
-            <img
               src='assets/images/logo-icon.png'
               alt='site logo'
               className='logo-icon'
@@ -125,147 +120,27 @@ const MasterLayout = ({ children }) => {
         </div>
         <div className='sidebar-menu-area'>
           <ul className='sidebar-menu' id='sidebar-menu'>
-            <li className='dropdown'>
-              <Link to='#'>
-                <Icon
-                  icon='solar:home-smile-angle-outline'
-                  className='menu-icon'
-                />
-                <span>Dashboard</span>
-              </Link>
-              <ul className='sidebar-submenu'>
-                <li>
-                  <NavLink
-                    to='/'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
-                    AI
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-2'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
-                    CRM
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-3'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    eCommerce
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-4'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />
-                    Cryptocurrency
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-5'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-success-main w-auto' />{" "}
-                    Investment
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-6'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-purple w-auto' />{" "}
-                    LMS
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-7'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    NFT &amp; Gaming
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-8'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    Medical
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-9'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    Analytics
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-10'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    POS & Inventory
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/index-11'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    Finance & Banking
-                  </NavLink>
-                </li>
-              </ul>
-            </li>
 
-            <li className='sidebar-menu-group-title'>Application</li>
+
+            <li className='sidebar-menu-group-title'>Student Dashboard</li>
             <li>
               <NavLink
-                to='/email'
+                to='/profile'
                 className={(navData) => (navData.isActive ? "active-page" : "")}
               >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Email</span>
+                <Icon icon='cuida:user-outline' className='menu-icon' />
+                <span>Profile</span>
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink to='/result'
+                className={(navData) => (navData.isActive ? "active-page" : "")}>
+                <Icon
+                  icon='solar:document-text-outline'
+                  className='menu-icon'
+                />
+                <span>Result</span>
               </NavLink>
             </li>
             <li>
@@ -299,7 +174,6 @@ const MasterLayout = ({ children }) => {
               </NavLink>
             </li>
 
-            {/* Invoice Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon icon='hugeicons:invoice-03' className='menu-icon' />
@@ -353,7 +227,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Ai Application Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <i className='ri-robot-2-line mr-10' />
@@ -419,7 +292,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Crypto Currency Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <i className='ri-btc-line mr-10' />
@@ -475,7 +347,6 @@ const MasterLayout = ({ children }) => {
 
             <li className='sidebar-menu-group-title'>UI Elements</li>
 
-            {/* Components Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon
@@ -719,7 +590,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Forms Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon icon='heroicons:document' className='menu-icon' />
@@ -773,7 +643,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Table Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon icon='mingcute:storage-line' className='menu-icon' />
@@ -805,7 +674,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Chart Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon icon='solar:pie-chart-outline' className='menu-icon' />
@@ -858,7 +726,6 @@ const MasterLayout = ({ children }) => {
               </NavLink>
             </li>
 
-            {/* Users Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon
@@ -915,7 +782,6 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            {/* Role & Access Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <i className='ri-user-settings-line' />
@@ -949,7 +815,6 @@ const MasterLayout = ({ children }) => {
 
             <li className='sidebar-menu-group-title'>Application</li>
 
-            {/* Authentication Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon icon='simple-line-icons:vector' className='menu-icon' />
@@ -991,8 +856,6 @@ const MasterLayout = ({ children }) => {
                 </li>
               </ul>
             </li>
-
-            {/* gallery */}
 
             <li className='dropdown'>
               <Link to='#'>
@@ -1062,8 +925,6 @@ const MasterLayout = ({ children }) => {
                 <span>Pricing</span>
               </NavLink>
             </li>
-
-            {/* Blog */}
 
             <li className='dropdown'>
               <Link to='#'>
@@ -1189,7 +1050,6 @@ const MasterLayout = ({ children }) => {
               </NavLink>
             </li>
 
-            {/* Settings Dropdown */}
             <li className='dropdown'>
               <Link to='#'>
                 <Icon
@@ -1961,10 +1821,10 @@ const MasterLayout = ({ children }) => {
             <div className='col-auto'>
               <p className='mb-0'>
                 Made by <span className='text-primary-600'>
-                <NavLink
-                  to='https://wa.me/+923046321166' target="_blank">
-                  Mubashar Ahmad
-                </NavLink>
+                  <NavLink
+                    to='https://wa.me/+923046321166' target="_blank">
+                    Mubashar Ahmad
+                  </NavLink>
                 </span>
               </p>
             </div>

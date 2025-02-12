@@ -1,10 +1,10 @@
 import React from "react";
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
-import ViewProfileLayer from "../components/ViewProfileLayer";
+import ProfileLayer from "../components/ProfileLayer";
 
 
-const ViewProfilePage = () => {
+const Profile = () => {
   return (
     <>
 
@@ -12,10 +12,10 @@ const ViewProfilePage = () => {
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="View Profile" />
+        {/* <Breadcrumb title="Student Profile" /> */}
 
         {/* ViewProfileLayer */}
-        <ViewProfileLayer />
+        <ProfileLayer />
 
       </MasterLayout>
 
@@ -23,4 +23,4 @@ const ViewProfilePage = () => {
   );
 };
 
-export default ViewProfilePage; 
+export default Profile; 

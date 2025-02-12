@@ -15,7 +15,7 @@ const Breadcrumb = ({ pageTitle, title }) => {
               icon='solar:home-smile-angle-outline'
               className='icon text-lg'
             />
-            Dashboard
+            RankUp
           </Link>
         </li>
         <li> - </li>

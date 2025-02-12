@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useState } from 'react';
 
-const ViewProfileLayer = () => {
+const ProfileLayer = () => {
     const [imagePreview, setImagePreview] = useState('assets/images/user-grid/user-grid-img13.png');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -501,8 +501,7 @@ const ViewProfileLayer = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 
-export default ViewProfileLayer;
+export default ProfileLayer;
