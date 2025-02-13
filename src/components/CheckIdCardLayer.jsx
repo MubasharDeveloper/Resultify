@@ -22,7 +22,6 @@ const CheckIdCardLayer = () => {
             value = value.slice(0, 13) + "-" + value.slice(13);
         }
 
-
         setCnic(value);
         if (value.length === 15) {
             setError("");
@@ -41,7 +40,7 @@ const CheckIdCardLayer = () => {
             setError(""); // No error
             setTimeout(() => {
                 navigate("/profile"); // Redirect to another page
-            }, 1000)
+            }, 500)
         }
     };
 
@@ -61,34 +60,36 @@ const CheckIdCardLayer = () => {
                                 Please Enter Your Valid CNIC (Computerized National Identity Card) Number to Check Your Result
                             </p>
                             <p className="mb-32 text-secondary-light text-sm">
-                                <strong>Note:</strong> <br/> 
+                                <strong>Note:</strong> <br />
                                 Please make sure to enter the correct 13-digit CNIC number.
-                                <br/>
+                                <br />
                                 (-) will add automatically.
                             </p>
                         </div>
-                        <div className="icon-field">
-                            <span className="icon top-50 translate-middle-y">
-                                <Icon icon="lucide-lab:card-credit" />
-                            </span>
-                            <input
-                                type="text"
-                                value={cnic}
-                                onChange={handleChange}
-                                maxLength="15"
-                                className={`form-control h-56-px bg-neutral-50 radius-12 ${error ? "border-danger-500" : "border-primary-500"}`}
-                                placeholder="Enter Your CNIC XXXXX-XXXXXXX-X"
-                            />
-                        </div>
-                        <div>
-                            {error && <p className="mb-0 text-sm text-danger-500">{error}</p>}
-                        </div>
-                        <button
-                            onClick={handleSubmit}
-                            className="btn btn-primary px-12 py-12 w-100 radius-12 mt-32"
-                        >
-                            Check
-                        </button>
+                        <form onSubmit={handleSubmit}>
+                            <div className="icon-field">
+                                <span className="icon top-50 translate-middle-y">
+                                    <Icon icon="lucide-lab:card-credit" />
+                                </span>
+                                <input
+                                    type="text"
+                                    value={cnic}
+                                    onChange={handleChange}
+                                    maxLength="15"
+                                    className={`form-control h-56-px bg-neutral-50 radius-12 ${error ? "border-danger-500" : "border-primary-500"}`}
+                                    placeholder="Enter Your CNIC XXXXX-XXXXXXX-X"
+                                />
+                            </div>
+                            <div>
+                                {error && <p className="mb-0 text-sm text-danger-500">{error}</p>}
+                            </div>
+                            <button
+                                type='submit'
+                                className="btn btn-primary px-12 py-12 w-100 radius-12 mt-32"
+                            >
+                                Check
+                            </button>
+                        </form>
                     </div>
                 </div>
             </section>

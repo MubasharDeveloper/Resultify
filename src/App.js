@@ -100,7 +100,7 @@ import BlankPagePage from "./pages/BlankPagePage";
 // Valid Routes
 
 import CheckIdCard from "./pages/CheckIdCard";
-import StudentsDashboard from "./pages/Profile";
+import Profile from "./pages/Profile";
 
 
 
@@ -113,7 +113,7 @@ function App() {
         {/* Valid Routes */}
 
         <Route exact path='/' element={<CheckIdCard />} />
-        <Route exact path='/profile' element={<StudentsDashboard />} />
+        <Route exact path='/profile' element={<Profile />} />
 
         {/* Irralevant Routes */}
 

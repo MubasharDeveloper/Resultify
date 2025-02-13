@@ -17,7 +17,7 @@ const ErrorLayer = () => {
   return (
     <div className='card basic-data-table' style={ErrorDiv}>
       <div className='card-body text-center' style={ErrorInnerDiv}>
-        <img src='assets/images/error-img.png' alt='' style={ErrorImg} />
+        <img src='assets/images/error-img.svg' className="mb-32" alt='' style={ErrorImg} />
         <h6 className='mb-16'>Page not Found</h6>
         <p className='text-secondary-light'>
           Sorry, the page you are looking for doesn’t exist{" "}

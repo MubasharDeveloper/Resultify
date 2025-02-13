@@ -15777,3 +15777,7 @@ td.fc-header-center {
   border-bottom: 2px solid var(--brand);
   position: absolute;
 }
+
+.border-1px{
+  border: 1px solid #bbb;
+}
