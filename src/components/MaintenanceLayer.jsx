@@ -37,7 +37,7 @@ const MaintenanceLayer = () => {
                   <input
                     type='email'
                     className='form-control text-start py-24 flex-grow-1'
-                    placeholder='wowdash@gmail.com'
+                    placeholder='RankUp@gmail.com'
                     required=''
                   />
                   <button

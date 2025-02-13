@@ -16,7 +16,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-info mb-0">- WowDash</span>
+                                <span className="text-info mb-0">- RankUp</span>
                             </div>
                         </div>
                         <div className="col-lg-4 col-sm-6">
@@ -24,7 +24,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-success mb-0">- WowDash</span>
+                                <span className="text-success mb-0">- RankUp</span>
                             </div>
                         </div>
                         <div className="col-lg-4 col-sm-6">
@@ -32,7 +32,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-info-main mb-0">- WowDash</span>
+                                <span className="text-info-main mb-0">- RankUp</span>
                             </div>
                         </div>
                         <div className="col-lg-4 col-sm-6">
@@ -40,7 +40,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-danger-main mb-0">- WowDash</span>
+                                <span className="text-danger-main mb-0">- RankUp</span>
                             </div>
                         </div>
                         <div className="col-lg-4 col-sm-6">
@@ -48,7 +48,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-warning-main mb-0">- WowDash</span>
+                                <span className="text-warning-main mb-0">- RankUp</span>
                             </div>
                         </div>
                         <div className="col-lg-4 col-sm-6">
@@ -56,7 +56,7 @@ const BlockquoteBackgroundColorTextFont = () => {
                                 <h6 className="text-primary-light text-md mb-8">
                                     Custom Blockquote Primary Example
                                 </h6>
-                                <span className="text-primary-light mb-0">- WowDash</span>
+                                <span className="text-primary-light mb-0">- RankUp</span>
                             </div>
                         </div>
                     </div>

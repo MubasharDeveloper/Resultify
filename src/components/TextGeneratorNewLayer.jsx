@@ -184,7 +184,7 @@ const TextGeneratorNewLayer = () => {
                         <input
                             type="text"
                             name="chatMessage"
-                            placeholder="Message wowdash..."
+                            placeholder="Message RankUp..."
                         />
                         <button
                             type="submit"

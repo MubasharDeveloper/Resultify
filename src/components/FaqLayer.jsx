@@ -75,7 +75,7 @@ const FaqLayer = () => {
                                 aria-controls="v-pills-use-case"
                                 aria-selected="false"
                             >
-                                How to can i use WowDash?{" "}
+                                How to can i use RankUp?{" "}
                             </button>
                             <button
                                 className="nav-link text-secondary-light fw-semibold text-xl px-0 py-16"

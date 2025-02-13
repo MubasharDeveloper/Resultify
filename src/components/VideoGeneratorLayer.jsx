@@ -182,7 +182,7 @@ const VideoGeneratorLayer = () => {
                                 <div className="img overflow-hidden flex-shrink-0">
                                     <img
                                         src="assets/images/chat/1.png"
-                                        alt="Wowdash"
+                                        alt="RankUp"
                                         className="w-44-px h-44-px rounded-circle object-fit-cover"
                                     />
                                 </div>
@@ -205,23 +205,23 @@ const VideoGeneratorLayer = () => {
                             </button>
                         </div>
                         {/* User generated Text End */}
-                        {/* WowDash generated Text Start */}
+                        {/* RankUp generated Text Start */}
                         <div className="d-flex align-items-start gap-16 border-bottom border-neutral-200 pb-16 mb-16">
                             <div className="img overflow-hidden flex-shrink-0">
                                 <img
                                     src="assets/images/wow-dash-favicon.png"
-                                    alt="Wowdash"
+                                    alt="RankUp"
                                     className="w-44-px h-44-px rounded-circle object-fit-cover"
                                 />
                             </div>
                             <div className="info flex-grow-1">
-                                <h6 className="text-lg mb-16 mt-8">WowDash</h6>
+                                <h6 className="text-lg mb-16 mt-8">RankUp</h6>
                                 <div className="row g-3">
                                     <div className="col-xl-4 col-sm-6">
                                         <div className="generated-image-item radius-8 overflow-hidden position-relative">
                                             <img
                                                 src="assets/images/chatgpt/image-generator5.png"
-                                                alt="Wowdash"
+                                                alt="RankUp"
                                                 className="w-100 h-100 object-fit-cover"
                                             />
                                             <button className="w-72-px h-72-px bg-primary-600 rounded-circle text-white text-2xxl d-flex align-items-center justify-content-center bg-hover-primary-700 position-absolute top-50 start-50 translate-middle">
@@ -268,14 +268,14 @@ const VideoGeneratorLayer = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* WowDash generated Text End */}
+                        {/* RankUp generated Text End */}
                         {/* User generated Text Start */}
                         <div className="d-flex align-items-start justify-content-between gap-16 border-bottom border-neutral-200 pb-16 mb-16">
                             <div className="d-flex align-items-start gap-16">
                                 <div className="img overflow-hidden flex-shrink-0">
                                     <img
                                         src="assets/images/chat/1.png"
-                                        alt="Wowdash"
+                                        alt="RankUp"
                                         className="w-44-px h-44-px rounded-circle object-fit-cover"
                                     />
                                 </div>
@@ -298,23 +298,23 @@ const VideoGeneratorLayer = () => {
                             </button>
                         </div>
                         {/* User generated Text End */}
-                        {/* WowDash generated Text Start */}
+                        {/* RankUp generated Text Start */}
                         <div className="d-flex align-items-start gap-16 border-bottom border-neutral-200 pb-16 mb-16">
                             <div className="img overflow-hidden flex-shrink-0">
                                 <img
                                     src="assets/images/wow-dash-favicon.png"
-                                    alt="Wowdash"
+                                    alt="RankUp"
                                     className="w-44-px h-44-px rounded-circle object-fit-cover"
                                 />
                             </div>
                             <div className="info flex-grow-1">
-                                <h6 className="text-lg mb-16 mt-8">WowDash</h6>
+                                <h6 className="text-lg mb-16 mt-8">RankUp</h6>
                                 <div className="row g-3">
                                     <div className="col-xl-4 col-sm-6">
                                         <div className="generated-image-item radius-8 overflow-hidden position-relative">
                                             <img
                                                 src="assets/images/chatgpt/image-generator5.png"
-                                                alt="Wowdash"
+                                                alt="RankUp"
                                                 className="w-100 h-100 object-fit-cover"
                                             />
                                             <button className="w-72-px h-72-px bg-primary-600 rounded-circle text-white text-2xxl d-flex align-items-center justify-content-center bg-hover-primary-700 position-absolute top-50 start-50 translate-middle">
@@ -361,13 +361,13 @@ const VideoGeneratorLayer = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* WowDash generated Text End */}
+                        {/* RankUp generated Text End */}
                     </div>
                     <form className="chat-message-box">
                         <input
                             type="text"
                             name="chatMessage"
-                            placeholder="Message wowdash..."
+                            placeholder="Message RankUp..."
                         />
                         <button
                             type="submit"

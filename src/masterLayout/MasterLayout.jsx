@@ -1189,7 +1189,7 @@ const MasterLayout = ({ children }) => {
                   >
                     <img
                       src='assets/images/lang-flag.png'
-                      alt='Wowdash'
+                      alt='RankUp'
                       className='w-24 h-24 object-fit-cover rounded-circle'
                     />
                   </button> */}

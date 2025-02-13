@@ -70,7 +70,7 @@ const NotificationLayer = () => {
                                     className="form-control radius-8"
                                     id="firebaseAuthDomain"
                                     placeholder="Firebase  AUTH Domain"
-                                    defaultValue="wowdash.firebaseapp.com"
+                                    defaultValue="RankUp.firebaseapp.com"
                                 />
                             </div>
                         </div>
@@ -87,7 +87,7 @@ const NotificationLayer = () => {
                                     className="form-control radius-8"
                                     id="firebaseProjectID"
                                     placeholder="Firebase Project ID"
-                                    defaultValue="wowdash.com"
+                                    defaultValue="RankUp.com"
                                 />
                             </div>
                         </div>
@@ -104,7 +104,7 @@ const NotificationLayer = () => {
                                     className="form-control radius-8"
                                     id="firebaseStorageBucket"
                                     placeholder="Firebase Storage Bucket"
-                                    defaultValue="wowdash.appsport.com"
+                                    defaultValue="RankUp.appsport.com"
                                 />
                             </div>
                         </div>
