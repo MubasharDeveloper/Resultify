@@ -1,36 +1,28 @@
-import React from 'react'
-import DefaultList from './child/DefaultList'
-import ActiveList from './child/ActiveList'
-import ActiveListTwo from './child/ActiveListTwo'
-import ListIconsLabel from './child/ListIconsLabel'
-import ColoredLists from './child/ColoredLists'
-import ListIconsLabelTwo from './child/ListIconsLabelTwo'
+import React, { useState } from "react";
 
-const ListLayer = () => {
-    return (
-        <div className="row gy-4">
+const BlankPageLayer = () => {
 
-            {/* DefaultList */}
-            <DefaultList />
+  const [Btn, setBtn] = useState('danger');
 
-            {/* ActiveList */}
-            <ActiveList />
 
-            {/* ActiveListTwo */}
-            <ActiveListTwo />
+  return (
+    <>
+      <div className="py-5 text-center">
+        <h3>My Favourt Button color is {Btn}</h3>
 
-            {/* ListIconsLabel */}
-            <ListIconsLabel />
+        <button className="p-2 px-3 m-2 border" onClick={()=>{setBtn('danger')}}>Danger</button>
+        <button className="p-2 px-3 m-2 border" onClick={()=>{setBtn('primary')}}>Primary</button>
+        <button className="p-2 px-3 m-2 border" onClick={()=>{setBtn('warning')}}>Warning</button>
+        <button className="p-2 px-3 m-2 border" onClick={()=>{setBtn('success')}}>Success</button>
 
-            {/* ColoredLists */}
-            <ColoredLists />
+        <br/>
+        <br/>
+        <br/>
 
-            {/* ListIconsLabelTwo */}
-            <ListIconsLabelTwo />
+        <button className={`btn btn-${Btn}`}>Button {Btn}</button>
+      </div>
+    </>
+  );
+};
 
-        </div>
-
-    )
-}
-
-export default ListLayer
+export default BlankPageLayer;

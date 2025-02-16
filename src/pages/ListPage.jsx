@@ -1,28 +1,17 @@
 import React from "react";
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
-import ListLayer from "../components/ListLayer";
-
-
-
+import ListLayer from "../components/listLayer";
 
 const ListPage = () => {
   return (
     <>
-
-      {/* MasterLayout */}
       <MasterLayout>
-
-        {/* Breadcrumb */}
-        <Breadcrumb title="Components / List" />
-
-        {/* ListLayer */}
+        <Breadcrumb title='List Page' />
         <ListLayer />
-
       </MasterLayout>
-
     </>
   );
 };
 
-export default ListPage; 
+export default ListPage;

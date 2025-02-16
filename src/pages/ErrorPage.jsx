@@ -5,7 +5,6 @@ import ErrorLayer from "../components/ErrorLayer";
 const ErrorPage = () => {
   return (
     <>
-        {/* ErrorLayer */}
         <ErrorLayer />
     </>
   );

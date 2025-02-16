@@ -15388,7 +15388,7 @@ td.fc-header-center {
 }
 
 .sidebar.active {
-  width: 66px;
+  width: 62px;
 }
 
 .sidebar.active:hover {
@@ -15727,7 +15727,7 @@ td.fc-header-center {
 
 @media (min-width: 1199px) {
   .dashboard-main.active {
-    margin-inline-start: 66px;
+    margin-inline-start: 62px;
   }
 }
 
