@@ -44,6 +44,8 @@ const CheckIdCardLayer = () => {
         }
     };
 
+    
+
     return (
         <>
             <section className="auth forgot-password-page bg-base d-flex flex-wrap">
