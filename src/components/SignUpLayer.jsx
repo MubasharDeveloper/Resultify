@@ -3,7 +3,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const SignUpLayer = () => {
-  
   return (
     <section className='auth bg-base d-flex flex-wrap'>
       <div className='auth-left d-lg-block d-none'>

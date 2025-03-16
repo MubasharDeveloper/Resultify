@@ -6,8 +6,12 @@ import BlankPageLayer from "../components/BlankPageLayer";
 const BlankPagePage = () => {
   return (
     <>
+      {/* MasterLayout */}
       <MasterLayout>
+        {/* Breadcrumb */}
         <Breadcrumb title='Blank Page' />
+
+        {/* BlankPageLayer */}
         <BlankPageLayer />
       </MasterLayout>
     </>
