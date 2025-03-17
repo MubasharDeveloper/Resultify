@@ -16,8 +16,7 @@ const ForgotPasswordLayer = () => {
                         <div>
                             <h4 className="mb-12">Forgot Password</h4>
                             <p className="mb-32 text-secondary-light text-lg">
-                                Enter the email address associated with your account and we will
-                                send you a link to reset your password.
+                            Enter your email to get a password reset link.
                             </p>
                         </div>
                         <form action="#">
@@ -33,7 +32,7 @@ const ForgotPasswordLayer = () => {
                             </div>
                             <button
                                 type="button"
-                                className="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32"
+                                className="btn btn-primary px-12 py-12 w-100 radius-12 mt-32"
                                 data-bs-toggle="modal"
                                 data-bs-target="#exampleModal"
                             >

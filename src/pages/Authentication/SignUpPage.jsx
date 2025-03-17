@@ -1,13 +1,10 @@
 import React from "react";
-import SignUpLayer from "../components/SignUpLayer";
+import SignUpLayer from "../../components/Authentication/SignUpLayer";
 
 const SignUpPage = () => {
   return (
     <>
-
-      {/* SignUpLayer */}
       <SignUpLayer />
-
     </>
   );
 };

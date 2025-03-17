@@ -125,6 +125,109 @@ const MasterLayout = ({ children }) => {
         </div>
         <div className='sidebar-menu-area'>
           <ul className='sidebar-menu' id='sidebar-menu'>
+            <li className='sidebar-menu-group-title'>Common Pages</li>
+            <li>
+              <NavLink
+                to='/sign-in'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Sign In</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/sign-up'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Sign Up</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/forgot-password'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Forgot Password</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/login-cnic'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Login With CNIC</span>
+              </NavLink>
+            </li>
+            <li className='sidebar-menu-group-title'>Supper Admin</li>
+            <li>
+              <NavLink
+                to='/admin-dashboard'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Admin Dashboard</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/departments'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Departments</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/batches'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Batch</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/admin-settings'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Admin Settings</span>
+              </NavLink>
+            </li>
+            <li className='sidebar-menu-group-title'>Teachers</li>
+            <li>
+              <NavLink
+                to='/hod-dashboard'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>HOD Dashboad</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/teachers'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Teachers</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/course-outlines'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Course Outlines</span>
+              </NavLink>
+            </li>
+            <li className='sidebar-menu-group-title'>DashBoard</li>
             <li className='dropdown'>
               <Link to='#'>
                 <Icon
@@ -948,49 +1051,6 @@ const MasterLayout = ({ children }) => {
             </li>
 
             <li className='sidebar-menu-group-title'>Application</li>
-
-            {/* Authentication Dropdown */}
-            <li className='dropdown'>
-              <Link to='#'>
-                <Icon icon='simple-line-icons:vector' className='menu-icon' />
-                <span>Authentication</span>
-              </Link>
-              <ul className='sidebar-submenu'>
-                <li>
-                  <NavLink
-                    to='/sign-in'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
-                    Sign In
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/sign-up'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
-                    Sign Up
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to='/forgot-password'
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                    Forgot Password
-                  </NavLink>
-                </li>
-              </ul>
-            </li>
 
             {/* gallery */}
 

@@ -1,13 +1,10 @@
 import React from "react";
-import SignInLayer from "../components/SignInLayer";
+import SignInLayer from "../../components/Authentication/SignInLayer";
 
 const SignInPage = () => {
   return (
     <>
-
-      {/* SignInLayer */}
       <SignInLayer />
-
     </>
   );
 };
