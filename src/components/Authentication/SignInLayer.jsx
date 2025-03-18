@@ -1,8 +1,102 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { toast, Bounce } from 'react-toastify';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from '../../Firease_config';
+
+const initialStateSignUp = {
+  email: '',
+  password: '',
+};
 
 const SignInLayer = () => {
+  const navigate = useNavigate();
+  const [signUpData, setSignUpData] = useState(initialStateSignUp);
+  const [errors, setErrors] = useState(initialStateSignUp);
+  const [logInError, setLogInError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Email validation regex
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleChange = (e) => {
+    setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
+
+    // Clear errors as the user types
+    setErrors({ ...errors, [e.target.name]: "" });
+    setLogInError('');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let valid = true;
+    let newErrors = { email: "", password: "" };
+
+    if (signUpData.email.trim() === "") {
+      newErrors.email = "Please enter your email";
+      valid = false;
+    } else if (!validateEmail(signUpData.email)) {
+      newErrors.email = "Invalid email format";
+      valid = false;
+    }
+
+    if (signUpData.password.trim() === "") {
+      newErrors.password = "Please enter your password";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+
+    if (!valid) {
+      return;
+    }
+
+    
+    // Proceed with Firebase authentication
+    const { email, password } = signUpData;
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.table(signUpData);
+        setSignUpData(initialStateSignUp);
+        toast.success('Login Successfully!', {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          onClose: () => {
+            // Navigate to Sign-In page after toast disappears
+            navigate('/');
+          }
+        });
+        console.log("User Registration Successful", userCredential);
+      })
+      .catch((error) => {
+        console.error("Signup Error", error);
+        setLogInError('Invalid Email or Password');
+        toast.error(error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+      });
+  };
+
   return (
     <section className='auth bg-base d-flex flex-wrap'>
       <div className='auth-left d-lg-block d-none'>
@@ -21,29 +115,53 @@ const SignInLayer = () => {
               Welcome back! please enter your detail
             </p>
           </div>
-          <form action='#'>
-            <div className='icon-field mb-16'>
-              <span className='icon top-50 translate-middle-y'>
-                <Icon icon='mage:email' />
-              </span>
-              <input
-                type='email'
-                className='form-control h-56-px bg-neutral-50 radius-12'
-                placeholder='Email'
-              />
-            </div>
-            <div className='position-relative mb-20'>
-              <div className='icon-field'>
-                <span className='icon top-50 translate-middle-y'>
-                  <Icon icon='solar:lock-password-outline' />
-                </span>
-                <input
-                  type='password'
-                  className='form-control h-56-px bg-neutral-50 radius-12'
-                  id='your-password'
-                  placeholder='Password'
-                />
+          <form onSubmit={handleSubmit}>
+            {/* Email Input */}
+            <div className="mb-12">
+              <div className="position-relative">
+                <div className='icon-field'>
+                  <span className='icon top-50 translate-middle-y'>
+                    <Icon icon='mage:email' />
+                  </span>
+                  <input
+                    type='text'
+                    name='email'
+                    value={signUpData.email}
+                    onChange={handleChange}
+                    className={`form-control h-56-px bg-neutral-50 radius-12 ${errors.email || logInError ? "border-danger" : ""}`}
+                    placeholder='Enter Your Email'
+                  />
+                </div>
               </div>
+              <span className='mt-4 text-sm text-danger' id="error-email">
+                {errors.email}
+              </span>
+            </div>
+
+            {/* Password Input */}
+            <div className='mb-20'>
+              <div className='position-relative'>
+                <div className='icon-field'>
+                  <span className='icon top-50 translate-middle-y'>
+                    <Icon icon='solar:lock-password-outline' />
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name='password'
+                    value={signUpData.password}
+                    onChange={handleChange}
+                    className={`form-control h-56-px bg-neutral-50 radius-12 ${errors.password || logInError ? "border-danger" : ""}`}
+                    placeholder='Enter Your Password'
+                    style={{paddingInlineEnd: '2.5rem'}}
+                  />
+                  <span className='icon-right top-50 translate-middle-y cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
+                    <Icon icon={showPassword ? "charm:eye" : "charm:eye-slash"} />
+                  </span>
+                </div>
+              </div>
+              <span className='mt-4 text-sm text-danger' id="error-password">
+                {errors.password}
+              </span>
             </div>
             <div className=''>
               <div className='d-flex justify-content-between gap-2'>

@@ -331,6 +331,10 @@
   --neutral-900: #f5f6fa;
 }
 
+.w-95{
+  width: 95% !important;
+}
+
 /* === reset css start === */
 /* === reset css start === */
 *:where( :not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
