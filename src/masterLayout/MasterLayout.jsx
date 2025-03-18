@@ -1613,7 +1613,7 @@ const MasterLayout = ({ children }) => {
         <div className='dashboard-main-body'>{children}</div>
 
         {/* Footer section */}
-        <footer className='d-footer'>
+        {/* <footer className='d-footer'>
           <div className='row align-items-center justify-content-between'>
             <div className='col-auto'>
               <p className='mb-0'>© 2024 WowDash. All Rights Reserved.</p>
@@ -1624,7 +1624,7 @@ const MasterLayout = ({ children }) => {
               </p>
             </div>
           </div>
-        </footer>
+        </footer> */}
       </main>
     </section>
   );

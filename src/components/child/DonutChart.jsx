@@ -21,7 +21,7 @@ const DonutChart = () => {
                             <h4 className="mb-0">72</h4>
                         </div>
                     </div>
-                    <div className="max-w-290-px w-100">
+                    <div className="max-w-220-px w-100">
                         <div className="d-flex align-items-center justify-content-between gap-12 border pb-12 mb-12 border-end-0 border-top-0 border-start-0">
                             <span className="text-primary-light fw-medium text-sm">Label</span>
                             <span className="text-primary-light fw-medium text-sm">Value</span>

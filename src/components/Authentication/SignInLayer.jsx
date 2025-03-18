@@ -71,7 +71,7 @@ const SignInLayer = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "colored",
+          theme: "light",
           transition: Bounce,
           onClose: () => {
             // Navigate to Sign-In page after toast disappears
@@ -91,7 +91,7 @@ const SignInLayer = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "colored",
+          theme: "light",
           transition: Bounce,
           });
       });
@@ -107,7 +107,7 @@ const SignInLayer = () => {
       <div className='auth-right py-32 px-24 d-flex flex-column justify-content-center'>
         <div className='max-w-464-px mx-auto w-100'>
           <div>
-            <Link to='/' className='mb-40 max-w-290-px'>
+            <Link to='/' className='mb-40 max-w-220-px'>
               <img src='assets/images/logo.png' alt='' />
             </Link>
             <h4 className='mb-12'>Sign In to your Account</h4>
@@ -176,7 +176,7 @@ const SignInLayer = () => {
                     Remember me{" "}
                   </label>
                 </div>
-                <Link to='#' className='text-primary-600 fw-medium'>
+                <Link to='/forgot-password' className='text-primary-600 fw-medium'>
                   Forgot Password?
                 </Link>
               </div>
@@ -188,7 +188,7 @@ const SignInLayer = () => {
               {" "}
               Sign In
             </button>
-            <div className='mt-32 center-border-horizontal text-center'>
+            {/* <div className='mt-32 center-border-horizontal text-center'>
               <span className='bg-base z-1 px-4'>Or sign in with</span>
             </div>
             <div className='mt-32 d-flex align-items-center gap-3'>
@@ -202,7 +202,7 @@ const SignInLayer = () => {
                 />
                 Google
               </button>
-            </div>
+            </div> */}
             <div className='mt-32 text-center text-sm'>
               <p className='mb-0'>
                 Don’t have an account?{" "}

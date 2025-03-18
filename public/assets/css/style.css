@@ -4055,8 +4055,8 @@ html[data-theme="dark"] .dark-bg-neutral-200 {
   max-width: 500px;
 }
 
-.max-w-290-px {
-  max-width: 290px;
+.max-w-220-px {
+  max-width: 220px;
 }
 
 .max-w-634-px {
@@ -15503,7 +15503,7 @@ td.fc-header-center {
 }
 
 .sidebar-logo img {
-  max-height: 3.4375rem;
+  max-height: 46px;
 }
 
 .sidebar-logo img.dark-logo {

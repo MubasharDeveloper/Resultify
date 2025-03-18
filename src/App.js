@@ -31,7 +31,6 @@ import CompanyPage from "./pages/CompanyPage";
 import CurrenciesPage from "./pages/CurrenciesPage";
 import DropdownPage from "./pages/DropdownPage";
 import FaqPage from "./pages/FaqPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import FormLayoutPage from "./pages/FormLayoutPage";
 import FormValidationPage from "./pages/FormValidationPage";
 import FormPage from "./pages/FormPage";
@@ -102,6 +101,7 @@ import BlankPagePage from "./pages/BlankPagePage";
 import RouteScrollToTop from "./helper/RouteScrollToTop";
 import SignInPage from "./pages/Authentication/SignInPage";
 import SignUpPage from "./pages/Authentication/SignUpPage";
+import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 import ErrorPage from "./pages/ErrorPage";
 
 
