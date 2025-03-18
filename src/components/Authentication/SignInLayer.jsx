@@ -44,10 +44,6 @@ const SignInLayer = () => {
                   placeholder='Password'
                 />
               </div>
-              <span
-                className='toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light'
-                data-toggle='#your-password'
-              />
             </div>
             <div className=''>
               <div className='d-flex justify-content-between gap-2'>
