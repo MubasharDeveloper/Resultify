@@ -2,20 +2,21 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from '../../Firease_config';
-import { right } from "@popperjs/core";
-import { toast, Bounce } from 'react-toastify';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { auth } from "../../Firease_config";
+import { toast, Bounce } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 
 const ForgotPasswordLayer = () => {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('')
-    const [errors, setErrors] = useState('');
+    const db = getFirestore(); // Initialize Firestore
+    const [email, setEmail] = useState("");
+    const [errors, setErrors] = useState("");
 
-    const handleChange = e =>{
-        setEmail(e.target.value)
-        setErrors('');
-    }
+    const handleChange = (e) => {
+        setEmail(e.target.value);
+        setErrors("");
+    };
 
     // Email validation regex
     const validateEmail = (email) => {
@@ -23,61 +24,59 @@ const ForgotPasswordLayer = () => {
         return regex.test(email);
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        let valid = true;
-        let newErrors = '';
-  
-        if (email.trim() === "") {
-            newErrors = "Please enter your email";
-            valid = false;
-        } else if (!validateEmail(email)) {
-            newErrors = "Invalid email format";
-            valid = false;
-        }
+        setErrors(""); // Clear previous errors
 
-        setErrors(newErrors);
-
-        if (!valid) {
+        if (!email.trim()) {
+            setErrors("Please enter your email");
             return;
         }
-  
-        sendPasswordResetEmail(auth, email)
-            .then(() => {
-                console.log("Password reset email sent!");
-                setEmail('');
-                toast.success('Check Your Mail Box!', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                    transition: Bounce,
-                    onClose: () => {
-                        navigate('/sign-in');
-                    }
-                });
-            })
-            .catch((error) => {
-                console.error("Error sending email:", error.message);
-                toast.error(error.message, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                    transition: Bounce,
-                });
-            });
-  
-    }
+        if (!validateEmail(email)) {
+            setErrors("Invalid email format");
+            return;
+        }
 
+        try {
+            // Check Firestore if email exists
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                setErrors("No account found with this email.");
+                return;
+            }
+
+            // Send password reset email if the email exists in Firestore
+            await sendPasswordResetEmail(auth, email);
+            setEmail("");
+            toast.success("Check Your Mailbox for reset instructions!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "light",
+                transition: Bounce,
+                onClose: () => navigate("/sign-in"),
+            });
+        } catch (error) {
+            console.error("Error:", error.message);
+            setErrors("Something went wrong. Please try again later.");
+            toast.error(error.message, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "light",
+                transition: Bounce,
+            });
+        }
+    };
 
     return (
         <>
@@ -92,35 +91,34 @@ const ForgotPasswordLayer = () => {
                         <div>
                             <h4 className="mb-12">Forgot Password</h4>
                             <p className="mb-32 text-secondary-light text-lg">
-                            Enter your email to get a password reset link.
+                                Enter your email to get a password reset link.
                             </p>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-12">
                                 <div className="position-relative">
-                                    <div className='icon-field'>
-                                        <span className='icon top-50 translate-middle-y'>
-                                        <Icon icon='mage:email' />
+                                    <div className="icon-field">
+                                        <span className="icon top-50 translate-middle-y">
+                                            <Icon icon="mage:email" />
                                         </span>
                                         <input
-                                        type='text'
-                                        name='email'
-                                        value={email}
-                                        onChange={handleChange}
-                                        className={`form-control h-56-px bg-neutral-50 radius-12 ${errors ? "border-danger" : ""}`}
-                                        placeholder='Enter Your Email'
+                                            type="text"
+                                            name="email"
+                                            value={email}
+                                            onChange={handleChange}
+                                            className={`form-control h-56-px bg-neutral-50 radius-12 ${
+                                                errors ? "border-danger" : ""
+                                            }`}
+                                            placeholder="Enter Your Email"
                                         />
                                     </div>
                                 </div>
-                                <span className='mt-4 text-sm text-danger' id="error-email">
+                                <span className="mt-4 text-sm text-danger" id="error-email">
                                     {errors}
                                 </span>
                             </div>
-                            <button
-                            type='submit'
-                            className='btn btn-primary px-12 py-12 w-100 radius-12 mt-32'
-                            >
-                                Sign Up
+                            <button type="submit" className="btn btn-primary px-12 py-12 w-100 radius-12 mt-32">
+                                Reset Password
                             </button>
                             <div className="text-center">
                                 <Link to="/sign-in" className="text-primary-600 fw-bold mt-24">
@@ -131,44 +129,8 @@ const ForgotPasswordLayer = () => {
                     </div>
                 </div>
             </section>
-            {/* Modal */}
-            <div
-                className="modal fade"
-                id="exampleModal"
-                tabIndex={-1}
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-dialog modal-dialog-centered">
-                    <div className="modal-content radius-16 bg-base">
-                        <div className="modal-body p-40 text-center">
-                            <div className="mb-32">
-                                <img src="assets/images/auth/envelop-icon.png" alt="" />
-                            </div>
-                            <h6 className="mb-12">Verify your Email</h6>
-                            <p className="text-secondary-light text-sm mb-0">
-                                Thank you, check your email for instructions to reset your password
-                            </p>
-                            <button
-                                type="button"
-                                className="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32"
-                            >
-                                Skip
-                            </button>
-                            <div className="mt-32 text-sm">
-                                <p className="mb-0">
-                                    Don’t receive an email?{" "}
-                                    <Link to="/resend" className="text-primary-600 fw-semibold">
-                                        Resend
-                                    </Link>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </>
+    );
+};
 
-    )
-}
-
-export default ForgotPasswordLayer
+export default ForgotPasswordLayer;
