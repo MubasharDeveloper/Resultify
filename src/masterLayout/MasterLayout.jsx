@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
+import { useAuth } from "../context/AuthContext";
 
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
   const location = useLocation(); // Hook to get the current route
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleDropdownClick = (event) => {
@@ -143,6 +145,22 @@ const MasterLayout = ({ children }) => {
                 <Icon icon='mage:email' className='menu-icon' />
                 <span>Sign Up</span>
               </NavLink>
+            </li>
+            <li>
+              {user && (
+                <>
+                  <NavLink
+                    to=''
+                    className={(navData) => (navData.isActive ? "active-page" : "")}
+                    onClick={logout}
+                  >
+                    <Icon icon='mage:email' className='menu-icon' />
+                    <span>Logout</span>
+                  </NavLink>
+                  <span>{console.log(user)}</span>
+                </>
+                )                
+              }
             </li>
             <li>
               <NavLink

@@ -2,9 +2,9 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { toast, Bounce } from 'react-toastify';
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from '../../Firease_config';
+import { toast, Slide } from 'react-toastify';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db, collection, query, where, getDocs } from '../../Firebase_config';
 
 const initialStateSignUp = {
   email: '',
@@ -17,6 +17,7 @@ const SignInLayer = () => {
   const [errors, setErrors] = useState(initialStateSignUp);
   const [logInError, setLogInError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Email validation regex
   const validateEmail = (email) => {
@@ -32,11 +33,13 @@ const SignInLayer = () => {
     setLogInError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     let valid = true;
     let newErrors = { email: "", password: "" };
-
+  
     if (signUpData.email.trim() === "") {
       newErrors.email = "Please enter your email";
       valid = false;
@@ -44,57 +47,83 @@ const SignInLayer = () => {
       newErrors.email = "Invalid email format";
       valid = false;
     }
-
+  
     if (signUpData.password.trim() === "") {
       newErrors.password = "Please enter your password";
       valid = false;
     }
-
+  
     setErrors(newErrors);
-
     if (!valid) {
+      setLoading(false); // enable button again
       return;
     }
-
-    
-    // Proceed with Firebase authentication
+  
     const { email, password } = signUpData;
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.table(signUpData);
-        setSignUpData(initialStateSignUp);
-        toast.success('Login Successfully!', {
+  
+    try {
+      // Check if user with this email exists
+      const usersCollectionRef = collection(db, "Users"); // Capital 'U' as per your collection
+      const q = query(usersCollectionRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        toast.error("User not found. Please check your email address and try again.",{
           position: "top-right",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-          onClose: () => {
-            // Navigate to Sign-In page after toast disappears
-            navigate('/');
-          }
+          autoClose: 3000,
+          theme: "colored",
+          transition: Slide,
         });
-        console.log("User Registration Successful", userCredential);
-      })
-      .catch((error) => {
-        console.error("Signup Error", error);
-        setLogInError('Invalid Email or Password');
-        toast.error(error.message, {
+        setLoading(false);
+        return;
+      }
+  
+      // Check user status
+      let userBlocked = false;
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        if (!userData.Status) {
+          userBlocked = true;
+        }
+      });
+  
+      if (userBlocked) {
+        toast.error("User is blocked with this email address. Please contact the administrator for assistance.", {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-          });
+          theme: "colored",
+          transition: Slide,
+        });
+        setLoading(false);
+        return;
+      }
+  
+      // Proceed with login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setSignUpData(initialStateSignUp);
+  
+      toast.success("Login Successfully!", {
+        position: "top-right",
+        autoClose: 2500,
+        theme: "colored",
+        transition: Slide,
+        onClose: () => navigate("/"), // Redirect after success
       });
+  
+      console.log("User login successful", userCredential);
+  
+    } catch (error) {
+      console.error("Login Error", error);
+      setLogInError("Invalid Email or Password");
+      toast.error('Invalid Email or Password', {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "colored",
+        transition: Slide,
+      });
+    } finally {
+      setLoading(false); // enable button after everything
+    }
   };
 
   return (
@@ -111,7 +140,7 @@ const SignInLayer = () => {
               <img src='assets/images/logo.png' alt='' />
             </Link>
             <h4 className='mb-12'>Sign In to your Account</h4>
-            <p className='mb-32 text-secondary-light text-lg'>
+            <p className='mb-32 text-secondary-colored text-lg'>
               Welcome back! please enter your detail
             </p>
           </div>
@@ -184,9 +213,9 @@ const SignInLayer = () => {
             <button
               type='submit'
               className='btn btn-primary px-12 py-12 w-100 radius-12 mt-32'
+              disabled={loading}
             >
-              {" "}
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </button>
             {/* <div className='mt-32 center-border-horizontal text-center'>
               <span className='bg-base z-1 px-4'>Or sign in with</span>
@@ -194,7 +223,7 @@ const SignInLayer = () => {
             <div className='mt-32 d-flex align-items-center gap-3'>
               <button
                 type='button'
-                className='fw-semibold text-primary-light py-16 px-18 w-100 border radius-12 text-md d-flex align-items-center justify-content-center gap-12 line-height-1 bg-hover-primary-50'
+                className='fw-semibold text-primary-colored py-16 px-18 w-100 border radius-12 text-md d-flex align-items-center justify-content-center gap-12 line-height-1 bg-hover-primary-50'
               >
                 <Icon
                   icon='logos:google-icon'
