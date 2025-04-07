@@ -105,12 +105,17 @@ import SignUpPage from "./pages/Authentication/SignUpPage";
 import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 import ErrorPage from "./pages/ErrorPage";
 
-import Departments from "./pages/Departments";
+import Departments from "./pages/Admin/Departments";
+import Batches from "./pages/Admin/Batches";
+import Users from "./pages/Admin/Users";
 
 
 const Loader = () => (
-  <div className="loader-container">
-    <div className="spinner"></div>
+  // <div className="loader-container">
+  //    <div className="spinner"></div>
+  // </div>
+  <div id="preloader">
+    <div id="loader"></div>
   </div>
 );
 
@@ -252,6 +257,18 @@ function App() {
             <Route exact path='/departments' element={
               <PrivateRoute>
                 <Departments />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/batches' element={
+              <PrivateRoute>
+                <Batches />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/manage-users' element={
+              <PrivateRoute>
+                <Users />
               </PrivateRoute>
             } />
 

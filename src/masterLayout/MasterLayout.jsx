@@ -210,6 +210,15 @@ const MasterLayout = ({ children }) => {
             </li>
             <li>
               <NavLink
+                to='/manage-users'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon='mage:email' className='menu-icon' />
+                <span>Manage Users</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to='/admin-settings'
                 className={(navData) => (navData.isActive ? "active-page" : "")}
               >
