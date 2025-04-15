@@ -105,6 +105,10 @@ import SignUpPage from "./pages/Authentication/SignUpPage";
 import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 import ErrorPage from "./pages/ErrorPage";
 
+import AdminDashboard from "./pages/Dashboards/AdminDashboard";
+import HodDashboard from "./pages/Dashboards/HodDashboard";
+import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
+
 import Departments from "./pages/Admin/Departments";
 import Batches from "./pages/Admin/Batches";
 import Users from "./pages/Admin/Users";
@@ -254,21 +258,39 @@ function App() {
             <Route exact path='/sign-up' element={<SignUpPage />} />
             <Route exact path='/forgot-password' element={<ForgotPasswordPage />} />
 
+            <Route exact path='/admin-dashboard' element={
+              <PrivateRoute allowedRoles={['Admin']}>
+                <AdminDashboard />
+              </PrivateRoute>
+            } />
+
             <Route exact path='/departments' element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={['Admin']}>
                 <Departments />
               </PrivateRoute>
             } />
 
             <Route exact path='/batches' element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={['Admin', 'HOD']}>
                 <Batches />
               </PrivateRoute>
             } />
 
             <Route exact path='/manage-users' element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={['Admin', 'HOD']}>
                 <Users />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/hod-dashboard' element={
+              <PrivateRoute allowedRoles={['HOD']}>
+                <HodDashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/teacher-dashboard' element={
+              <PrivateRoute allowedRoles={['Teacher']}>
+                <TeacherDashboard />
               </PrivateRoute>
             } />
 

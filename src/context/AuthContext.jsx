@@ -1,31 +1,75 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../Firebase_config";
+import { db } from "../Firebase_config";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("authUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser || null);
+  const [loading, setLoading] = useState(false);
+
+  const roleToRootLink = {
+    Admin: "/admin/dashboard",
+    HOD: "/hod/dashboard",
+    Teacher: "/teacher/dashboard",
+    Student: "/student/results", // if you ever allow this role
+  };
+
+  const login = async (userData) => {
+    try {
+      setLoading(true);
+  
+      // Fetch department name if departmentId exists
+      let departmentName = null;
+      if (userData.departmentId) {
+        const deptDoc = await getDoc(doc(db, "Departments", userData.departmentId));
+        if (deptDoc.exists()) {
+          departmentName = deptDoc.data().name;
+        }
+      }
+  
+      // Fetch role name if roleId exists
+      let roleName = null;
+      if (userData.roleId) {
+        const roleDoc = await getDoc(doc(db, "Roles", userData.roleId));
+        if (roleDoc.exists()) {
+          roleName = roleDoc.data().name;
+        }
+      }
+  
+      // ✅ Map roleName to rootLink
+      const rootLink = roleToRootLink[roleName] || "/"; // fallback to home if unknown role
+  
+      const updatedUser = {
+        ...userData,
+        departmentName,
+        roleName,
+        rootLink, // ✅ Include rootLink
+      };
+  
+      localStorage.setItem("authUser", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+  
 
-    return () => unsubscribe();
-  }, []);
-
-  const logout = async () => {
-    await signOut(auth);
+  const logout = () => {
+    localStorage.removeItem("authUser");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout, loading, setLoading, }}>
+      {children}
     </AuthContext.Provider>
   );
 };

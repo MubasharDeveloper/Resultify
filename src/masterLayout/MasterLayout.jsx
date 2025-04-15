@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import ThemeToggleButton from "../helper/ThemeToggleButton";
+// import ThemeToggleButton from "../helper/ThemeToggleButton";
 import { useAuth } from "../context/AuthContext";
 
 const MasterLayout = ({ children }) => {
@@ -9,6 +9,7 @@ const MasterLayout = ({ children }) => {
   let [mobileMenu, setMobileMenu] = useState(false);
   const location = useLocation(); // Hook to get the current route
   const { user, logout } = useAuth();
+
 
   useEffect(() => {
     const handleDropdownClick = (event) => {
@@ -95,8 +96,8 @@ const MasterLayout = ({ children }) => {
           sidebarActive
             ? "sidebar active "
             : mobileMenu
-            ? "sidebar sidebar-open"
-            : "sidebar"
+              ? "sidebar sidebar-open"
+              : "sidebar"
         }
       >
         <button
@@ -127,133 +128,96 @@ const MasterLayout = ({ children }) => {
         </div>
         <div className='sidebar-menu-area'>
           <ul className='sidebar-menu' id='sidebar-menu'>
-            <li className='sidebar-menu-group-title'>Common Pages</li>
-            <li>
-              <NavLink
-                to='/sign-in'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Sign In</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/sign-up'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Sign Up</span>
-              </NavLink>
-            </li>
-            <li>
-              {user && (
+            {
+              user.roleName === 'Admin' ? (
                 <>
-                  <NavLink
-                    to=''
-                    className={(navData) => (navData.isActive ? "active-page" : "")}
-                    onClick={logout}
-                  >
-                    <Icon icon='mage:email' className='menu-icon' />
-                    <span>Logout</span>
-                  </NavLink>
-                  <span>{console.log(user)}</span>
+                  <li className='sidebar-menu-group-title'>Supper Admin</li>
+                  <li>
+                    <NavLink
+                      to='/admin-dashboard'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon
+                        icon='solar:home-smile-angle-outline'
+                        className='menu-icon'
+                      />
+                      <span>Dashboard</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/departments'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Departments</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/batches'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Batch</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/manage-users'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Manage Users</span>
+                    </NavLink>
+                  </li>
                 </>
-                )                
-              }
-            </li>
-            <li>
-              <NavLink
-                to='/forgot-password'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Forgot Password</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/login-cnic'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Login With CNIC</span>
-              </NavLink>
-            </li>
-            <li className='sidebar-menu-group-title'>Supper Admin</li>
-            <li>
-              <NavLink
-                to='/admin-dashboard'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Admin Dashboard</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/departments'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Departments</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/batches'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Batch</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/manage-users'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Manage Users</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/admin-settings'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Admin Settings</span>
-              </NavLink>
-            </li>
-            <li className='sidebar-menu-group-title'>Teachers</li>
-            <li>
-              <NavLink
-                to='/hod-dashboard'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>HOD Dashboad</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/teachers'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Teachers</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/course-outlines'
-                className={(navData) => (navData.isActive ? "active-page" : "")}
-              >
-                <Icon icon='mage:email' className='menu-icon' />
-                <span>Course Outlines</span>
-              </NavLink>
-            </li>
+              ) : user.roleName === 'HOD' ? (
+                <>
+                  <li className='sidebar-menu-group-title'>Head of Department (HOD)</li>
+                  <li>
+                    <NavLink
+                      to='/hod-dashboard'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon
+                        icon='solar:home-smile-angle-outline'
+                        className='menu-icon'
+                      />
+                      <span>Dashboard</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/batches'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Batch</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/subjects'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Subjects</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/manage-users'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Manage Users</span>
+                    </NavLink>
+                  </li>
+                </>
+              ) : ('')
+            }
+
             <li className='sidebar-menu-group-title'>DashBoard</li>
             <li className='dropdown'>
               <Link to='#'>
@@ -1565,47 +1529,59 @@ const MasterLayout = ({ children }) => {
                     />
                   </button>
                   <div className='dropdown-menu to-top dropdown-menu-sm'>
-                    <div className='py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2'>
-                      <div>
-                        <h6 className='text-lg text-primary-light fw-semibold mb-2'>
-                          Shaidul Islam
-                        </h6>
-                        <span className='text-secondary-light fw-medium text-sm'>
-                          Admin
-                        </span>
-                      </div>
-                      <button type='button' className='hover-text-danger'>
-                        <Icon
-                          icon='radix-icons:cross-1'
-                          className='icon text-xl'
-                        />
-                      </button>
-                    </div>
+                    {
+                      user && (
+                        <div className='py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2'>
+                          <div>
+                            <h6 className='text-lg text-primary-light fw-semibold mb-2'>
+                              {user.name}
+                            </h6>
+                            <span className='text-secondary-light fw-medium text-sm'>
+                              {user.roleName}
+                            </span>
+                          </div>
+                          <button type='button' className='hover-text-danger'>
+                            <Icon
+                              icon='radix-icons:cross-1'
+                              className='icon text-xl'
+                            />
+                          </button>
+                        </div>
+                      )
+                    }
+
                     <ul className='to-top-list'>
-                      <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                          to='/view-profile'
-                        >
-                          <Icon
-                            icon='solar:user-linear'
-                            className='icon text-xl'
-                          />{" "}
-                          My Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                          to='/email'
-                        >
-                          <Icon
-                            icon='tabler:message-check'
-                            className='icon text-xl'
-                          />{" "}
-                          Inbox
-                        </Link>
-                      </li>
+                      {
+                        user && (
+                          <>
+                            <li>
+                              <Link
+                                className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
+                                to='/view-profile'
+                              >
+                                <Icon
+                                  icon='solar:user-linear'
+                                  className='icon text-xl'
+                                />{" "}
+                                My Profile
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
+                                to='/email'
+                              >
+                                <Icon
+                                  icon='tabler:message-check'
+                                  className='icon text-xl'
+                                />{" "}
+                                Inbox
+                              </Link>
+                            </li>
+                          </>
+                        )
+                      }
+
                       <li>
                         <Link
                           className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
@@ -1618,15 +1594,31 @@ const MasterLayout = ({ children }) => {
                           Setting
                         </Link>
                       </li>
-                      <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                          to='#'
-                        >
-                          <Icon icon='lucide:power' className='icon text-xl' />{" "}
-                          Log Out
-                        </Link>
-                      </li>
+
+                      {
+                        user ? (
+                          <li>
+                            <Link
+                              className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
+                              to='#'
+                              onClick={logout}
+                            >
+                              <Icon icon='lucide:power' className='icon text-xl' />{" "}
+                              Log Out
+                            </Link>
+                          </li>
+                        ) : (
+                          <li>
+                            <Link
+                              className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
+                              to='/sign-in'
+                            >
+                              <Icon icon='lucide:power' className='icon text-xl' />{" "}
+                              Log In
+                            </Link>
+                          </li>
+                        )
+                      }
                     </ul>
                   </div>
                 </div>

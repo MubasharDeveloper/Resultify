@@ -5,10 +5,7 @@ import ForgotPasswordLayer from "../../components/Authentication/ForgotPasswordL
 const ForgotPasswordPage = () => {
   return (
     <>
-
-      {/* ForgotPasswordLayer */}
       <ForgotPasswordLayer />
-
     </>
   );
 };

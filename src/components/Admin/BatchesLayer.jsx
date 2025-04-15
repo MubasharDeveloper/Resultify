@@ -7,8 +7,12 @@ import { toast, Slide } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { CustomLoader } from '../CustomLoader';
 import NoDataTable from '../NoDataTable';
+import { useAuth } from "../../context/AuthContext";
 
 const Batches = () => {
+
+    const { user } = useAuth();
+
     const [departments, setDepartments] = useState([]);
     const [activeDepartments, setActiveDepartments] = useState([]);
     const [batches, setBatches] = useState([]);
@@ -37,44 +41,74 @@ const Batches = () => {
 
     // Fetch departments and batches
     const fetchData = async () => {
-        const activeDeptQuery = query(
-            collection(db, "Departments"),
-            where("status", "==", true)
-        );
+        let activeDeptQuery;
+        let batchQuery;
+
+        // Queries setup
+        if (user.roleName === 'Admin') {
+            activeDeptQuery = query(
+                collection(db, "Departments"),
+                where("status", "==", true)
+            );
+            batchQuery = query(
+                collection(db, "Batches"),
+                orderBy("startYear", "desc")
+            );
+        } else if (user.roleName === 'HOD') {
+            activeDeptQuery = query(
+                collection(db, "Departments"),
+                where("status", "==", true)
+            ); // Will filter by doc.id later
+
+            batchQuery = query(
+                collection(db, "Batches"),
+                where("departmentId", "==", user.departmentId),
+                orderBy("startYear", "desc")
+            );
+        }
+
+        // Fetch departments
         const activeDeptSnap = await getDocs(activeDeptQuery);
         const deptSnap = await getDocs(collection(db, "Departments"));
 
-        const batchQuery = query(
-            collection(db, "Batches"),
-            orderBy("startYear", "desc")
-        );
-        const batchSnap = await getDocs(batchQuery);
+        // Manual filter for HOD to restrict their department by doc ID
+        let filteredActiveDepartments = activeDeptSnap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
 
-        setActiveDepartments(activeDeptSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        if (user.roleName === 'HOD') {
+            filteredActiveDepartments = filteredActiveDepartments.filter(
+                (dept) => dept.id === user.departmentId
+            );
+        }
+
+        // Set Departments
+        setActiveDepartments(filteredActiveDepartments);
         setDepartments(deptSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
 
+        // Fetch and sort batches
+        const batchSnap = await getDocs(batchQuery);
         setBatches(
             batchSnap.docs
                 .map((doc) => ({ id: doc.id, ...doc.data() }))
-                .sort((a, b) => {
-                    // First sort by startYear (descending)
-                    if (b.startYear !== a.startYear) {
-                        return b.startYear - a.startYear;
-                    }
+                // .sort((a, b) => {
+                //     // First sort by startYear (descending)
+                //     if (b.startYear !== a.startYear) return b.startYear - a.startYear;
 
-                    // If startYear is equal, sort by department name (ascending)
-                    const deptA = getDeptName(a.departmentId);
-                    const deptB = getDeptName(b.departmentId);
-                    if (deptA < deptB) return -1;
-                    if (deptA > deptB) return 1;
+                //     // Then by department name (ascending)
+                //     const deptA = getDeptName(a.departmentId);
+                //     const deptB = getDeptName(b.departmentId);
+                //     if (deptA < deptB) return -1;
+                //     if (deptA > deptB) return 1;
 
-                    // If department is equal, sort by shift (Morning first)
-                    if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
-                    if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
+                //     // Then by shift (Morning first)
+                //     if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
+                //     if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
 
-                    // If all else is equal, maintain original order
-                    return 0;
-                })
+                //     // Maintain original order
+                //     return 0;
+                // })
         );
     }
 
@@ -83,51 +117,82 @@ const Batches = () => {
         const fetchBatchData = async () => {
             setLoading(true);
             try {
-                const activeDeptQuery = query(
-                    collection(db, "Departments"),
-                    where("status", "==", true)
-                );
+                let activeDeptQuery;
+                let batchQuery;
+
+                // Queries setup
+                if (user.roleName === 'Admin') {
+                    activeDeptQuery = query(
+                        collection(db, "Departments"),
+                        where("status", "==", true)
+                    );
+                    batchQuery = query(
+                        collection(db, "Batches"),
+                        orderBy("startYear", "desc")
+                    );
+                } else if (user.roleName === 'HOD') {
+                    activeDeptQuery = query(
+                        collection(db, "Departments"),
+                        where("status", "==", true)
+                    ); // Will filter by doc.id later
+
+                    batchQuery = query(
+                        collection(db, "Batches"),
+                        where("departmentId", "==", user.departmentId),
+                        orderBy("startYear", "desc")
+                    );
+                }
+
+                // Fetch departments
                 const activeDeptSnap = await getDocs(activeDeptQuery);
                 const deptSnap = await getDocs(collection(db, "Departments"));
 
-                const batchQuery = query(
-                    collection(db, "Batches"),
-                    orderBy("startYear", "desc")
-                );
-                const batchSnap = await getDocs(batchQuery);
+                // Manual filter for HOD to restrict their department by doc ID
+                let filteredActiveDepartments = activeDeptSnap.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
 
-                setActiveDepartments(activeDeptSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+                if (user.roleName === 'HOD') {
+                    filteredActiveDepartments = filteredActiveDepartments.filter(
+                        (dept) => dept.id === user.departmentId
+                    );
+                }
+
+                // Set Departments
+                setActiveDepartments(filteredActiveDepartments);
                 setDepartments(deptSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
 
+                // Fetch and sort batches
+                const batchSnap = await getDocs(batchQuery);
                 setBatches(
                     batchSnap.docs
                         .map((doc) => ({ id: doc.id, ...doc.data() }))
-                        .sort((a, b) => {
-                            // First sort by startYear (descending)
-                            if (b.startYear !== a.startYear) {
-                                return b.startYear - a.startYear;
-                            }
+                        // .sort((a, b) => {
+                        //     // First sort by startYear (descending)
+                        //     if (b.startYear !== a.startYear) return b.startYear - a.startYear;
 
-                            // If startYear is equal, sort by department name (ascending)
-                            const deptA = getDeptName(a.departmentId);
-                            const deptB = getDeptName(b.departmentId);
-                            if (deptA < deptB) return -1;
-                            if (deptA > deptB) return 1;
+                        //     // Then by department name (ascending)
+                        //     const deptA = getDeptName(a.departmentId);
+                        //     const deptB = getDeptName(b.departmentId);
+                        //     if (deptA < deptB) return -1;
+                        //     if (deptA > deptB) return 1;
 
-                            // If department is equal, sort by shift (Morning first)
-                            if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
-                            if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
+                        //     // Then by shift (Morning first)
+                        //     if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
+                        //     if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
 
-                            // If all else is equal, maintain original order
-                            return 0;
-                        })
+                        //     // Maintain original order
+                        //     return 0;
+                        // })
                 );
             } catch (error) {
-                console.log('Error fetching batches. Error: ', error);
+                console.log("Error fetching batches. Error: ", error);
             } finally {
                 setLoading(false);
             }
         };
+
 
         fetchBatchData();
     }, []);
@@ -525,11 +590,11 @@ const Batches = () => {
             selector: (row) => (
                 <span
                     className={`${currentYear === row.startYear
-                        ? 'bg-success-focus text-success-main'
+                        ? 'bg-success-focus text-success-main border-success-main'
                         : currentYear > row.startYear
-                            ? 'bg-danger-focus text-danger-main'
-                            : 'bg-warning-focus text-warning-main'
-                        } px-24 py-6 rounded-pill fw-medium text-sm`
+                            ? 'bg-danger-focus text-danger-main border-danger-main'
+                            : 'bg-warning-focus text-warning-main border-warning-main'
+                        } border px-20 py-4 radius-6 fw-medium text-md`
                     }
                 >
                     {row.startYear} - {row.endYear}
@@ -547,9 +612,9 @@ const Batches = () => {
             selector: (row) => (
                 <span
                     className={`${row.shift === 'Morning'
-                        ? 'bg-success-focus text-success-main'
-                        : 'bg-danger-focus text-danger-main'
-                        } px-24 py-6 rounded-pill fw-medium text-sm`
+                        ? 'bg-success-focus text-success-main border-success-main'
+                        : 'bg-warning-focus text-warning-main border-warning-main'
+                        } border px-20 py-4 radius-6 fw-medium text-md`
                     }
                 >
                     {row.shift}

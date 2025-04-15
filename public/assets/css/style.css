@@ -15848,7 +15848,7 @@ h2.swal2-title {
 
 .error-message {
   color: #dc3545 !important;
-  font-size: 0.875em !important;
+  font-size: 12px !important;
   margin-top: 0.25rem !important;
 }
 
@@ -15982,4 +15982,8 @@ h2.swal2-title {
   border-top-color: var(--primary-300);
   -webkit-animation: spin 1.5s linear infinite;
   animation: spin 1.5s linear infinite;
+}
+
+.top-40{
+  top: 40% !important;
 }

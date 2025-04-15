@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { toast, Slide } from 'react-toastify';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db, collection, query, where, getDocs } from '../../Firebase_config';
+import { useAuth } from "../../context/AuthContext";
+import { db, collection, query, where, getDocs } from '../../Firebase_config';
+
 
 const initialStateSignUp = {
   email: '',
@@ -18,6 +19,8 @@ const SignInLayer = () => {
   const [logInError, setLogInError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { login, user } = useAuth();
 
   // Email validation regex
   const validateEmail = (email) => {
@@ -39,7 +42,7 @@ const SignInLayer = () => {
 
     let valid = true;
     let newErrors = { email: "", password: "" };
-  
+
     if (signUpData.email.trim() === "") {
       newErrors.email = "Please enter your email";
       valid = false;
@@ -47,28 +50,26 @@ const SignInLayer = () => {
       newErrors.email = "Invalid email format";
       valid = false;
     }
-  
+
     if (signUpData.password.trim() === "") {
       newErrors.password = "Please enter your password";
       valid = false;
     }
-  
+
     setErrors(newErrors);
     if (!valid) {
-      setLoading(false); // enable button again
+      setLoading(false);
       return;
     }
-  
+
     const { email, password } = signUpData;
-  
+
     try {
-      // Check if user with this email exists
-      const usersCollectionRef = collection(db, "Users"); // Capital 'U' as per your collection
-      const q = query(usersCollectionRef, where("email", "==", email));
+      const q = query(collection(db, "Users"), where("email", "==", email.toLowerCase()));
       const querySnapshot = await getDocs(q);
-  
+
       if (querySnapshot.empty) {
-        toast.error("User not found. Please check your email address and try again.",{
+        toast.error("User not found. Please check your email address and try again.", {
           position: "top-right",
           autoClose: 3000,
           theme: "colored",
@@ -77,54 +78,96 @@ const SignInLayer = () => {
         setLoading(false);
         return;
       }
-  
-      // Check user status
-      let userBlocked = false;
+
+      let matchedUser = null;
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (!userData.Status) {
-          userBlocked = true;
+        if (userData.password === password) {
+          matchedUser = { id: doc.id, ...userData };
         }
       });
-  
-      if (userBlocked) {
-        toast.error("User is blocked with this email address. Please contact the administrator for assistance.", {
+
+      if (!matchedUser) {
+        setLogInError("Invalid Email or Password");
+        toast.error("Invalid Email or Password", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           theme: "colored",
           transition: Slide,
         });
         setLoading(false);
         return;
       }
-  
-      // Proceed with login
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      if (matchedUser.status === false) {
+        toast.error("User is blocked. Please contact the administrator.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+          transition: Slide,
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (!matchedUser.roleId) {
+        toast.error("Your Role is not assigned. Please contact the administrator.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+          transition: Slide,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Fetch role by roleId to get the role name
+      const roleQuery = query(collection(db, "Roles"), where("__name__", "==", matchedUser.roleId));
+      const roleSnap = await getDocs(roleQuery);
+
+      if (roleSnap.empty) {
+        toast.error("Role not found. Please contact the administrator.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+          transition: Slide,
+        });
+        setLoading(false);
+        return;
+      }
+
+      const roleData = roleSnap.docs[0].data();
+      const roleName = roleData.name;
+
+      // ✅ Store user and navigate after toast closes
+      login(matchedUser);
       setSignUpData(initialStateSignUp);
-  
+
       toast.success("Login Successfully!", {
         position: "top-right",
-        autoClose: 2500,
+        autoClose: 2000,
         theme: "colored",
         transition: Slide,
-        onClose: () => navigate("/"), // Redirect after success
+        onClose: () => {
+          if (roleName === 'Admin') navigate('/admin-dashboard');
+          else if (roleName === 'HOD') navigate('/hod-dashboard');
+          else if (roleName === 'Teacher') navigate('/teacher-dashboard');
+        },
       });
-  
-      console.log("User login successful", userCredential);
-  
+
     } catch (error) {
-      console.error("Login Error", error);
-      setLogInError("Invalid Email or Password");
-      toast.error('Invalid Email or Password', {
+      console.error("Custom Login Error", error);
+      toast.error("Something went wrong. Please try again.", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 3000,
         theme: "colored",
         transition: Slide,
       });
     } finally {
-      setLoading(false); // enable button after everything
+      setLoading(false);
     }
   };
+
 
   return (
     <section className='auth bg-base d-flex flex-wrap'>
@@ -181,7 +224,7 @@ const SignInLayer = () => {
                     onChange={handleChange}
                     className={`form-control h-56-px bg-neutral-50 radius-12 ${errors.password || logInError ? "border-danger" : ""}`}
                     placeholder='Enter Your Password'
-                    style={{paddingInlineEnd: '2.5rem'}}
+                    style={{ paddingInlineEnd: '2.5rem' }}
                   />
                   <span className='icon-right top-50 translate-middle-y cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
                     <Icon icon={showPassword ? "charm:eye" : "charm:eye-slash"} />

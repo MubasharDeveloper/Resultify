@@ -1,11 +1,9 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../Firebase_config';
-import { right } from "@popperjs/core";
-import { toast, Bounce } from 'react-toastify';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
+import { toast, Slide } from 'react-toastify';
+import { db } from '../../Firebase_config';
+import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 
 const initialStateSignUp = {
   email: '',
@@ -18,31 +16,21 @@ const SignUpLayer = () => {
   const [errors, setErrors] = useState(initialStateSignUp);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Email validation regex
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  // Password validation regex
-  const validatePassword = (password) => {
-    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
-    return regex.test(password);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = (password) =>
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(password);
 
   const handleChange = (e) => {
     setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
-
-    // Clear errors as the user types
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let valid = true;
     let newErrors = { email: "", password: "" };
 
-    if (signUpData.email.trim() === "") {
+    if (!signUpData.email.trim()) {
       newErrors.email = "Please enter your email";
       valid = false;
     } else if (!validateEmail(signUpData.email)) {
@@ -50,58 +38,61 @@ const SignUpLayer = () => {
       valid = false;
     }
 
-    if (signUpData.password.trim() === "") {
+    if (!signUpData.password.trim()) {
       newErrors.password = "Please enter your password";
       valid = false;
     } else if (!validatePassword(signUpData.password)) {
       newErrors.password =
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.";
+        "Password must be at least 8 characters long and include letters, numbers, and special characters.";
       valid = false;
     }
 
     setErrors(newErrors);
+    if (!valid) return;
 
-    if (!valid) {
-      return;
-    }
+    try {
+      // Check if email already exists in Users collection
+      const q = query(
+        collection(db, "Users"),
+        where("email", "==", signUpData.email)
+      );
+      const snapshot = await getDocs(q);
 
-    
-    // Proceed with Firebase authentication
-    const { email, password } = signUpData;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.table(signUpData);
-        setSignUpData(initialStateSignUp);
-        toast.success('Register Successfully!', {
+      if (!snapshot.empty) {
+        toast.error("This email is already registered!", {
           position: "top-right",
           autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-          onClose: () => {
-            navigate('/sign-in');
-          }
+          theme: "colored",
+          transition: Slide,
         });
-        console.log("User Registration Successful", userCredential);
-      })
-      .catch((error) => {
-        console.error("Signup Error", error);
-        toast.error(error.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        return;
+      }
+
+      // Add new user to Users collection
+      await addDoc(collection(db, "Users"), {
+        email: signUpData.email.toLowerCase(),
+        password: signUpData.password,
+        status: false,
       });
+
+      toast.success("User registered successfully!", {
+        position: "top-right",
+        autoClose: 2500,
+        theme: "colored",
+        transition: Slide,
+        onClose: () => navigate('/sign-in')
+      });
+
+      setSignUpData(initialStateSignUp);
+    } catch (error) {
+      console.error("Firestore Error", error);
+      toast.error("Something went wrong!", {
+        position: "top-right",
+        autoClose: 2500,
+        theme: "colored",
+        transition: Slide,
+      });
+    }
   };
 
   return (
@@ -119,11 +110,11 @@ const SignUpLayer = () => {
             </Link>
             <h4 className='mb-12'>Sign Up to your Account</h4>
             <p className='mb-32 text-secondary-light text-lg'>
-              Welcome back! Please enter your details
+              Welcome! Please enter your details
             </p>
           </div>
           <form onSubmit={handleSubmit}>
-            {/* Email Input */}
+            {/* Email */}
             <div className="mb-12">
               <div className="position-relative">
                 <div className='icon-field'>
@@ -140,12 +131,10 @@ const SignUpLayer = () => {
                   />
                 </div>
               </div>
-              <span className='mt-4 text-sm text-danger' id="error-email">
-                {errors.email}
-              </span>
+              <span className='mt-4 text-sm text-danger'>{errors.email}</span>
             </div>
 
-            {/* Password Input */}
+            {/* Password */}
             <div className='mb-20'>
               <div className='position-relative'>
                 <div className='icon-field'>
@@ -159,62 +148,34 @@ const SignUpLayer = () => {
                     onChange={handleChange}
                     className={`form-control h-56-px bg-neutral-50 radius-12 ${errors.password ? "border-danger" : ""}`}
                     placeholder='Enter Your Password'
-                    style={{paddingInlineEnd: '2.5rem'}}
+                    style={{ paddingInlineEnd: '2.5rem' }}
                   />
-                  <span className='icon-right top-50 translate-middle-y cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
+                  <span
+                    className='icon-right top-50 translate-middle-y cursor-pointer'
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                     <Icon icon={showPassword ? "charm:eye" : "charm:eye-slash"} />
                   </span>
                 </div>
               </div>
-              <span className='mt-4 text-sm text-danger' id="error-password">
-                {errors.password}
-              </span>
+              <span className='mt-4 text-sm text-danger'>{errors.password}</span>
             </div>
 
+            {/* Terms */}
             <div className=''>
-              <div className='d-flex justify-content-between gap-2'>
-                <div className='form-check style-check d-flex align-items-start'>
-                  <input
-                    className='form-check-input border border-neutral-300 mt-4'
-                    type='checkbox'
-                    id='condition'
-                  />
-                  <label
-                    className='form-check-label text-md'
-                    htmlFor='condition'
-                  >
-                    By creating an account, you agree to the {' '}
-                    <Link to='#' className='text-primary-600 fw-semibold'> Terms & Conditions </Link>
-                    {' '} and our {' '}
-                    <Link to='#' className='text-primary-600 fw-semibold'> Privacy Policy</Link>
-                  </label>
-                </div>
+              <div className='form-check style-check d-flex align-items-start'>
+                <input className='form-check-input border border-neutral-300 mt-4' type='checkbox' id='condition' />
+                <label className='form-check-label text-md' htmlFor='condition'>
+                  By creating an account, you agree to the{' '}
+                  <Link to='#' className='text-primary-600 fw-semibold'>Terms & Conditions</Link> and our{' '}
+                  <Link to='#' className='text-primary-600 fw-semibold'>Privacy Policy</Link>
+                </label>
               </div>
             </div>
 
-            <button
-              type='submit'
-              className='btn btn-primary px-12 py-12 w-100 radius-12 mt-32'
-            >
+            <button type='submit' className='btn btn-primary px-12 py-12 w-100 radius-12 mt-32'>
               Sign Up
             </button>
-
-            {/* <div className='mt-32 center-border-horizontal text-center'>
-              <span className='bg-base z-1 px-4'>Or sign up with</span>
-            </div>
-
-            <div className='mt-32 d-flex align-items-center gap-3'>
-              <button
-                type='button'
-                className='fw-semibold text-primary-light py-16 px-18 w-100 border radius-12 text-md d-flex align-items-center justify-content-center gap-12 line-height-1 bg-hover-primary-50'
-              >
-                <Icon
-                  icon='logos:google-icon'
-                  className='text-primary-600 text-xl line-height-1'
-                />
-                Google
-              </button>
-            </div> */}
 
             <div className='mt-32 text-center text-sm'>
               <p className='mb-0'>
