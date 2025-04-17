@@ -111,6 +111,8 @@ import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
 
 import Departments from "./pages/Admin/Departments";
 import Batches from "./pages/Admin/Batches";
+import Subjects from "./pages/Admin/Subjects";
+import Semesters from "./pages/Admin/Semesters";
 import Users from "./pages/Admin/Users";
 
 
@@ -285,6 +287,18 @@ function App() {
             <Route exact path='/hod-dashboard' element={
               <PrivateRoute allowedRoles={['HOD']}>
                 <HodDashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/subjects' element={
+              <PrivateRoute allowedRoles={['HOD']}>
+                <Subjects />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/semesters' element={
+              <PrivateRoute allowedRoles={['HOD']}>
+                <Semesters />
               </PrivateRoute>
             } />
 

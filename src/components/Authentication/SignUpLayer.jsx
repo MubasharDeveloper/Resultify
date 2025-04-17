@@ -62,7 +62,7 @@ const SignUpLayer = () => {
         toast.error("This email is already registered!", {
           position: "top-right",
           autoClose: 2500,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         return;
@@ -78,7 +78,7 @@ const SignUpLayer = () => {
       toast.success("User registered successfully!", {
         position: "top-right",
         autoClose: 2500,
-        theme: "colored",
+        theme: "light",
         transition: Slide,
         onClose: () => navigate('/sign-in')
       });
@@ -89,7 +89,7 @@ const SignUpLayer = () => {
       toast.error("Something went wrong!", {
         position: "top-right",
         autoClose: 2500,
-        theme: "colored",
+        theme: "light",
         transition: Slide,
       });
     }

@@ -72,7 +72,7 @@ const SignInLayer = () => {
         toast.error("User not found. Please check your email address and try again.", {
           position: "top-right",
           autoClose: 3000,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         setLoading(false);
@@ -92,7 +92,7 @@ const SignInLayer = () => {
         toast.error("Invalid Email or Password", {
           position: "top-right",
           autoClose: 3000,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         setLoading(false);
@@ -103,7 +103,7 @@ const SignInLayer = () => {
         toast.error("User is blocked. Please contact the administrator.", {
           position: "top-right",
           autoClose: 3000,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         setLoading(false);
@@ -114,7 +114,7 @@ const SignInLayer = () => {
         toast.error("Your Role is not assigned. Please contact the administrator.", {
           position: "top-right",
           autoClose: 3000,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         setLoading(false);
@@ -129,7 +129,7 @@ const SignInLayer = () => {
         toast.error("Role not found. Please contact the administrator.", {
           position: "top-right",
           autoClose: 3000,
-          theme: "colored",
+          theme: "light",
           transition: Slide,
         });
         setLoading(false);
@@ -146,7 +146,7 @@ const SignInLayer = () => {
       toast.success("Login Successfully!", {
         position: "top-right",
         autoClose: 2000,
-        theme: "colored",
+        theme: "light",
         transition: Slide,
         onClose: () => {
           if (roleName === 'Admin') navigate('/admin-dashboard');
@@ -160,7 +160,7 @@ const SignInLayer = () => {
       toast.error("Something went wrong. Please try again.", {
         position: "top-right",
         autoClose: 3000,
-        theme: "colored",
+        theme: "light",
         transition: Slide,
       });
     } finally {

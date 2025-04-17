@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
-import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
-import { auth, db, collection, getDocs, addDoc, setDoc, query, where, doc, updateDoc, orderBy, deleteDoc } from '../../Firebase_config';
+import { db, collection, getDocs, addDoc, query, where, doc, updateDoc, deleteDoc } from '../../Firebase_config';
 import { toast, Slide } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
@@ -31,6 +30,9 @@ const UsersLayer = () => {
     const [userFormErrors, setUserFormErrors] = useState({});
     const [updateFormErrors, setUpdateFormErrors] = useState({});
     const [selectedUserId, setSelectedUserId] = useState(null);
+
+    const isAdmin = user?.roleName === 'Admin';
+    const isHOD = user?.roleName === 'HOD';
 
     const [userForm, setUserForm] = useState({
         name: "",
@@ -97,6 +99,7 @@ const UsersLayer = () => {
             });
         } else {
             setShowModal(false);
+            resetFormFields();
         }
     };
 
@@ -145,7 +148,7 @@ const UsersLayer = () => {
             let roleSnap;
             let userSnap;
 
-            if (user.roleName === 'Admin') {
+            if (isAdmin) {
                 // Admin: fetch all departments, roles, users
                 activeDeptQuery = query(
                     collection(db, "Departments"),
@@ -154,10 +157,28 @@ const UsersLayer = () => {
 
                 activeDeptSnap = await getDocs(activeDeptQuery);
                 deptSnap = await getDocs(collection(db, "Departments"));
-                roleSnap = await getDocs(collection(db, "Roles"));
-                userSnap = await getDocs(collection(db, "Users"));
 
-            } else if (user.roleName === 'HOD') {
+
+                // ✅ Fetch all roles and filter only HOD and Teacher
+                const allRolesSnap = await getDocs(collection(db, "Roles"));
+                roleSnap = {
+                    docs: allRolesSnap.docs.filter(doc =>
+                        ['HOD','Teacher'].includes(doc.data().name)
+                    ),
+                };
+
+                // ✅ Fetch users with matching departmentId and allowed roleIds
+                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn','k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                const usersQuery = query(
+                    collection(db, "Users"),
+                    where("roleId", "in", allowedRoleIds)
+                );
+                const userSnapQuery = await getDocs(usersQuery);
+                userSnap = {
+                    docs: userSnapQuery.docs,
+                };
+
+            } else if (isHOD) {
                 const allActiveDeptsSnap = await getDocs(
                     query(collection(db, "Departments"), where("status", "==", true))
                 );
@@ -175,12 +196,12 @@ const UsersLayer = () => {
                 const allRolesSnap = await getDocs(collection(db, "Roles"));
                 roleSnap = {
                     docs: allRolesSnap.docs.filter(doc =>
-                        ['HOD', 'Teacher'].includes(doc.data().name)
+                        ['Teacher'].includes(doc.data().name)
                     ),
                 };
 
                 // ✅ Fetch users with matching departmentId and allowed roleIds
-                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
                 const usersQuery = query(
                     collection(db, "Users"),
                     where("departmentId", "==", user.departmentId),
@@ -220,7 +241,7 @@ const UsersLayer = () => {
                 let roleSnap;
                 let userSnap;
 
-                if (user.roleName === 'Admin') {
+                if (isAdmin) {
                     // Admin: fetch all departments, roles, users
                     activeDeptQuery = query(
                         collection(db, "Departments"),
@@ -229,10 +250,28 @@ const UsersLayer = () => {
 
                     activeDeptSnap = await getDocs(activeDeptQuery);
                     deptSnap = await getDocs(collection(db, "Departments"));
-                    roleSnap = await getDocs(collection(db, "Roles"));
-                    userSnap = await getDocs(collection(db, "Users"));
 
-                } else if (user.roleName === 'HOD') {
+
+                    // ✅ Fetch all roles and filter only HOD and Teacher
+                    const allRolesSnap = await getDocs(collection(db, "Roles"));
+                    roleSnap = {
+                        docs: allRolesSnap.docs.filter(doc =>
+                            ['HOD','Teacher'].includes(doc.data().name)
+                        ),
+                    };
+
+                    // ✅ Fetch users with matching departmentId and allowed roleIds
+                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn','k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                    const usersQuery = query(
+                        collection(db, "Users"),
+                        where("roleId", "in", allowedRoleIds)
+                    );
+                    const userSnapQuery = await getDocs(usersQuery);
+                    userSnap = {
+                        docs: userSnapQuery.docs,
+                    };
+
+                } else if (isHOD) {
                     const allActiveDeptsSnap = await getDocs(
                         query(collection(db, "Departments"), where("status", "==", true))
                     );
@@ -250,12 +289,12 @@ const UsersLayer = () => {
                     const allRolesSnap = await getDocs(collection(db, "Roles"));
                     roleSnap = {
                         docs: allRolesSnap.docs.filter(doc =>
-                            ['HOD', 'Teacher'].includes(doc.data().name)
+                            ['Teacher'].includes(doc.data().name)
                         ),
                     };
 
                     // ✅ Fetch users with matching departmentId and allowed roleIds
-                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                    const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
                     const usersQuery = query(
                         collection(db, "Users"),
                         where("departmentId", "==", user.departmentId),
@@ -361,7 +400,7 @@ const UsersLayer = () => {
             toast.success("Status updated successfully", {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
 
@@ -381,7 +420,7 @@ const UsersLayer = () => {
             toast.error(`Error updating user status: ${error.message}`, {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -482,7 +521,7 @@ const UsersLayer = () => {
             toast.success('User created successfully!', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } catch (error) {
@@ -490,7 +529,7 @@ const UsersLayer = () => {
             toast.error(`Error creating user: ${error.message}`, {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -526,7 +565,7 @@ const UsersLayer = () => {
             toast.success('User updated successfully!', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } catch (error) {
@@ -534,7 +573,7 @@ const UsersLayer = () => {
             toast.error(`Error updating user: ${error.message}`, {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -575,7 +614,7 @@ const UsersLayer = () => {
                     toast.success('User deleted successfully!', {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 } catch (error) {
@@ -583,7 +622,7 @@ const UsersLayer = () => {
                     toast.error(`Error deleting user: ${error.message}`, {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 }
@@ -633,7 +672,7 @@ const UsersLayer = () => {
                             : getRoleName(row.roleId) === 'Teacher'
                                 ? 'bg-warning-focus text-warning-main border-warning-main'
                                 : 'bg-danger-focus text-danger-main border-danger-main'
-                        } border px-20 py-4 radius-6 fw-medium text-md`
+                        } border px-8 py-2 radius-4 fw-medium text-sm`
                     }
                 >
                     {getRoleName(row.roleId)}
@@ -641,39 +680,44 @@ const UsersLayer = () => {
             ),
             sortable: false,
         },
-        {
-            name: 'Status',
-            cell: row => (
-                <Form.Check
-                    type="switch"
-                    id={`switch-${row.id}`}
-                    checked={row.status === true}
-                    onChange={() => handleStatusChange(row.id, row.status)}
-                    disabled={loadingSwitchId === row.id}
-                />
-            ),
-        },
-        {
-            name: 'Action',
-            cell: row => (
-                <div className="d-flex">
-                    <Button
-                        variant={'success'}
-                        className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-success-600 p-2"
-                        onClick={() => handleEditUser(row.id)}
-                    >
-                        <Icon icon="lucide:edit" />
-                    </Button>
-                    <Button
-                        variant={'danger'}
-                        className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-danger-600 p-2"
-                        onClick={() => handleDeleteUser(row.id)}
-                    >
-                        <Icon icon="mingcute:delete-2-line" />
-                    </Button>
-                </div>
-            ),
-        },
+        ...(
+            isAdmin ? [
+                {
+                    name: 'Status',
+                    cell: row => (
+                        <Form.Check
+                            type="switch"
+                            id={`switch-${row.id}`}
+                            checked={row.status === true}
+                            onChange={() => handleStatusChange(row.id, row.status)}
+                            disabled={loadingSwitchId === row.id}
+                        />
+                    ),
+                },
+                {
+                    name: 'Action',
+                    cell: row => (
+                        <div className="d-flex">
+                            <Button
+                                variant={'success'}
+                                className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-success-600 p-2"
+                                onClick={() => handleEditUser(row.id)}
+                            >
+                                <Icon icon="lucide:edit" />
+                            </Button>
+                            <Button
+                                variant={'danger'}
+                                className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-danger-600 p-2"
+                                onClick={() => handleDeleteUser(row.id)}
+                            >
+                                <Icon icon="mingcute:delete-2-line" />
+                            </Button>
+                        </div>
+                    ),
+                },
+            ] : []
+        )
+        
     ];
 
     return (
@@ -688,7 +732,7 @@ const UsersLayer = () => {
                                 columns={columns}
                                 data={filteredUsers}
                                 pagination
-                                paginationPerPage={10}
+                                paginationPerPage={20}
                                 highlightOnHover
                                 responsive
                                 striped
@@ -697,10 +741,14 @@ const UsersLayer = () => {
                                 subHeaderComponent={searchComponent}
                                 title={
                                     <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                                        <h5 className="mb-0 h6">Users</h5>
-                                        <Button variant="primary" onClick={() => setShowModal(true)}>
-                                            Add User
-                                        </Button>
+                                        <h5 className="mb-0 h6">Staff</h5>
+                                        {
+                                            isAdmin && (
+                                                <Button variant="primary" onClick={() => setShowModal(true)}>
+                                                    Add Staff
+                                                </Button>
+                                            )
+                                        }
                                     </div>
                                 }
                                 noDataComponent={
@@ -797,24 +845,21 @@ const UsersLayer = () => {
                                 </Form.Group>
                             </Col>
                             <Col md='6'>
-                                <Form.Group controlId="department" className="mb-3">
-                                    <Form.Label>Department</Form.Label>
+                                <Form.Group controlId="gen" className="mb-3">
+                                    <Form.Label>Gender</Form.Label>
                                     <Form.Control
                                         as="select"
-                                        name="departmentId"
-                                        value={userForm.departmentId}
+                                        name="gen"
+                                        value={userForm.gen}
                                         onChange={handleUserInputChange}
-                                        className={`${userFormErrors.departmentId && "error-field"}`}
+                                        className={`${userFormErrors.gen && "error-field"}`}
                                     >
-                                        <option value="">Select Department</option>
-                                        {activeDepartments.map((dept) => (
-                                            <option key={dept.id} value={dept.id}>
-                                                {dept.name}
-                                            </option>
-                                        ))}
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </Form.Control>
-                                    {userFormErrors.departmentId && (
-                                        <div className="error-message">{userFormErrors.departmentId}</div>
+                                    {userFormErrors.gen && (
+                                        <div className="error-message">{userFormErrors.gen}</div>
                                     )}
                                 </Form.Group>
                             </Col>
@@ -841,21 +886,24 @@ const UsersLayer = () => {
                                 </Form.Group>
                             </Col>
                             <Col md='6'>
-                                <Form.Group controlId="gen" className="mb-3">
-                                    <Form.Label>Gender</Form.Label>
+                                <Form.Group controlId="department" className="mb-3">
+                                    <Form.Label>Department</Form.Label>
                                     <Form.Control
                                         as="select"
-                                        name="gen"
-                                        value={userForm.gen}
+                                        name="departmentId"
+                                        value={userForm.departmentId}
                                         onChange={handleUserInputChange}
-                                        className={`${userFormErrors.gen && "error-field"}`}
+                                        className={`${userFormErrors.departmentId && "error-field"}`}
                                     >
-                                        <option value="">Select Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                        <option value="">Select Department</option>
+                                        {activeDepartments.map((dept) => (
+                                            <option key={dept.id} value={dept.id}>
+                                                {dept.name}
+                                            </option>
+                                        ))}
                                     </Form.Control>
-                                    {userFormErrors.gen && (
-                                        <div className="error-message">{userFormErrors.gen}</div>
+                                    {userFormErrors.departmentId && (
+                                        <div className="error-message">{userFormErrors.departmentId}</div>
                                     )}
                                 </Form.Group>
                             </Col>

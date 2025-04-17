@@ -1,19 +1,17 @@
 import React from "react";
 import MasterLayout from "../../masterLayout/MasterLayout";
 import Breadcrumb from "../../components/Breadcrumb";
-import UsersLayer from "../../components/Admin/UsersLayer";
+import SemestersLayer from "../../components/Admin/SemestersLayer";
 
-const Users = () => {
+const Semesters = () => {
   return (
     <>
-
       <MasterLayout>
-        <Breadcrumb title='Staff' />
-        <UsersLayer />
+        <Breadcrumb title='Semesters' />
+        <SemestersLayer />
       </MasterLayout>
-
     </>
   );
 };
 
-export default Users; 
+export default Semesters; 

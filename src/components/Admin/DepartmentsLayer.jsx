@@ -80,14 +80,14 @@ const DepartmentsLayer = () => {
             toast.success(`Department ${newStatus ? 'activated' : 'deactivated'} successfully`, {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } catch (error) {
             toast.error('Failed to update status', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -120,14 +120,14 @@ const DepartmentsLayer = () => {
                     toast.success('Department deleted successfully!', {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 } catch (error) {
                     toast.error('Failed to delete department', {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 }
@@ -168,7 +168,7 @@ const DepartmentsLayer = () => {
             toast.success("Department created successfully", {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
             });
 
             setDepartmentName('');
@@ -177,7 +177,7 @@ const DepartmentsLayer = () => {
             toast.error("Failed to create department", {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
             });
         } finally {
             setIsCreating(false);
@@ -217,7 +217,7 @@ const DepartmentsLayer = () => {
             toast.success("Department updated successfully", {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
             });
     
             setShowUpdateModal(false);
@@ -227,7 +227,7 @@ const DepartmentsLayer = () => {
             toast.error("Failed to update department", {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
             });
         } finally {
             setIsUpdating(false);
@@ -304,7 +304,7 @@ const DepartmentsLayer = () => {
                                 columns={columns}
                                 data={filteredDepartments}
                                 pagination
-                                paginationPerPage={10}
+                                paginationPerPage={20}
                                 highlightOnHover
                                 responsive
                                 striped

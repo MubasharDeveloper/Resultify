@@ -14,10 +14,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   const roleToRootLink = {
-    Admin: "/admin/dashboard",
-    HOD: "/hod/dashboard",
-    Teacher: "/teacher/dashboard",
-    Student: "/student/results", // if you ever allow this role
+    Admin: "/admin-dashboard",
+    HOD: "/hod-dashboard",
+    Teacher: "/teacher-dashboard",
   };
 
   const login = async (userData) => {

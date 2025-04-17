@@ -10,7 +10,6 @@ import NoDataTable from '../NoDataTable';
 import { useAuth } from "../../context/AuthContext";
 
 const Batches = () => {
-
     const { user } = useAuth();
 
     const [departments, setDepartments] = useState([]);
@@ -18,14 +17,14 @@ const Batches = () => {
     const [batches, setBatches] = useState([]);
     const [loading, setLoading] = useState(true);  // Loading for user data fetch
     const currentYear = new Date().getFullYear();
-    const minYear = currentYear - 2; // 2 years backward
-    const maxYear = currentYear + 4; // 4 years forward
+    const minYear = currentYear - 1; // 1 years backward
+    const maxYear = currentYear + 1; // 1 years forward
 
     const [form, setForm] = useState({
         departmentId: "",
         startYear: currentYear, // Default to current year
-        batchDuration: "",
         shift: "Morning",
+        status: true,
     });
     const [showModal, setShowModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -35,9 +34,7 @@ const Batches = () => {
     const [touchedFields, setTouchedFields] = useState({}); // Track touched fields
 
     const [loadingSwitchId, setLoadingSwitchId] = useState(null); // Track the ID of the batch being updated
-
     const [searchText, setSearchText] = useState('');
-
 
     // Fetch departments and batches
     const fetchData = async () => {
@@ -59,7 +56,6 @@ const Batches = () => {
                 collection(db, "Departments"),
                 where("status", "==", true)
             ); // Will filter by doc.id later
-
             batchQuery = query(
                 collection(db, "Batches"),
                 where("departmentId", "==", user.departmentId),
@@ -90,28 +86,9 @@ const Batches = () => {
         // Fetch and sort batches
         const batchSnap = await getDocs(batchQuery);
         setBatches(
-            batchSnap.docs
-                .map((doc) => ({ id: doc.id, ...doc.data() }))
-                // .sort((a, b) => {
-                //     // First sort by startYear (descending)
-                //     if (b.startYear !== a.startYear) return b.startYear - a.startYear;
-
-                //     // Then by department name (ascending)
-                //     const deptA = getDeptName(a.departmentId);
-                //     const deptB = getDeptName(b.departmentId);
-                //     if (deptA < deptB) return -1;
-                //     if (deptA > deptB) return 1;
-
-                //     // Then by shift (Morning first)
-                //     if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
-                //     if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
-
-                //     // Maintain original order
-                //     return 0;
-                // })
+            batchSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
         );
     }
-
 
     useEffect(() => {
         const fetchBatchData = async () => {
@@ -135,7 +112,6 @@ const Batches = () => {
                         collection(db, "Departments"),
                         where("status", "==", true)
                     ); // Will filter by doc.id later
-
                     batchQuery = query(
                         collection(db, "Batches"),
                         where("departmentId", "==", user.departmentId),
@@ -166,25 +142,7 @@ const Batches = () => {
                 // Fetch and sort batches
                 const batchSnap = await getDocs(batchQuery);
                 setBatches(
-                    batchSnap.docs
-                        .map((doc) => ({ id: doc.id, ...doc.data() }))
-                        // .sort((a, b) => {
-                        //     // First sort by startYear (descending)
-                        //     if (b.startYear !== a.startYear) return b.startYear - a.startYear;
-
-                        //     // Then by department name (ascending)
-                        //     const deptA = getDeptName(a.departmentId);
-                        //     const deptB = getDeptName(b.departmentId);
-                        //     if (deptA < deptB) return -1;
-                        //     if (deptA > deptB) return 1;
-
-                        //     // Then by shift (Morning first)
-                        //     if (a.shift === 'Morning' && b.shift !== 'Morning') return -1;
-                        //     if (a.shift !== 'Morning' && b.shift === 'Morning') return 1;
-
-                        //     // Maintain original order
-                        //     return 0;
-                        // })
+                    batchSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
                 );
             } catch (error) {
                 console.log("Error fetching batches. Error: ", error);
@@ -193,29 +151,12 @@ const Batches = () => {
             }
         };
 
-
         fetchBatchData();
     }, []);
 
     const getDeptName = (id) => {
         const dept = departments.find((d) => d.id === id);
         return dept ? dept.name : "Unknown";
-    };
-
-    const handleBlur = (e) => {
-        const { name } = e.target;
-        setTouchedFields({ ...touchedFields, [name]: true });
-
-        // Validate individual field when it loses focus
-        if (name === 'batchDuration') {
-            const value = Number(form.batchDuration);
-            if (value < 1 || value > 4) {
-                setFormErrors({
-                    ...formErrors,
-                    batchDuration: "Batch Duration must be between 1 and 4 years"
-                });
-            }
-        }
     };
 
     const handleChange = (e) => {
@@ -227,26 +168,12 @@ const Batches = () => {
             if (processedValue < minYear) processedValue = minYear;
             if (processedValue > maxYear) processedValue = maxYear;
         }
-
-        if (name === 'batchDuration') {
-            processedValue = Number(value);
-            if (processedValue < 1) processedValue = 1;
-            if (processedValue > 4) processedValue = 4;
-
-            // Clear error if user corrects it
-            if (formErrors.batchDuration && processedValue >= 1 && processedValue <= 4) {
-                const newErrors = { ...formErrors };
-                delete newErrors.batchDuration;
-                setFormErrors(newErrors);
-            }
-        }
-
         setForm({ ...form, [name]: processedValue });
     };
 
     // Calculate the end year based on start year and batch duration
-    const calculateEndYear = (startYear, batchDuration) => {
-        return Number(startYear) + Number(batchDuration);
+    const calculateEndYear = (startYear) => {
+        return Number(startYear) + 4;
     };
 
     // Validate form
@@ -261,14 +188,6 @@ const Batches = () => {
 
         if (!form.startYear) {
             errors.startYear = "Start Year is required";
-            isValid = false;
-        }
-
-        if (!form.batchDuration) {
-            errors.batchDuration = "Batch Duration is required";
-            isValid = false;
-        } else if (form.batchDuration < 1 || form.batchDuration > 4) {
-            errors.batchDuration = "Batch Duration must be between 1 and 4 years";
             isValid = false;
         }
 
@@ -293,7 +212,6 @@ const Batches = () => {
             setTouchedFields({
                 departmentId: true,
                 startYear: true,
-                batchDuration: true,
                 shift: true
             });
             return;
@@ -301,7 +219,7 @@ const Batches = () => {
 
         setIsLoading(true);
 
-        const endYear = calculateEndYear(form.startYear, form.batchDuration);
+        const endYear = calculateEndYear(form.startYear);
 
         // Duplicate check logic
         const q = query(
@@ -318,7 +236,7 @@ const Batches = () => {
             toast.error('A batch with these details already exists.', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
             setIsLoading(false);
@@ -329,6 +247,8 @@ const Batches = () => {
             ...form,
             startYear: Number(form.startYear),
             endYear: endYear,
+            batchDuration: 4,
+            name: `${form.startYear} - ${endYear}`,
         };
 
         try {
@@ -337,7 +257,6 @@ const Batches = () => {
             setForm({
                 departmentId: "",
                 startYear: currentYear,
-                batchDuration: "",
                 shift: "Morning",
                 status: true,
             });
@@ -347,14 +266,14 @@ const Batches = () => {
             toast.success('Batch created successfully!', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } catch (error) {
             toast.error('Error creating batch. Please try again.', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
 
@@ -407,7 +326,6 @@ const Batches = () => {
         setForm({
             departmentId: "",
             startYear: currentYear,
-            batchDuration: "",
             shift: "Morning",
         });
         setFormErrors({}); // Reset form errors
@@ -435,7 +353,6 @@ const Batches = () => {
             setTouchedFields({
                 departmentId: true,
                 startYear: true,
-                batchDuration: true,
                 shift: true
             });
             return;
@@ -443,7 +360,7 @@ const Batches = () => {
 
         setIsLoading(true);
 
-        const endYear = calculateEndYear(form.startYear, form.batchDuration);
+        const endYear = calculateEndYear(form.startYear);
 
         // Duplicate check for updating a batch
         const q = query(
@@ -462,7 +379,7 @@ const Batches = () => {
             toast.error('A similar batch already exists. Update failed.', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
             setIsLoading(false);
@@ -474,22 +391,23 @@ const Batches = () => {
                 departmentId: form.departmentId,
                 startYear: Number(form.startYear),
                 endYear: endYear,
-                batchDuration: form.batchDuration,
+                batchDuration: 4,
                 shift: form.shift,
+                name: `${form.startYear} - ${endYear}`
             });
             fetchData();
             handleCloseUpdateModal();
             toast.success('Batch updated successfully!', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } catch (error) {
             toast.error('Error updating batch. Please try again.', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -520,14 +438,14 @@ const Batches = () => {
                     toast.success('Batch deleted successfully!.', {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 } catch (error) {
                     toast.error('Error deleting batch. Please try again.', {
                         position: "top-right",
                         autoClose: 3000,
-                        theme: "colored",
+                        theme: "light",
                         transition: Slide,
                     });
                 }
@@ -557,7 +475,7 @@ const Batches = () => {
             toast.success('Status Update Successfully!', {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
             fetchData();
@@ -566,7 +484,7 @@ const Batches = () => {
             toast.error(`Error updating status: ${error.message}`, {
                 position: "top-right",
                 autoClose: 3000,
-                theme: "colored",
+                theme: "light",
                 transition: Slide,
             });
         } finally {
@@ -594,10 +512,10 @@ const Batches = () => {
                         : currentYear > row.startYear
                             ? 'bg-danger-focus text-danger-main border-danger-main'
                             : 'bg-warning-focus text-warning-main border-warning-main'
-                        } border px-20 py-4 radius-6 fw-medium text-md`
+                        } border px-8 py-2 radius-4 fw-medium text-sm`
                     }
                 >
-                    {row.startYear} - {row.endYear}
+                    {row.name}
                 </span>
             ),
             sortable: false,
@@ -614,7 +532,7 @@ const Batches = () => {
                     className={`${row.shift === 'Morning'
                         ? 'bg-success-focus text-success-main border-success-main'
                         : 'bg-warning-focus text-warning-main border-warning-main'
-                        } border px-20 py-4 radius-6 fw-medium text-md`
+                        } border px-8 py-2 radius-4 fw-medium text-sm`
                     }
                 >
                     {row.shift}
@@ -680,7 +598,7 @@ const Batches = () => {
                                 columns={columns}
                                 data={filteredBatches}
                                 pagination
-                                paginationPerPage={10}
+                                paginationPerPage={20}
                                 highlightOnHover
                                 responsive
                                 fixedHeader
@@ -753,21 +671,6 @@ const Batches = () => {
                             />
                             {formErrors.startYear && (
                                 <div className="error-message">{formErrors.startYear}</div>
-                            )}
-                        </Form.Group>
-                        <Form.Group controlId="batchDuration" className="mb-3">
-                            <Form.Label>Batch Duration (Years)</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="batchDuration"
-                                value={form.batchDuration}
-                                onChange={handleChange}
-                                className={`${formErrors.batchDuration && 'error-field'}`}
-                                min="1"
-                                max="4"
-                            />
-                            {formErrors.batchDuration && (
-                                <div className="error-message">{formErrors.batchDuration}</div>
                             )}
                         </Form.Group>
                         <Form.Group controlId="shift" className="mb-3">
@@ -857,21 +760,6 @@ const Batches = () => {
                                 <div className="error-message">{formErrors.startYear}</div>
                             )}
                         </Form.Group>
-                        <Form.Group controlId="batchDuration" className="mb-3">
-                            <Form.Label>Batch Duration (Years)</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="batchDuration"
-                                value={form.batchDuration}
-                                onChange={handleChange}
-                                className={`${formErrors.batchDuration && 'error-field'}`}
-                                min="1"
-                                max="4"
-                            />
-                            {formErrors.batchDuration && (
-                                <div className="error-message">{formErrors.batchDuration}</div>
-                            )}
-                        </Form.Group>
                         <Form.Group controlId="shift" className="mb-3">
                             <Form.Label>Shift</Form.Label>
                             <Form.Control
@@ -879,7 +767,7 @@ const Batches = () => {
                                 name="shift"
                                 value={form.shift}
                                 onChange={handleChange}
-                                className={`${formErrors.batchDuration && 'error-field'}`}
+                                className={`${formErrors.shift && 'error-field'}`}
                             >
                                 <option value="Morning">Morning</option>
                                 <option value="Evening">Evening</option>

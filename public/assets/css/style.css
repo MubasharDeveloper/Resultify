@@ -6725,7 +6725,7 @@ h6,
 /* === text-align css end === */
 /* === border css start === */
 .border {
-  border: 2px solid var(--border-color) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .border-start {
@@ -15986,4 +15986,17 @@ h2.swal2-title {
 
 .top-40{
   top: 40% !important;
+}
+
+
+.tagify {
+  --tag-bg: #7367f0;
+  --tag-hover: #7367f0;
+  --tag-text-color: white;
+  --tags-border-color: #ddd;
+  --tag-remove-btn-color: white;
+}
+.tagify__dropdown__item--active {
+  background-color: #7367f0;
+  color: white;
 }
