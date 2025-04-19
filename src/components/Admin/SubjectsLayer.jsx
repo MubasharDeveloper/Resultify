@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
-import { Button, Modal, Form, Card } from 'react-bootstrap';
+import { Button, Modal, Form, Card, Row, Col } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { db, collection, getDocs, addDoc, query, where, doc, updateDoc, orderBy, deleteDoc } from '../../Firebase_config';
 import { toast, Slide } from 'react-toastify';
@@ -133,7 +133,7 @@ const Subjects = () => {
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Yes, discard",
-                cancelButtonText: "Cancel",
+                cancelButtonText: "No, keep it open",
             }).then((result) => {
                 if (result.isConfirmed) {
                     setShowModal(false);
@@ -455,7 +455,7 @@ const Subjects = () => {
                             title={
                                 <div className="d-flex justify-content-between align-items-center w-100 pe-2">
                                     <h5 className="mb-0 h6">Subjects</h5>
-                                    <Button variant="primary" onClick={() => setShowModal(true)}>
+                                    <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
                                         Add Subjects
                                     </Button>
                                 </div>
@@ -471,167 +471,186 @@ const Subjects = () => {
                 </Card.Body>
             </Card>
 
-            <Modal show={showModal} onHide={() => handleModalClose()} centered>
-                <Modal.Header className='d-flex justify-content-center'>
-                    <Modal.Title className='h6'>Create Subject</Modal.Title>
-                </Modal.Header>
+            <Modal show={showModal} onHide={() => handleModalClose()} centered size='lg'>
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Creare Subject`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={() => handleModalClose()} />
+                        </div>
+                    </div>
                     <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Course Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={newSubject.name}
-                                onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
-                                className={`${errors.name && 'error-field'}`}
-                            />
-                            {errors.name && <div className="error-message">{errors.name}</div>}
-                        </Form.Group>
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Course Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={newSubject.name}
+                                        onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
+                                        className={`${errors.name && 'error-field'}`}
+                                    />
+                                    {errors.name && <div className="error-message">{errors.name}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Course Code</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={newSubject.subCode}
+                                        onChange={(e) => {
+                                            let input = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Course Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={newSubject.subCode}
-                                onChange={(e) => {
-                                    let input = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                            const letters = input.slice(0, 3).replace(/[^A-Z]/g, '');
+                                            const digits = input.slice(3).replace(/[^0-9]/g, '').slice(0, 3);
+                                            const formatted = letters + (digits ? '-' + digits : '');
 
-                                    const letters = input.slice(0, 3).replace(/[^A-Z]/g, '');
-                                    const digits = input.slice(3).replace(/[^0-9]/g, '').slice(0, 3);
-                                    const formatted = letters + (digits ? '-' + digits : '');
-
-                                    setNewSubject({ ...newSubject, subCode: formatted });
-                                }}
-                                className={`${errors.subCode && 'error-field'}`}
-                            />
-                            {errors.subCode && <div className="error-message">{errors.subCode}</div>}
-                        </Form.Group>
-
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Theory Hours</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={newSubject.theory}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
-                                        setNewSubject({ ...newSubject, theory: value });
-                                    }
-                                }}
-                                className={`${errors.theory && 'error-field'}`}
-                            />
-                            {errors.theory && <div className="error-message">{errors.theory}</div>}
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Practical Hours</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={newSubject.practical}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
-                                        setNewSubject({ ...newSubject, practical: value });
-                                    }
-                                }}
-                                className={`${errors.practical && 'error-field'}`}
-                            />
-                            {errors.practical && <div className="error-message">{errors.practical}</div>}
-                        </Form.Group>
+                                            setNewSubject({ ...newSubject, subCode: formatted });
+                                        }}
+                                        className={`${errors.subCode && 'error-field'}`}
+                                    />
+                                    {errors.subCode && <div className="error-message">{errors.subCode}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Theory Hours</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={newSubject.theory}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
+                                                setNewSubject({ ...newSubject, theory: value });
+                                            }
+                                        }}
+                                        className={`${errors.theory && 'error-field'}`}
+                                    />
+                                    {errors.theory && <div className="error-message">{errors.theory}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Practical Hours</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={newSubject.practical}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
+                                                setNewSubject({ ...newSubject, practical: value });
+                                            }
+                                        }}
+                                        className={`${errors.practical && 'error-field'}`}
+                                    />
+                                    {errors.practical && <div className="error-message">{errors.practical}</div>}
+                                </Form.Group>
+                            </Col>
+                        </Row>
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={() => handleModalClose()}>
+                            <Button variant="secondary" className='px-24' onClick={() => handleModalClose()}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
+                                className='px-24'
                                 onClick={handleCreateSubject}
                                 disabled={creating} // ✅ Button disabled while loading
                             >
                                 {creating ? "Creating..." : "Create"}
                             </Button>
-
                         </div>
-
                     </Form>
                 </Modal.Body>
             </Modal>
 
             <Modal show={showEditModal} onHide={handleEditModalClose} centered>
-                <Modal.Header className='d-flex justify-content-center'>
-                    <Modal.Title className='h6'>Update Subject</Modal.Title>
-                </Modal.Header>
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Update Subject`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={handleEditModalClose} />
+                        </div>
+                    </div>
                     <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Course Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={editSubject.name}
-                                onChange={(e) => setEditSubject({ ...editSubject, name: e.target.value })}
-                                className={`${editErrors.name && 'error-field'}`}
-                            />
-                            {editErrors.name && <div className="error-message">{editErrors.name}</div>}
-                        </Form.Group>
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Course Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={editSubject.name}
+                                        onChange={(e) => setEditSubject({ ...editSubject, name: e.target.value })}
+                                        className={`${editErrors.name && 'error-field'}`}
+                                    />
+                                    {editErrors.name && <div className="error-message">{editErrors.name}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Course Code</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={editSubject.subCode}
+                                        onChange={(e) => {
+                                            let input = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Course Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={editSubject.subCode}
-                                onChange={(e) => {
-                                    let input = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                            const letters = input.slice(0, 3).replace(/[^A-Z]/g, '');
+                                            const digits = input.slice(3).replace(/[^0-9]/g, '').slice(0, 3);
+                                            const formatted = letters + (digits ? '-' + digits : '');
 
-                                    const letters = input.slice(0, 3).replace(/[^A-Z]/g, '');
-                                    const digits = input.slice(3).replace(/[^0-9]/g, '').slice(0, 3);
-                                    const formatted = letters + (digits ? '-' + digits : '');
-
-                                    setEditSubject({ ...editSubject, subCode: formatted });
-                                }}
-                                className={`${editErrors.subCode && 'error-field'}`}
-                            />
-                            {editErrors.subCode && <div className="error-message">{editErrors.subCode}</div>}
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Theory Hours</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={editSubject.theory}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
-                                        setEditSubject({ ...editSubject, theory: value });
-                                    }
-                                }}
-                                className={`${editErrors.theory && 'error-field'}`}
-                            />
-                            {editErrors.theory && <div className="error-message">{editErrors.theory}</div>}
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Practical Hours</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={editSubject.practical}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
-                                        setEditSubject({ ...editSubject, practical: value });
-                                    }
-                                }}
-                                className={`${editErrors.practical && 'error-field'}`}
-                            />
-                            {editErrors.practical && <div className="error-message">{editErrors.practical}</div>}
-                        </Form.Group>
+                                            setEditSubject({ ...editSubject, subCode: formatted });
+                                        }}
+                                        className={`${editErrors.subCode && 'error-field'}`}
+                                    />
+                                    {editErrors.subCode && <div className="error-message">{editErrors.subCode}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Theory Hours</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={editSubject.theory}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
+                                                setEditSubject({ ...editSubject, theory: value });
+                                            }
+                                        }}
+                                        className={`${editErrors.theory && 'error-field'}`}
+                                    />
+                                    {editErrors.theory && <div className="error-message">{editErrors.theory}</div>}
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Practical Hours</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={editSubject.practical}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '' || (Number(value) >= 0 && Number(value) <= 6)) {
+                                                setEditSubject({ ...editSubject, practical: value });
+                                            }
+                                        }}
+                                        className={`${editErrors.practical && 'error-field'}`}
+                                    />
+                                    {editErrors.practical && <div className="error-message">{editErrors.practical}</div>}
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={handleEditModalClose}>
+                            <Button variant="secondary" className='px-24' onClick={handleEditModalClose}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
                                 onClick={handleUpdateSubject}
+                                className='px-24'
                                 disabled={updating}
                             >
                                 {updating ? "Updating..." : "Update"}

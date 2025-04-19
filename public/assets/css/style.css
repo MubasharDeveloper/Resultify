@@ -12497,7 +12497,7 @@ div.dt-container .dt-paging .dt-paging-button.current:hover {
 .form-select,
 .form-control,
 textarea {
-  border: 2px solid var(--input-form-light);
+  border: 1px solid var(--input-form-light);
   color: var(--text-primary-light) !important;
   background-color: var(--white);
   padding: 0.5625rem 1.25rem;
@@ -12579,7 +12579,7 @@ textarea:active {
 
 .form-label {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary-light);
 }
 
@@ -15874,6 +15874,16 @@ h2.swal2-title {
   z-index: 999999;
 }
 
+#body-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff91;
+  z-index: 999999;
+}
+
 #loader {
   display: block;
   position: relative;
@@ -15884,7 +15894,7 @@ h2.swal2-title {
   margin: -75px 0 0 -75px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color:  var(--primary-700);
+  border-top-color: var(--primary-700);
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
@@ -15898,7 +15908,7 @@ h2.swal2-title {
   bottom: 5px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color:  var(--primary-500);
+  border-top-color: var(--primary-500);
   -webkit-animation: spin 3s linear infinite;
   animation: spin 3s linear infinite;
 }
@@ -15951,7 +15961,7 @@ h2.swal2-title {
   position: relative;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color:  var(--primary-700);
+  border-top-color: var(--primary-700);
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
@@ -15965,7 +15975,7 @@ h2.swal2-title {
   bottom: 5px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color:  var(--primary-500);
+  border-top-color: var(--primary-500);
   -webkit-animation: spin 3s linear infinite;
   animation: spin 3s linear infinite;
 }
@@ -15984,7 +15994,7 @@ h2.swal2-title {
   animation: spin 1.5s linear infinite;
 }
 
-.top-40{
+.top-40 {
   top: 40% !important;
 }
 
@@ -15996,7 +16006,34 @@ h2.swal2-title {
   --tags-border-color: #ddd;
   --tag-remove-btn-color: white;
 }
+
 .tagify__dropdown__item--active {
   background-color: #7367f0;
   color: white;
+}
+
+.modal-heading {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+
+.modal-sub-heading {
+  font-size: 16px !important;
+  font-weight: 400;
+}
+
+.margin-bottom-10{
+  margin-bottom: 10px !important;
+}
+.margin-bottom-15{
+  margin-bottom: 15px !important;
+}
+.margin-bottom-20{
+  margin-bottom: 20px !important;
+}
+.margin-bottom-25{
+  margin-bottom: 25px !important;
+}
+.margin-bottom-30{
+  margin-bottom: 30px !important;
 }

@@ -23,7 +23,6 @@ const Batches = () => {
     const [form, setForm] = useState({
         departmentId: "",
         startYear: currentYear, // Default to current year
-        shift: "Morning",
         status: true,
     });
     const [showModal, setShowModal] = useState(false);
@@ -191,11 +190,6 @@ const Batches = () => {
             isValid = false;
         }
 
-        if (!form.shift) {
-            errors.shift = "Shift is required";
-            isValid = false;
-        }
-
         setFormErrors(errors);
         return isValid;
     };
@@ -212,7 +206,6 @@ const Batches = () => {
             setTouchedFields({
                 departmentId: true,
                 startYear: true,
-                shift: true
             });
             return;
         }
@@ -227,7 +220,6 @@ const Batches = () => {
             where("departmentId", "==", form.departmentId),
             where("startYear", "==", Number(form.startYear)),
             where("endYear", "==", endYear),
-            where("shift", "==", form.shift),
             where("status", "==", true)
         );
 
@@ -257,7 +249,6 @@ const Batches = () => {
             setForm({
                 departmentId: "",
                 startYear: currentYear,
-                shift: "Morning",
                 status: true,
             });
             setFormErrors({});
@@ -303,7 +294,6 @@ const Batches = () => {
                         departmentId: "",
                         startYear: currentYear, // Set to current year
                         batchDuration: "",
-                        shift: "Morning",
                     });
                     setFormErrors({}); // Reset form errors when closing modal
                     setShowModal(false);
@@ -315,7 +305,6 @@ const Batches = () => {
                 departmentId: "",
                 startYear: currentYear, // Set to current year
                 batchDuration: "",
-                shift: "Morning",
             });
             setFormErrors({});
             setShowModal(false);  // Close modal
@@ -323,13 +312,12 @@ const Batches = () => {
     };
 
     const handleCloseUpdateModal = () => {
+        setShowUpdateModal(false); // Close the update modal
         setForm({
             departmentId: "",
             startYear: currentYear,
-            shift: "Morning",
         });
         setFormErrors({}); // Reset form errors
-        setShowUpdateModal(false); // Close the update modal
     };
 
     const handleEditBatch = (batch) => {
@@ -337,7 +325,6 @@ const Batches = () => {
             departmentId: batch.departmentId,
             startYear: batch.startYear,
             batchDuration: batch.batchDuration,
-            shift: batch.shift,
         });
         setSelectedBatch(batch);
         setShowUpdateModal(true);
@@ -353,7 +340,6 @@ const Batches = () => {
             setTouchedFields({
                 departmentId: true,
                 startYear: true,
-                shift: true
             });
             return;
         }
@@ -368,7 +354,6 @@ const Batches = () => {
             where("departmentId", "==", form.departmentId),
             where("startYear", "==", Number(form.startYear)),
             where("endYear", "==", endYear),
-            where("shift", "==", form.shift)
         );
 
         // We need to exclude the current batch being updated
@@ -392,7 +377,6 @@ const Batches = () => {
                 startYear: Number(form.startYear),
                 endYear: endYear,
                 batchDuration: 4,
-                shift: form.shift,
                 name: `${form.startYear} - ${endYear}`
             });
             fetchData();
@@ -526,21 +510,6 @@ const Batches = () => {
             sortable: true,
         },
         {
-            name: "Shift",
-            selector: (row) => (
-                <span
-                    className={`${row.shift === 'Morning'
-                        ? 'bg-success-focus text-success-main border-success-main'
-                        : 'bg-warning-focus text-warning-main border-warning-main'
-                        } border px-8 py-2 radius-4 fw-medium text-sm`
-                    }
-                >
-                    {row.shift}
-                </span>
-            ),
-            sortable: false,
-        },
-        {
             name: 'Status',
             selector: 'status',
             cell: row => (
@@ -581,8 +550,7 @@ const Batches = () => {
         return (
             getDeptName(item.departmentId).toLowerCase().includes(query) ||
             item.startYear.toString().includes(query) ||
-            item.endYear.toString().includes(query) ||
-            item.shift.toLowerCase().includes(query)
+            item.endYear.toString().includes(query)
         );
     });
 
@@ -659,7 +627,7 @@ const Batches = () => {
                             )}
                         </Form.Group>
                         <Form.Group controlId="startYear" className="mb-3">
-                            <Form.Label>Start Year</Form.Label>
+                            <Form.Label>Start Year (4 Years Semester System)</Form.Label>
                             <Form.Control
                                 type="number"
                                 name="startYear"
@@ -672,22 +640,9 @@ const Batches = () => {
                             {formErrors.startYear && (
                                 <div className="error-message">{formErrors.startYear}</div>
                             )}
-                        </Form.Group>
-                        <Form.Group controlId="shift" className="mb-3">
-                            <Form.Label>Shift</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="shift"
-                                value={form.shift}
-                                onChange={handleChange}
-                                className={`${formErrors.shift && 'error-field'}`}
-                            >
-                                <option value="Morning">Morning</option>
-                                <option value="Evening">Evening</option>
-                            </Form.Control>
-                            {formErrors.shift && (
-                                <div className="error-message">{formErrors.shift}</div>
-                            )}
+                            <Form.Text muted>
+                                End year will be {calculateEndYear(form.startYear)}
+                            </Form.Text>
                         </Form.Group>
                         <div className="d-flex justify-content-end gap-2">
                             <Button variant="secondary" onClick={handleCloseModal}>
@@ -759,22 +714,9 @@ const Batches = () => {
                             {formErrors.startYear && (
                                 <div className="error-message">{formErrors.startYear}</div>
                             )}
-                        </Form.Group>
-                        <Form.Group controlId="shift" className="mb-3">
-                            <Form.Label>Shift</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="shift"
-                                value={form.shift}
-                                onChange={handleChange}
-                                className={`${formErrors.shift && 'error-field'}`}
-                            >
-                                <option value="Morning">Morning</option>
-                                <option value="Evening">Evening</option>
-                            </Form.Control>
-                            {formErrors.shift && (
-                                <div className="error-message">{formErrors.shift}</div>
-                            )}
+                            <Form.Text muted>
+                                End year will be {calculateEndYear(form.startYear)}
+                            </Form.Text>
                         </Form.Group>
                         <div className="d-flex justify-content-end gap-2">
                             <Button variant="secondary" onClick={handleCloseUpdateModal}>

@@ -15,3 +15,11 @@ export function BodyLoader() {
         </div>
     )
 }
+
+export function BodyLoading() {
+    return (
+        <div id='body-loading'>
+            <div id="loader"></div>
+        </div>
+    )
+}
