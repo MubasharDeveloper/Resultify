@@ -35,18 +35,18 @@ const DepartmentsLayer = () => {
 
     const SearchComponent = (
         <input
-          type="text"
-          placeholder="Search by department name..."
-          className="form-control w-25"
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
+            type="text"
+            placeholder="Search by department name..."
+            className="form-control w-25"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
         />
     );
 
 
     useEffect(() => {
         const fetchDepartments = async () => {
-            try{
+            try {
                 setLoading(true);
                 const departmentsCollectionRef = collection(db, 'Departments');
                 const querySnapshot = await getDocs(departmentsCollectionRef);
@@ -55,9 +55,9 @@ const DepartmentsLayer = () => {
                     ...doc.data(),
                 }));
                 setDepartments(departmentList);
-            }catch (error){
+            } catch (error) {
                 console.log('Error fetching departments. Error: ', error);
-            }finally{
+            } finally {
                 setLoading(false);
             }
         };
@@ -189,37 +189,37 @@ const DepartmentsLayer = () => {
             setUpdateNameError("Department name is required");
             return;
         }
-    
+
         const exists = departments.some(
             (dep) =>
                 dep.name.trim().toLowerCase() === updateDepartmentName.trim().toLowerCase() &&
                 dep.id !== editingDepartment?.id
         );
-    
+
         if (exists) {
             setUpdateNameError("A department with this name already exists");
             return;
         }
-    
+
         setIsUpdating(true);
         setUpdateNameError('');
-    
+
         try {
             const departmentRef = doc(db, 'Departments', editingDepartment.id);
             await updateDoc(departmentRef, { name: updateDepartmentName.trim() });
-    
+
             setDepartments((prev) =>
                 prev.map((dep) =>
                     dep.id === editingDepartment.id ? { ...dep, name: updateDepartmentName.trim() } : dep
                 )
             );
-    
+
             toast.success("Department updated successfully", {
                 position: "top-right",
                 autoClose: 3000,
                 theme: "light",
             });
-    
+
             setShowUpdateModal(false);
             setEditingDepartment(null);
             setUpdateDepartmentName('');
@@ -232,7 +232,7 @@ const DepartmentsLayer = () => {
         } finally {
             setIsUpdating(false);
         }
-    };    
+    };
 
     const columns = [
         {
