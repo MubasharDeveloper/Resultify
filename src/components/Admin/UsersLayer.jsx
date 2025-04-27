@@ -163,12 +163,12 @@ const UsersLayer = () => {
                 const allRolesSnap = await getDocs(collection(db, "Roles"));
                 roleSnap = {
                     docs: allRolesSnap.docs.filter(doc =>
-                        ['HOD','Teacher'].includes(doc.data().name)
+                        ['HOD', 'Teacher'].includes(doc.data().name)
                     ),
                 };
 
                 // ✅ Fetch users with matching departmentId and allowed roleIds
-                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn','k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
                 const usersQuery = query(
                     collection(db, "Users"),
                     where("roleId", "in", allowedRoleIds)
@@ -256,12 +256,12 @@ const UsersLayer = () => {
                     const allRolesSnap = await getDocs(collection(db, "Roles"));
                     roleSnap = {
                         docs: allRolesSnap.docs.filter(doc =>
-                            ['HOD','Teacher'].includes(doc.data().name)
+                            ['HOD', 'Teacher'].includes(doc.data().name)
                         ),
                     };
 
                     // ✅ Fetch users with matching departmentId and allowed roleIds
-                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn','k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
                     const usersQuery = query(
                         collection(db, "Users"),
                         where("roleId", "in", allowedRoleIds)
@@ -499,6 +499,23 @@ const UsersLayer = () => {
             return;
         }
 
+        // Check if the department already has an HOD
+        if (userForm.roleId === roles.find(role => role.name === 'HOD')?.id) {
+            const existingHOD = users.find(
+                user => user.departmentId === userForm.departmentId && user.roleId === roles.find(role => role.name === 'HOD')?.id
+            );
+
+            if (existingHOD) {
+                toast.error('This department already has an HOD!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "light",
+                    transition: Slide,
+                });
+                return;
+            }
+        }
+
         setIsUserLoading(true);
 
         try {
@@ -715,9 +732,24 @@ const UsersLayer = () => {
                         </div>
                     ),
                 },
-            ] : []
+            ] : [
+                {
+                    name: 'Action',
+                    cell: row => (
+                        <div className="d-flex">
+                            <Button
+                                variant={'success'}
+                                className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-success-600 p-2"
+                                onClick={() => handleEditUser(row.id)}
+                            >
+                                <Icon icon="lucide:edit" />
+                            </Button>
+                        </div>
+                    ),
+                },
+            ]
         )
-        
+
     ];
 
     return (
@@ -762,10 +794,13 @@ const UsersLayer = () => {
 
             {/* Create User Modal */}
             <Modal show={showModal} size='lg' centered onHide={handleCloseModal}>
-                <Modal.Header className="d-flex justify-content-center">
-                    <Modal.Title className="h6">Create User</Modal.Title>
-                </Modal.Header>
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Add User`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={handleCloseModal} />
+                        </div>
+                    </div>
                     <Form onSubmit={handleCreateUserSubmit}>
                         <Row>
                             <Col md='6'>
@@ -927,10 +962,13 @@ const UsersLayer = () => {
 
             {/* Update User Modal */}
             <Modal show={showUpdateModal} size='lg' centered onHide={handleCloseUpdateModal}>
-                <Modal.Header className="d-flex justify-content-center">
-                    <Modal.Title className="h6">Update User</Modal.Title>
-                </Modal.Header>
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Update User`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={handleCloseUpdateModal} />
+                        </div>
+                    </div>
                     <Form onSubmit={handleUpdateUserSubmit}>
                         <Row>
                             <Col md='6'>

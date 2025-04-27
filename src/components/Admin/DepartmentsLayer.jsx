@@ -329,11 +329,18 @@ const DepartmentsLayer = () => {
             </Card>
 
             {/* Create Department Modal */}
-            <Modal show={showCreateModal} centered onHide={() => setShowCreateModal(false)}>
-                <Modal.Header className='d-flex justify-content-center'>
-                    <Modal.Title className='h6'>Create New Department</Modal.Title>
-                </Modal.Header>
+            <Modal show={showCreateModal} centered onHide={() => setShowCreateModal(false)} size='lg'>
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Create New Department`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={() => {
+                                setShowCreateModal(false);
+                                setDepartmentName('');
+                                setNameError('');
+                            }} />
+                        </div>
+                    </div>
                     <Form.Group controlId="departmentName" className="mb-3">
                         <Form.Label>Department Name</Form.Label>
                         <Form.Control
@@ -369,11 +376,18 @@ const DepartmentsLayer = () => {
             </Modal>
 
             {/* Update Department Modal */}
-            <Modal show={showUpdateModal} centered onHide={() => setShowUpdateModal(false)}>
-                <Modal.Header className='d-flex justify-content-center'>
-                    <Modal.Title className='h6'>Update Department</Modal.Title>
-                </Modal.Header>
+            <Modal show={showUpdateModal} centered onHide={() => setShowUpdateModal(false)} size="lg">
                 <Modal.Body>
+                    <div className="margin-bottom-15">
+                        <div className="d-flex justify-content-between">
+                            <h5 className="margin-bottom-10 mt-3 modal-heading">{`Update Department`}</h5>
+                            <Icon icon="ci:close-circle" color='#dc3545' className={`cursor-pointer`} style={{ fontSize: '24px' }} onClick={() => {
+                                setShowUpdateModal(false);
+                                setUpdateDepartmentName('');
+                                setUpdateNameError('');
+                            }} />
+                        </div>
+                    </div>
                     <Form.Group controlId="updateDepartmentName" className="mb-3">
                         <Form.Label>Department Name</Form.Label>
                         <Form.Control

@@ -565,7 +565,7 @@ const Subjects = () => {
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showEditModal} onHide={handleEditModalClose} centered>
+            <Modal show={showEditModal} onHide={handleEditModalClose} centered size='lg'>
                 <Modal.Body>
                     <div className="margin-bottom-15">
                         <div className="d-flex justify-content-between">
