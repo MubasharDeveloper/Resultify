@@ -764,7 +764,7 @@ const UsersLayer = () => {
                                 columns={columns}
                                 data={filteredUsers}
                                 pagination
-                                paginationPerPage={20}
+                                paginationPerPage={15}
                                 highlightOnHover
                                 responsive
                                 striped

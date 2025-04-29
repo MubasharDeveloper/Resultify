@@ -44,129 +44,142 @@ const SignInLayer = () => {
     let newErrors = { email: "", password: "" };
 
     if (signUpData.email.trim() === "") {
-      newErrors.email = "Please enter your email";
-      valid = false;
+        newErrors.email = "Please enter your email";
+        valid = false;
     } else if (!validateEmail(signUpData.email)) {
-      newErrors.email = "Invalid email format";
-      valid = false;
+        newErrors.email = "Invalid email format";
+        valid = false;
     }
 
     if (signUpData.password.trim() === "") {
-      newErrors.password = "Please enter your password";
-      valid = false;
+        newErrors.password = "Please enter your password";
+        valid = false;
     }
 
     setErrors(newErrors);
     if (!valid) {
-      setLoading(false);
-      return;
+        setLoading(false);
+        return;
     }
 
     const { email, password } = signUpData;
 
     try {
-      const q = query(collection(db, "Users"), where("email", "==", email.toLowerCase()));
-      const querySnapshot = await getDocs(q);
+        const q = query(collection(db, "Users"), where("email", "==", email.toLowerCase()));
+        const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) {
-        toast.error("User not found. Please check your email address and try again.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-          transition: Slide,
-        });
-        setLoading(false);
-        return;
-      }
-
-      let matchedUser = null;
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (userData.password === password) {
-          matchedUser = { id: doc.id, ...userData };
+        if (querySnapshot.empty) {
+            toast.error("User not found. Please check your email address and try again.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+            setLoading(false);
+            return;
         }
-      });
 
-      if (!matchedUser) {
-        setLogInError("Invalid Email or Password");
-        toast.error("Invalid Email or Password", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-          transition: Slide,
+        let matchedUser = null;
+        querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            if (userData.password === password) {
+                matchedUser = { id: doc.id, ...userData };
+            }
         });
-        setLoading(false);
-        return;
-      }
 
-      if (matchedUser.status === false) {
-        toast.error("User is blocked. Please contact the administrator.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-          transition: Slide,
+        if (!matchedUser) {
+            setLogInError("Invalid Email or Password");
+            toast.error("Invalid Email or Password", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+            setLoading(false);
+            return;
+        }
+
+        if (matchedUser.status === false) {
+            toast.error("User is blocked. Please contact the administrator.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+            setLoading(false);
+            return;
+        }
+
+        if (!matchedUser.roleId) {
+            toast.error("Your Role is not assigned. Please contact the administrator.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+            setLoading(false);
+            return;
+        }
+
+        // ✅ Fetch role by roleId to get the role name
+        const roleQuery = query(collection(db, "Roles"), where("__name__", "==", matchedUser.roleId));
+        const roleSnap = await getDocs(roleQuery);
+
+        if (roleSnap.empty) {
+            toast.error("Role not found. Please contact the administrator.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+            setLoading(false);
+            return;
+        }
+
+        const roleData = roleSnap.docs[0].data();
+        const roleName = roleData.name;
+
+        // ✅ Store user and navigate after toast closes
+        login(matchedUser);
+        setSignUpData(initialStateSignUp);
+
+        // Check if "Remember me" is checked
+        const rememberMeCheckbox = document.getElementById('remeber');
+        if (rememberMeCheckbox.checked) {
+            // Store user data in localStorage without the password
+            alert('checked');
+            const userDataToStore = { ...matchedUser };
+            delete userDataToStore.password; // Remove password from the object
+            localStorage.setItem('User', JSON.stringify(userDataToStore));
+        } else {
+            // Clear any existing user data in localStorage
+            localStorage.removeItem('User');
+        }
+
+        toast.success("Login Successfully!", {
+            position: "top-right",
+            autoClose: 2000,
+            theme: "light",
+            transition: Slide,
+            onClose: () => {
+                if (roleName === 'Admin') navigate('/admin-dashboard');
+                else if (roleName === 'HOD') navigate('/hod-dashboard');
+                else if (roleName === 'Teacher') navigate('/teacher-dashboard');
+            },
         });
-        setLoading(false);
-        return;
-      }
-
-      if (!matchedUser.roleId) {
-        toast.error("Your Role is not assigned. Please contact the administrator.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-          transition: Slide,
-        });
-        setLoading(false);
-        return;
-      }
-
-      // ✅ Fetch role by roleId to get the role name
-      const roleQuery = query(collection(db, "Roles"), where("__name__", "==", matchedUser.roleId));
-      const roleSnap = await getDocs(roleQuery);
-
-      if (roleSnap.empty) {
-        toast.error("Role not found. Please contact the administrator.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-          transition: Slide,
-        });
-        setLoading(false);
-        return;
-      }
-
-      const roleData = roleSnap.docs[0].data();
-      const roleName = roleData.name;
-
-      // ✅ Store user and navigate after toast closes
-      login(matchedUser);
-      setSignUpData(initialStateSignUp);
-
-      toast.success("Login Successfully!", {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "light",
-        transition: Slide,
-        onClose: () => {
-          if (roleName === 'Admin') navigate('/admin-dashboard');
-          else if (roleName === 'HOD') navigate('/hod-dashboard');
-          else if (roleName === 'Teacher') navigate('/teacher-dashboard');
-        },
-      });
 
     } catch (error) {
-      console.error("Custom Login Error", error);
-      toast.error("Something went wrong. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "light",
-        transition: Slide,
-      });
+        console.error("Custom Login Error", error);
+        toast.error("Something went wrong. Please try again.", {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "light",
+            transition: Slide,
+        });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
 
   return (

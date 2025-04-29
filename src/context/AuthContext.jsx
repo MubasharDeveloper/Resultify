@@ -7,7 +7,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("authUser");
+    const storedUser = localStorage.getItem("User");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
         rootLink, // ✅ Include rootLink
       };
   
-      localStorage.setItem("authUser", JSON.stringify(updatedUser));
+      localStorage.setItem("User", JSON.stringify(updatedUser));
       setUser(updatedUser);
     } catch (error) {
       console.error("Login error:", error);
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   
 
   const logout = () => {
-    localStorage.removeItem("authUser");
+    localStorage.removeItem("User");
     setUser(null);
   };
 

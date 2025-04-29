@@ -555,7 +555,7 @@ const Batches = () => {
                             columns={columns}
                             data={filteredBatches}
                             pagination
-                            paginationPerPage={20}
+                            paginationPerPage={15}
                             highlightOnHover
                             responsive
                             fixedHeader
@@ -807,7 +807,7 @@ const Batches = () => {
                                                 return (
                                                     <Col key={semester.id} md={6}>
                                                         <div className="mb-4">
-                                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                            <div className="d-flex justify-content-between align-items-center mb-2">
                                                                 <h5 className="margin-bottom-10 modal-sub-heading">
                                                                     {semester.name}
                                                                 </h5>

@@ -213,6 +213,7 @@ const Subjects = () => {
             setShowModal(false);
             setNewSubject({ name: "", subCode: "", theory: "", practical: "" });
             fetchSubjects();
+            setErrors({});
         } catch (error) {
             console.error("Error creating subject:", error);
             toast.error("Failed to create subject!");
@@ -414,13 +415,13 @@ const Subjects = () => {
                     >
                         <Icon icon="lucide:edit" />
                     </Button>
-                    <Button
+                    {/* <Button
                         variant={'danger'}
                         className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-danger-600 p-2"
                         onClick={() => handleDeleteSubject(row.id)}
                     >
                         <Icon icon="mingcute:delete-2-line" />
-                    </Button>
+                    </Button> */}
                 </div>
             ),
         },
@@ -437,7 +438,7 @@ const Subjects = () => {
                             columns={columns}
                             data={filteredSubjects}
                             pagination
-                            paginationPerPage={20}
+                            paginationPerPage={15}
                             highlightOnHover
                             responsive
                             fixedHeader

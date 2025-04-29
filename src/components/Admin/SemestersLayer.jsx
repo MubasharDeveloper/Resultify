@@ -639,6 +639,35 @@ const Semesters = () => {
       sortable: true,
     },
     {
+      name: "Progress",
+      selector: (row) => {
+        const currentDate = new Date();
+        const startDate = row.startDate.toDate();
+        const endDate = row.endDate.toDate();
+
+        if (currentDate >= startDate && currentDate <= endDate) {
+          return (
+            <span className="bg-success-focus text-success-main border-success-main border px-8 py-2 radius-4 fw-medium text-sm">
+              Current
+            </span>
+          );
+        } else if (currentDate < startDate) {
+          return (
+            <span className="bg-warning-focus text-warning-main border-warning-main border px-8 py-2 radius-4 fw-medium text-sm">
+              Upcoming
+            </span>
+          );
+        } else {
+          return (
+            <span className="bg-danger-focus text-danger-main border-danger-main border px-8 py-2 radius-4 fw-medium text-sm">
+              Past
+            </span>
+          );
+        }
+      },
+      sortable: false,
+    },
+    {
       name: "Department",
       selector: (row) => row.departmentName,
       sortable: true,
@@ -699,7 +728,7 @@ const Semesters = () => {
               columns={columns}
               data={filteredSemesters}
               pagination
-              paginationPerPage={20}
+              paginationPerPage={15}
               highlightOnHover
               responsive
               fixedHeader
@@ -1028,7 +1057,7 @@ const Semesters = () => {
                         </tbody>
                       </table>
                     </div>
-                  ):(
+                  ) : (
                     <NoDataTable
                       img={'../assets/images/no-data.svg'}
                       text={'No Semesters Found!'}

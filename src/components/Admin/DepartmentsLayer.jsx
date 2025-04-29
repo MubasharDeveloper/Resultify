@@ -304,7 +304,7 @@ const DepartmentsLayer = () => {
                                 columns={columns}
                                 data={filteredDepartments}
                                 pagination
-                                paginationPerPage={20}
+                                paginationPerPage={15}
                                 highlightOnHover
                                 responsive
                                 striped
