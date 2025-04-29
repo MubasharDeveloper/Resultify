@@ -46,7 +46,7 @@
 .logo {
   display: flex;
   align-items: center;
-  font-size: 1.8rem;
+  font-size: 1.8rem !important;
   font-weight: 700;
   color: var(--primary);
   text-decoration: none;
@@ -54,7 +54,7 @@
 
 .logo svg {
   margin-right: 10px;
-  font-size: 2rem;
+  font-size: 2rem !important;
 }
 
 .nav-links {
@@ -126,7 +126,7 @@
 
 .mobile-menu-btn {
   display: none;
-  font-size: 1.5rem;
+  font-size: 1.5rem !important;
   cursor: pointer;
 }
 
@@ -159,7 +159,7 @@
 }
 
 .hero p {
-  font-size: 1.1rem;
+  font-size: 1.1rem !important;
   color: #666;
   margin-bottom: 30px;
   max-width: 600px;
@@ -284,7 +284,7 @@
   align-items: center;
   margin: 0 auto 25px;
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.8rem !important;
 }
 
 .feature-card h3 {
@@ -351,7 +351,7 @@
   justify-content: center;
   align-items: center;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.5rem !important;
   font-weight: 700;
 }
 
@@ -419,14 +419,14 @@
 }
 
 .author-info h4 {
-  font-size: 1.1rem;
+  font-size: 1.1rem !important;
   color: var(--dark);
   margin-bottom: 5px;
 }
 
 .author-info p {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.9rem !important;
 }
 
 /* CTA Section */
@@ -454,7 +454,7 @@
   background-color: white;
   color: var(--primary);
   padding: 15px 40px;
-  font-size: 1.1rem;
+  font-size: 1.1rem !important;
   font-weight: 600;
 }
 
@@ -546,7 +546,7 @@ footer {
   padding-top: 30px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: #aaa;
-  font-size: 0.9rem;
+  font-size: 0.9rem !important;
 }
 
 /* Animations */
@@ -576,7 +576,7 @@ footer {
 /* Responsive Styles */
 @media (max-width: 1200px) {
   .hero h1 {
-    font-size: 3rem;
+    font-size: 3rem !important;
   }
 }
 
@@ -656,7 +656,7 @@ footer {
   }
 
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.5rem !important;
   }
 
   .hero-buttons {
@@ -665,21 +665,21 @@ footer {
   }
 
   .section-title h2 {
-    font-size: 2rem;
+    font-size: 2rem !important;
   }
 }
 
 @media (max-width: 576px) {
   .hero h1 {
-    font-size: 2rem;
+    font-size: 2rem !important;
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: 1rem !important;
   }
 
   .section-title h2 {
-    font-size: 1.8rem;
+    font-size: 1.8rem !important;
   }
 
   .feature-card,
@@ -688,7 +688,7 @@ footer {
   }
 
   .cta h2 {
-    font-size: 2rem;
+    font-size: 2rem !important;
   }
 }
 
