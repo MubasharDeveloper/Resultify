@@ -16037,3 +16037,8 @@ h2.swal2-title {
 .margin-bottom-30{
   margin-bottom: 30px !important;
 }
+
+.basic-data-table header{
+  padding-right: 10px !important;
+  box-shadow: none !important;
+}
