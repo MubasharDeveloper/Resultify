@@ -344,6 +344,8 @@
 
 .step-number {
   min-width: 60px;
+  max-width: 60px;
+  margin: 0 auto;
   height: 60px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   border-radius: 50%;
