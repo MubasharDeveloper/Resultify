@@ -355,9 +355,9 @@ const ResultifyLandingPage = () => {
           </div>
           <div className="footer-column fade-in delay-3">
             <h3>Contact Info</h3>
-            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> 123 Education St, Tech City</p>
-            <p><FontAwesomeIcon icon={faPhone} /> +1 (555) 123-4567</p>
-            <p><FontAwesomeIcon icon={faEnvelope} /> info@resultify.com</p>
+            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Nishatabad, Faisalabad</p>
+            <p><FontAwesomeIcon icon={faPhone} /> +92 304 6321166</p>
+            <p><FontAwesomeIcon icon={faEnvelope} /> mubashardev0203@gmail.com</p>
           </div>
         </div>
         <div className="footer-bottom fade-in">

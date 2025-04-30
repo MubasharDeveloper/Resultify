@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { Button } from 'react-bootstrap';
 // import ThemeToggleButton from "../helper/ThemeToggleButton";
 import { useAuth } from "../context/AuthContext";
 
@@ -454,7 +455,7 @@ const MasterLayout = ({ children }) => {
                             <li>
                               <Link
                                 className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                to='/view-profile'
+                                to='/profile'
                               >
                                 <Icon
                                   icon='solar:user-linear'
@@ -466,20 +467,20 @@ const MasterLayout = ({ children }) => {
                             <li>
                               <Link
                                 className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                to='/email'
+                                to='/notifications'
                               >
                                 <Icon
                                   icon='tabler:message-check'
                                   className='icon text-xl'
                                 />{" "}
-                                Inbox
+                                Notifications
                               </Link>
                             </li>
                           </>
                         )
                       }
 
-                      <li>
+                      {/* <li>
                         <Link
                           className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
                           to='/company'
@@ -490,19 +491,18 @@ const MasterLayout = ({ children }) => {
                           />
                           Setting
                         </Link>
-                      </li>
+                      </li> */}
 
                       {
                         user ? (
                           <li>
-                            <Link
+                            <Button
                               className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                              to='#'
                               onClick={logout}
                             >
                               <Icon icon='lucide:power' className='icon text-xl' />{" "}
                               Log Out
-                            </Link>
+                            </Button>
                           </li>
                         ) : (
                           <li>

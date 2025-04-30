@@ -140,6 +140,14 @@ const Semesters = () => {
     return '-';
   };
 
+  const sortSemesters = (semesters) => {
+    return [...semesters].sort((a, b) => {
+      const semesterA = parseInt(a.name.split(' ')[1]);
+      const semesterB = parseInt(b.name.split(' ')[1]);
+      return semesterA - semesterB;
+    });
+  };
+
   const fetchSemestersData = async () => {
     try {
       if (!user?.departmentId) return;
@@ -181,8 +189,10 @@ const Semesters = () => {
         })
       );
 
-      setSemesters(semestersList);
-      setFilteredSemesters(semestersList);
+      // Sort the semesters before setting state
+      const sortedSemesters = sortSemesters(semestersList);
+      setSemesters(sortedSemesters);
+      setFilteredSemesters(sortedSemesters);
     } catch (error) {
       console.error("Error fetching semesters:", error);
     }
@@ -231,8 +241,10 @@ const Semesters = () => {
           })
         );
 
-        setSemesters(semestersList);
-        setFilteredSemesters(semestersList);
+        // Sort the semesters before setting state
+        const sortedSemesters = sortSemesters(semestersList);
+        setSemesters(sortedSemesters);
+        setFilteredSemesters(sortedSemesters);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load data");
@@ -354,7 +366,7 @@ const Semesters = () => {
 
   useEffect(() => {
     if (!searchText) {
-      setFilteredSemesters(semesters);
+      setFilteredSemesters(sortSemesters(semesters));
     } else {
       const lowerSearch = searchText.toLowerCase();
       const filtered = semesters.filter((sem) => {
@@ -373,7 +385,7 @@ const Semesters = () => {
         );
       });
 
-      setFilteredSemesters(filtered);
+      setFilteredSemesters(sortSemesters(filtered));
     }
   }, [searchText, semesters]);
 
@@ -624,7 +636,7 @@ const Semesters = () => {
       width: "60px",
     },
     {
-      name: "Semester",
+      name: "Semester #",
       selector: (row) => row.name,
       sortable: true,
     },
@@ -639,7 +651,7 @@ const Semesters = () => {
       sortable: true,
     },
     {
-      name: "Progress",
+      name: "Status",
       selector: (row) => {
         const currentDate = new Date();
         const startDate = row.startDate.toDate();
@@ -717,9 +729,27 @@ const Semesters = () => {
     },
   ];
 
+
+  const groupSemestersByBatch = (semesters) => {
+    return semesters.reduce((acc, semester) => {
+      const batchId = semester.batchId;
+      if (!acc[batchId]) {
+        acc[batchId] = {
+          batchName: semester.batchName,
+          batchStart: semester.batchStart,
+          batchEnd: semester.batchEnd,
+          departmentName: semester.departmentName,
+          semesters: []
+        };
+      }
+      acc[batchId].semesters.push(semester);
+      return acc;
+    }, {});
+  };
+
   return (
     <>
-      <Card className="basic-data-table py-3">
+      {/* <Card className="basic-data-table py-3">
         <Card.Body>
           {loading ? (
             <CustomLoader size={'80px'} />
@@ -758,6 +788,75 @@ const Semesters = () => {
                 />
               }
             />
+          )}
+        </Card.Body>
+      </Card> */}
+
+      <Card className="basic-data-table py-3">
+        <Card.Body>
+          {loading ? (
+            <CustomLoader size={'80px'} />
+          ) : (
+            <>
+              <div className="d-flex justify-content-end align-items-center mb-4">
+                <div className="d-flex gap-3 align-items-center">
+                  <Form.Control
+                    type="text"
+                    placeholder="Search Semesters..."
+                    className="w-auto"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
+                  <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
+                    Add Semester
+                  </Button>
+                </div>
+              </div>
+
+              {Object.entries(groupSemestersByBatch(filteredSemesters)).map(([batchId, batchData]) => (
+                <div key={batchId} className="mb-4">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h6 className="mb-0 h6" style={{ fontSize: '18px' }}>
+                      {`${batchData.departmentName} - ${batchData.batchName}  `}
+                      <span className={`border px-8 py-2 radius-4 fw-medium text-md ${currentYear >= batchData.batchStart && currentYear <= batchData.batchEnd
+                          ? 'bg-success-focus text-success-main border-success-main'
+                          : 'bg-danger-focus text-danger-main border-danger-main'
+                        }`}>
+                        {currentYear >= batchData.batchStart && currentYear <= batchData.batchEnd
+                          ? 'Current'
+                          : 'Inactive'}
+                      </span>
+                    </h6>
+                    <small className="text-muted">
+                      {`Session: ${batchData.batchStart} - ${batchData.batchEnd}`}
+                    </small>
+                  </div>
+                  <DataTable
+                    columns={columns}
+                    data={sortSemesters(batchData.semesters)}
+                    pagination
+                    paginationPerPage={15}
+                    highlightOnHover
+                    responsive
+                    fixedHeader
+                    striped
+                    noDataComponent={
+                      <NoDataTable
+                        img={'../assets/images/no-data.svg'}
+                        text={'No Semesters Found!'}
+                      />
+                    }
+                  />
+                </div>
+              ))}
+
+              {filteredSemesters.length === 0 && (
+                <NoDataTable
+                  img={'../assets/images/no-data.svg'}
+                  text={'No Semesters Found!'}
+                />
+              )}
+            </>
           )}
         </Card.Body>
       </Card>
