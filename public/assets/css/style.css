@@ -16042,3 +16042,7 @@ h2.swal2-title {
   padding-right: 10px !important;
   box-shadow: none !important;
 }
+
+.index-99{
+  z-index: 99 !important;
+}

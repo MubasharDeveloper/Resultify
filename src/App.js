@@ -24,6 +24,7 @@ import Batches from "./pages/Admin/Batches";
 import Subjects from "./pages/Admin/Subjects";
 import Semesters from "./pages/Admin/Semesters";
 import Users from "./pages/Admin/Users";
+import Profile from "./pages/Profile/Profile";
 
 
 const Loader = () => (
@@ -113,6 +114,12 @@ function App() {
             <Route exact path='/teacher-dashboard' element={
               <PrivateRoute allowedRoles={['Teacher']}>
                 <TeacherDashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/profile' element={
+              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher']}>
+                <Profile />
               </PrivateRoute>
             } />
 

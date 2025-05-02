@@ -11,7 +11,7 @@ const MasterLayout = ({ children }) => {
   const location = useLocation(); // Hook to get the current route
   const { user, logout } = useAuth();
 
-
+  
   useEffect(() => {
     const handleDropdownClick = (event) => {
       event.preventDefault();
@@ -421,7 +421,7 @@ const MasterLayout = ({ children }) => {
                     data-bs-toggle='dropdown'
                   >
                     <img
-                      src='assets/images/user.png'
+                      src='assets/images/user.jpg'
                       alt='image_user'
                       className='w-40-px h-40-px object-fit-cover rounded-circle'
                     />

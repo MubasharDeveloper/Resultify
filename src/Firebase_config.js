@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, query, where, getDoc, Timestamp, getDocs, orderBy, updateDoc, setDoc, deleteDoc, doc, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, getStorage, deleteObject } from 'firebase/storage';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,10 +19,12 @@ const firebaseConfig = {
   measurementId: "G-FPCVTRFY6F"
 };
 
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-export { analytics, auth, db, collection, query, where, getDoc, getDocs, Timestamp, updateDoc, setDoc, orderBy, deleteDoc, doc, addDoc };
+export { analytics, auth, db, collection, query, where, getDoc, getDocs, Timestamp, updateDoc, setDoc, orderBy, deleteDoc, doc, addDoc, ref, uploadBytes, getDownloadURL, storage, deleteObject };
