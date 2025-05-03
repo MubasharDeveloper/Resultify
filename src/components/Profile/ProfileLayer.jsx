@@ -1,11 +1,11 @@
 import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { db, storage, doc, getDoc, updateDoc, ref, uploadBytes, getDownloadURL, deleteObject } from '../../Firebase_config';
-import { CustomLoader, BodyLoading } from '../CustomLoader';
+import { db, storage, doc, getDoc, updateDoc, ref } from '../../Firebase_config';
+import { BodyLoading } from '../CustomLoader';
 
 const ProfileLayer = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -143,78 +143,6 @@ const ProfileLayer = () => {
       setImagePreview(e.target.result);
     };
     reader.readAsDataURL(file);
-  };
-
-  // Handle image upload
-  const handleImageUpload = async (e) => {
-    e.preventDefault();
-    if (!imageFile || !user?.id) return;
-  
-    try {
-      setUploadLoading(true);
-  
-      // 1. Check for existing image
-      const userDoc = await getDoc(doc(db, "Users", user.id));
-      const currentUserData = userDoc.data();
-  
-      // 2. Delete existing image if found
-      if (currentUserData?.imgPath) {
-        try {
-          const oldImageRef = ref(storage, currentUserData.imgPath);
-          await deleteObject(oldImageRef);
-        } catch (deleteError) {
-          console.log("Old image deletion error:", deleteError);
-        }
-      }
-  
-      // 3. Prepare new image metadata
-      const metadata = {
-        contentType: imageFile.type,
-        customMetadata: {
-          'uploadedBy': user.id,
-          'uploadDate': new Date().toISOString()
-        }
-      };
-  
-      // 4. Create storage reference
-      const fileExtension = imageFile.name.split('.').pop();
-      const newFileName = `profile_${user.id}_${Date.now()}.${fileExtension}`;
-      const storageRef = ref(storage, `public/images/usersProfile/${newFileName}`);
-  
-      // 5. Upload with error handling
-      const uploadTask = uploadBytesResumable(storageRef, imageFile, metadata);
-      
-      // Wait for upload to complete
-      await uploadTask;
-  
-      // 6. Get download URL
-      const downloadURL = await getDownloadURL(storageRef);
-  
-      // 7. Update Firestore
-      await updateDoc(doc(db, "Users", user.id), {
-        img: downloadURL,
-        imgPath: `public/images/usersProfile/${newFileName}`
-      });
-  
-      // 8. Update state
-      setUserData(prev => ({
-        ...prev,
-        img: downloadURL,
-        imgPath: `public/images/usersProfile/${newFileName}`
-      }));
-      
-      setImageFile(null);
-      setFormErrors(prev => ({ ...prev, image: '' }));
-  
-    } catch (error) {
-      console.error("Upload failed:", error);
-      setFormErrors(prev => ({
-        ...prev,
-        image: "Image upload failed. Please try again."
-      }));
-    } finally {
-      setUploadLoading(false);
-    }
   };
 
   // Handle form input changes
@@ -401,21 +329,27 @@ const ProfileLayer = () => {
     try {
       setProfileLoading(true);
 
-      await updateDoc(doc(db, "Users", user.id), {
+      const updatedUserData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         gen: formData.gender
-      });
+      };
+
+      // Update in Firestore
+      await updateDoc(doc(db, "Users", user.id), updatedUserData);
 
       // Update local state
       setUserData(prev => ({
         ...prev,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        gen: formData.gender
+        ...updatedUserData
       }));
+
+      // Update auth context
+      updateUser({
+        ...user,
+        ...updatedUserData
+      });
 
       // Clear errors
       setFormErrors({
@@ -623,7 +557,6 @@ const ProfileLayer = () => {
                       </label>
                       {imageFile && (
                         <button
-                          onClick={handleImageUpload}
                           disabled={uploadLoading}
                           className="w-32-px h-32-px index-99 position-absolute bottom-0 start-0 ms-24 d-flex justify-content-center align-items-center bg-success-50 text-success-600 border border-success-600 bg-hover-success-100 text-lg rounded-circle"
                         >

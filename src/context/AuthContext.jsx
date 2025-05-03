@@ -19,6 +19,19 @@ export const AuthProvider = ({ children }) => {
     Teacher: "/teacher-dashboard",
   };
 
+  const updateUser = (updatedData) => {
+    try {
+      const updatedUser = {
+        ...user,
+        ...updatedData
+      };
+      localStorage.setItem("User", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Update user error:", error);
+    }
+  };
+
   const login = async (userData) => {
     try {
       setLoading(true);
@@ -67,7 +80,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, setLoading, }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, setLoading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
