@@ -37,7 +37,7 @@ const DepartmentsLayer = () => {
         <input
             type="text"
             placeholder="Search by department name..."
-            className="form-control w-25"
+            className="form-control w-auto"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
         />
@@ -309,14 +309,14 @@ const DepartmentsLayer = () => {
                                 responsive
                                 striped
                                 fixedHeader
-                                subHeader
-                                subHeaderComponent={SearchComponent}
                                 title={
-                                    <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                                        <h5 className="mb-0 h6">Departments</h5>
-                                        <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-                                            Create Department
-                                        </Button>
+                                    <div className="d-flex justify-content-end align-items-center mb-4">
+                                        <div className="d-flex gap-3 align-items-center">
+                                            {SearchComponent}
+                                            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+                                                Add Department
+                                            </Button>
+                                        </div>
                                     </div>
                                 }
                                 noDataComponent={

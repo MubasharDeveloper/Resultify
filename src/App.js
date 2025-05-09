@@ -17,7 +17,7 @@ import AdminDashboard from "./pages/Dashboards/AdminDashboard";
 import HodDashboard from "./pages/Dashboards/HodDashboard";
 import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
 
-import LandingPage from "./pages/LandingPage/LandingPage";
+import LandingPage from "./pages/LandingPage/index";
 
 import Departments from "./pages/Admin/Departments";
 import Batches from "./pages/Admin/Batches";

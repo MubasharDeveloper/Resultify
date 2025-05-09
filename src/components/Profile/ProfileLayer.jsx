@@ -12,7 +12,6 @@ const ProfileLayer = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-
   // User data states
   const [userData, setUserData] = useState(null);
   const [roleName, setRoleName] = useState("Loading...");
@@ -52,7 +51,7 @@ const ProfileLayer = () => {
 
   // Image states
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('assets/images/user.jpg');
+  const [imagePreview, setImagePreview] = useState(user?.gen ? `assets/images/${user.gen}-user.png` : 'assets/images/user.jpg');
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -446,7 +445,7 @@ const ProfileLayer = () => {
               <h6 className="mb-0 mt-16">{userData?.name || "User"}</h6>
               <span className="text-secondary-light mb-16">{userData?.email || "No email"}</span>
             </div>
-            <div className="mt-24">
+            <div className="mt-24 px-3">
               <h6 className="text-xl mb-16">Personal Info</h6>
               <ul>
                 <li className="d-flex align-items-center gap-1 mb-12">

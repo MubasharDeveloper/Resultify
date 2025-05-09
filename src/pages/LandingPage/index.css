@@ -1,7 +1,7 @@
 :root {
-  --primary: #4361ee;
+  --primary: #1027ff;
   --secondary: #3f37c9;
-  --accent: #4895ef;
+  --accent: #1027ff;
   --light: #f8f9fa;
   --dark: #212529;
   --success: #4cc9f0;
@@ -15,7 +15,7 @@
 }
 
 .resultify-landing-page {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter','Poppins', sans-serif;
   background-color: var(--light);
   color: var(--dark);
   overflow-x: hidden;
@@ -64,7 +64,7 @@
 }
 
 .nav-links li {
-  margin-left: 30px;
+  margin-left: 24px;
 }
 
 .nav-links a {
@@ -73,6 +73,7 @@
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
+  font-size: 16px;
 }
 
 .nav-links a:hover {
@@ -108,9 +109,9 @@
 .cta-button {
   background-color: var(--primary);
   color: white !important;
-  padding: 10px 25px;
+  padding: 10px 24px;
   border-radius: 50px;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
@@ -199,7 +200,7 @@
 }
 
 .hero-image img {
-  max-width: 100%;
+  max-width: 80%;
   height: auto;
   animation: float 6s ease-in-out infinite;
 }

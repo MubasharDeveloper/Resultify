@@ -142,9 +142,11 @@ const Semesters = () => {
 
   const sortSemesters = (semesters) => {
     return [...semesters].sort((a, b) => {
+
+      // If dates are equal, sort by semester number
       const semesterA = parseInt(a.name.split(' ')[1]);
       const semesterB = parseInt(b.name.split(' ')[1]);
-      return semesterA - semesterB;
+      return semesterA - semesterB; // Lower semester numbers first
     });
   };
 
@@ -672,7 +674,7 @@ const Semesters = () => {
         } else {
           return (
             <span className="bg-danger-focus text-danger-main border-danger-main border px-8 py-2 radius-4 fw-medium text-sm">
-              Past
+              OutGoing
             </span>
           );
         }
@@ -731,7 +733,9 @@ const Semesters = () => {
 
 
   const groupSemestersByBatch = (semesters) => {
-    return semesters.reduce((acc, semester) => {
+    const sortedSemesters = sortSemesters(semesters);
+
+    const grouped = sortedSemesters.reduce((acc, semester) => {
       const batchId = semester.batchId;
       if (!acc[batchId]) {
         acc[batchId] = {
@@ -745,53 +749,24 @@ const Semesters = () => {
       acc[batchId].semesters.push(semester);
       return acc;
     }, {});
+
+    // Convert to array and sort batches by their earliest semester's start date
+    return Object.entries(grouped)
+      .map(([batchId, batchData]) => ({
+        batchId,
+        ...batchData,
+        earliestStart: batchData.semesters.reduce((min, sem) => {
+          const date = sem.startDate.toDate ? sem.startDate.toDate() : new Date(sem.startDate);
+          return date < min ? date : min;
+        }, new Date())
+      }))
+      .sort((a, b) => b.earliestStart - a.earliestStart); // Newest batches first
   };
+
+
 
   return (
     <>
-      {/* <Card className="basic-data-table py-3">
-        <Card.Body>
-          {loading ? (
-            <CustomLoader size={'80px'} />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={filteredSemesters}
-              pagination
-              paginationPerPage={15}
-              highlightOnHover
-              responsive
-              fixedHeader
-              subHeader
-              striped
-              subHeaderComponent={
-                <Form.Control
-                  type="text"
-                  placeholder="Search Semesters..."
-                  className="w-25"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
-              }
-              title={
-                <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                  <h5 className="mb-0 h6">Semesters</h5>
-                  <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
-                    Add Semester
-                  </Button>
-                </div>
-              }
-              noDataComponent={
-                <NoDataTable
-                  img={'../assets/images/no-data.svg'}
-                  text={'No Semesters Found!'}
-                />
-              }
-            />
-          )}
-        </Card.Body>
-      </Card> */}
-
       <Card className="basic-data-table py-3">
         <Card.Body>
           {loading ? (
@@ -816,11 +791,11 @@ const Semesters = () => {
               {Object.entries(groupSemestersByBatch(filteredSemesters)).map(([batchId, batchData]) => (
                 <div key={batchId} className="mb-4">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0 h6" style={{ fontSize: '18px' }}>
+                    <h6 className="mb-0 h6 d-flex align-items-center gap-2" style={{ fontSize: '18px' }}>
                       {`${batchData.departmentName} - ${batchData.batchName}  `}
                       <span className={`border px-8 py-2 radius-4 fw-medium text-md ${currentYear >= batchData.batchStart && currentYear <= batchData.batchEnd
-                          ? 'bg-success-focus text-success-main border-success-main'
-                          : 'bg-danger-focus text-danger-main border-danger-main'
+                        ? 'bg-success-focus text-success-main border-success-main'
+                        : 'bg-danger-focus text-danger-main border-danger-main'
                         }`}>
                         {currentYear >= batchData.batchStart && currentYear <= batchData.batchEnd
                           ? 'Current'
@@ -833,7 +808,7 @@ const Semesters = () => {
                   </div>
                   <DataTable
                     columns={columns}
-                    data={sortSemesters(batchData.semesters)}
+                    data={batchData.semesters}
                     pagination
                     paginationPerPage={15}
                     highlightOnHover

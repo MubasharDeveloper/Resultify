@@ -349,7 +349,7 @@ const UsersLayer = () => {
         <input
             type="text"
             placeholder="Search users..."
-            className="form-control w-25"
+            className="form-control w-auto"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
         />
@@ -752,43 +752,61 @@ const UsersLayer = () => {
 
     ];
 
+    const usersByDepartment = departments.reduce((acc, department) => {
+        const deptUsers = filteredUsers
+            .filter(user => user.departmentId === department.id)
+            .sort((a, b) => a.name.localeCompare(b.name));  // Sort by name
+
+        if (deptUsers.length > 0) {
+            acc.push({
+                departmentId: department.id,
+                departmentName: department.name,
+                users: deptUsers
+            });
+        }
+        return acc;
+    }, []);
+
     return (
         <>
             <Card className="basic-data-table py-3">
                 <Card.Body>
-                    {
-                        loading ? (
-                            <CustomLoader size={'80px'} />
-                        ) : (
-                            <DataTable
-                                columns={columns}
-                                data={filteredUsers}
-                                pagination
-                                paginationPerPage={15}
-                                highlightOnHover
-                                responsive
-                                striped
-                                fixedHeader
-                                subHeader
-                                subHeaderComponent={searchComponent}
-                                title={
-                                    <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                                        <h5 className="mb-0 h6">Staff</h5>
-                                        {
-                                            isAdmin && (
-                                                <Button variant="primary" onClick={() => setShowModal(true)}>
-                                                    Add Staff
-                                                </Button>
-                                            )
-                                        }
+                    {loading ? (
+                        <CustomLoader size={'80px'} />
+                    ) : (
+                        <>
+                            <div className="d-flex justify-content-end align-items-center mb-4">
+                                <div className="d-flex gap-3 align-items-center">
+                                    {searchComponent}
+                                    {isAdmin && (
+                                        <Button variant="primary" onClick={() => setShowModal(true)}>
+                                            Add Staff
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {usersByDepartment.length === 0 ? (
+                                <NoDataTable img={'../assets/images/no-data.svg'} text={'No Users Found!'} />
+                            ) : (
+                                usersByDepartment.map((deptGroup) => (
+                                    <div key={deptGroup.departmentId} className="mb-5">
+                                        <h5 className="mb-3 h6" style={{ fontSize: '18px' }}>{deptGroup.departmentName}</h5>
+                                        <DataTable
+                                            columns={columns}
+                                            data={deptGroup.users}
+                                            pagination
+                                            paginationPerPage={15}
+                                            highlightOnHover
+                                            responsive
+                                            striped
+                                            fixedHeader
+                                        />
                                     </div>
-                                }
-                                noDataComponent={
-                                    <NoDataTable img={'../assets/images/no-data.svg'} text={'No Users Found!'} />
-                                }
-                            />
-                        )
-                    }
+                                ))
+                            )}
+                        </>
+                    )}
                 </Card.Body>
             </Card>
 

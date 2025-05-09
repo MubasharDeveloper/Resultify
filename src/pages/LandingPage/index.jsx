@@ -21,7 +21,7 @@ import {
   faInstagram
 } from '@fortawesome/free-brands-svg-icons';
 import { useAuth } from "../../context/AuthContext";
-import './LandingPage.css';
+import './index.css';
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 const ResultifyLandingPage = () => {
@@ -244,7 +244,7 @@ const ResultifyLandingPage = () => {
           </div>
         </div>
         <div className="hero-image fade-in delay-3">
-          <img src="https://cdn.dribbble.com/users/1787323/screenshots/11310842/media/4cd5d6a5a7d1c5a4d3a0f5e8e5e5e5e5.png" alt="Result Management Dashboard" />
+          <img src='assets/images/dashboard-1.png' alt="Result Management Dashboard" />
         </div>
         <div className="hero-bg"></div>
       </section>
@@ -361,7 +361,7 @@ const ResultifyLandingPage = () => {
           </div>
         </div>
         <div className="footer-bottom fade-in">
-          <p>&copy; 2023 Resultify. All rights reserved.</p>
+          <p>&copy; 2025 Resultify. All rights reserved.</p>
         </div>
       </footer>
     </div>

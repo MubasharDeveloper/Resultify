@@ -442,23 +442,21 @@ const Subjects = () => {
                             highlightOnHover
                             responsive
                             fixedHeader
-                            subHeader
                             striped
-                            subHeaderComponent={
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Search subjects..."
-                                    className="w-25"
-                                    value={searchText}
-                                    onChange={(e) => setSearchText(e.target.value)}
-                                />
-                            }
                             title={
-                                <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                                    <h5 className="mb-0 h6">Subjects</h5>
-                                    <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
-                                        Add Subjects
-                                    </Button>
+                                <div className="d-flex justify-content-end align-items-center mb-4">
+                                    <div className="d-flex gap-3 align-items-center">
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search subjects..."
+                                            className="w-auto"
+                                            value={searchText}
+                                            onChange={(e) => setSearchText(e.target.value)}
+                                        />
+                                        <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
+                                            Add Subjects
+                                        </Button>
+                                    </div>
                                 </div>
                             }
                             noDataComponent={

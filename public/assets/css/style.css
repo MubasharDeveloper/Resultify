@@ -156,16 +156,16 @@
   --font-sm: 0.875rem;
   --font-xs: 0.75rem;
   --font-xxs: 0.625rem;
-  --primary-50: #e4f1ff;
-  --primary-100: #bfdcff;
-  --primary-200: #95c7ff;
-  --primary-300: #6bb1ff;
-  --primary-400: #519fff;
-  --primary-500: #458eff;
-  --primary-600: #487fff;
-  --primary-700: #486cea;
-  --primary-800: #4759d6;
-  --primary-900: #4536b6;
+  --primary-50: #cfd4ff;
+  --primary-100: #afb7ff;
+  --primary-200: #8f9aff;
+  --primary-300: #707dff;
+  --primary-400: #5060ff;
+  --primary-500: #3044ff;
+  --primary-600: #1027ff;
+  --primary-700: #0017ef;
+  --primary-800: #0014cf;
+  --primary-900: #0011af;
   --neutral-50: #f5f6fa;
   --neutral-100: #f3f4f6;
   --neutral-200: #ebecef;
@@ -1386,7 +1386,7 @@ th {
 }
 
 .text-info-main {
-  color: var(--info-main);
+  color: var(--primary-600);
 }
 
 .text-info-surface {
@@ -7199,7 +7199,7 @@ h6,
 }
 
 .border-info-main {
-  border-color: var(--info-main) !important;
+  border-color: var(--primary-600) !important;
 }
 
 .border-info-surface {
@@ -8535,11 +8535,7 @@ h6,
 
 .btn.btn-sm {
   padding: 8px 12px 8px 10px !important;
-   !i;
-   !;
   font-size: 13px !important;
-   !i;
-   !;
 }
 
 .btn-success {
@@ -14126,7 +14122,7 @@ td.fc-header-center {
 }
 
 .auth-left {
-  background: linear-gradient(90deg, #ecf0ff 0%, #fafbff 100%);
+  background: #fff;
   width: 50%;
 }
 
@@ -14148,8 +14144,7 @@ td.fc-header-center {
 }
 
 .auth.forgot-password-page .auth-left {
-  background: var(--gradients-Colors-gradients-2,
-      linear-gradient(90deg, #f7e9ff 0.12%, #fdf8f7 99.89%));
+  background: #fff;
 }
 
 .center-border-horizontal {
@@ -15228,13 +15223,14 @@ td.fc-header-center {
 /* === trail card end === */
 /* === navbar css start === */
 .navbar-header {
-  height: 60px;
+  height: 61px;
   background-color: var(--white);
   position: sticky;
   top: 0;
   padding: 10px 16px;
   z-index: 2;
-  box-shadow: -5px 0 14px 1px #c7c7c7;
+  border-bottom: 1px solid var(--neutral-200);
+  /* box-shadow: 0 0 1px 1px #e4e4e4; */
 }
 
 .sidebar-toggle,
@@ -15297,8 +15293,6 @@ td.fc-header-center {
   background-color: var(--neutral-50);
   border: 2px solid var(--input-form-light);
   border-radius: 8px !important;
-   !i;
-   !;
   -webkit-border-radius: 0.5rem;
   -moz-border-radius: 0.5rem;
   -ms-border-radius: 0.5rem;
@@ -15503,7 +15497,7 @@ td.fc-header-center {
 }
 
 .sidebar-logo img {
-  max-height: 46px;
+  max-height: 34px;
 }
 
 .sidebar-logo img.dark-logo {
@@ -16045,4 +16039,19 @@ h2.swal2-title {
 
 .index-99{
   z-index: 99 !important;
+}
+
+.h6{
+  font-size: 18px !important;
+}
+
+
+::-moz-selection { /* Code for Firefox */
+  color: #fff !important;
+  background: #000 !important;
+}
+
+::selection {
+  color: #fff !important;
+  background: #000 !important;
 }

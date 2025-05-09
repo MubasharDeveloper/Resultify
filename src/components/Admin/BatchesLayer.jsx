@@ -544,6 +544,23 @@ const Batches = () => {
         fetchData();
     }, []);
 
+    const batchesByDepartment = useMemo(() => {
+        return activeDepartments.reduce((acc, department) => {
+            const deptBatches = filteredBatches
+                .filter(batch => batch.departmentId === department.id)
+                .sort((a, b) => b.startYear - a.startYear); // Sort by year descending
+
+            if (deptBatches.length > 0) {
+                acc.push({
+                    departmentId: department.id,
+                    departmentName: department.name,
+                    batches: deptBatches
+                });
+            }
+            return acc;
+        }, []);
+    }, [filteredBatches, activeDepartments]);
+
     return (
         <>
             <Card className="basic-data-table py-3">
@@ -551,43 +568,56 @@ const Batches = () => {
                     {loading ? (
                         <CustomLoader size={'80px'} />
                     ) : (
-                        <DataTable
-                            columns={columns}
-                            data={filteredBatches}
-                            pagination
-                            paginationPerPage={15}
-                            highlightOnHover
-                            responsive
-                            fixedHeader
-                            subHeader
-                            striped
-                            subHeaderComponent={
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Search batches..."
-                                    className="w-25"
-                                    value={searchText}
-                                    onChange={(e) => setSearchText(e.target.value)}
-                                />
-                            }
-                            title={
-                                <div className="d-flex justify-content-between align-items-center w-100 pe-2">
-                                    <h5 className="mb-0 h6">Batches</h5>
+                        <>
+                            <div className="d-flex justify-content-end align-items-center mb-4">
+                                <div className="d-flex gap-3 align-items-center">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Search batches..."
+                                        className="w-auto"
+                                        value={searchText}
+                                        onChange={(e) => setSearchText(e.target.value)}
+                                    />
                                     <Button variant="primary" onClick={() => setShowModal(true)}>
-                                        Create Batch
+                                        Add Batch
                                     </Button>
                                 </div>
-                            }
-                            noDataComponent={
+                            </div>
+
+                            {batchesByDepartment.length === 0 ? (
                                 <NoDataTable
                                     img={'../assets/images/no-data.svg'}
                                     text={'No Batches Found!'}
                                 />
-                            }
-                        />
+                            ) : (
+                                batchesByDepartment.map((deptGroup) => (
+                                    <div key={deptGroup.departmentId} className="mb-5">
+                                        <h5 className="mb-3 h6"  style={{ fontSize: '18px' }}>
+                                            {deptGroup.departmentName}
+                                            <span className="text-muted ms-2">
+                                                ({deptGroup.batches.length} {deptGroup.batches.length === 1 ? 'batch' : 'batches'})
+                                            </span>
+                                        </h5>
+                                        <DataTable
+                                            columns={columns}
+                                            data={deptGroup.batches}
+                                            defaultSortField="startYear"
+                                            defaultSortAsc={false}
+                                            pagination
+                                            paginationPerPage={10}
+                                            highlightOnHover
+                                            responsive
+                                            striped
+                                            fixedHeader
+                                        />
+                                    </div>
+                                ))
+                            )}
+                        </>
                     )}
                 </Card.Body>
             </Card>
+
 
             {/* Create Batch Modal */}
             <Modal show={showModal} centered onHide={handleCloseModal} size='lg'>
@@ -782,7 +812,7 @@ const Batches = () => {
                                         </h5>
                                     </div>
                                 </div>
-                                
+
                                 {selectedBatchSubjects?.length > 0 ? (
                                     <Row className='gy-4 gx-3'>
                                         {[...selectedBatchSubjects]
@@ -858,7 +888,7 @@ const Batches = () => {
                                             })
                                         }
                                     </Row>
-                                ):(
+                                ) : (
                                     <NoDataTable
                                         img={'../assets/images/no-data.svg'}
                                         text={'No Road Map Found!'}
