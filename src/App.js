@@ -24,6 +24,7 @@ import Batches from "./pages/Admin/Batches";
 import Subjects from "./pages/Admin/Subjects";
 import Semesters from "./pages/Admin/Semesters";
 import Users from "./pages/Admin/Users";
+import TimeTable from "./pages/Admin/TimeTable";
 import Profile from "./pages/Profile/Profile";
 
 
@@ -108,6 +109,12 @@ function App() {
             <Route exact path='/semesters' element={
               <PrivateRoute allowedRoles={['HOD']}>
                 <Semesters />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/leactures' element={
+              <PrivateRoute allowedRoles={['HOD']}>
+                <TimeTable />
               </PrivateRoute>
             } />
 

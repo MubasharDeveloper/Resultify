@@ -224,6 +224,15 @@ const MasterLayout = ({ children }) => {
                       <span>Manage Staff</span>
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to='/leactures'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Leactures</span>
+                    </NavLink>
+                  </li>
                 </>
               ) : ('')
             }
