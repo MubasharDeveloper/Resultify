@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
 
 import AdminDashboard from "./pages/Dashboards/AdminDashboard";
+import ManageRequests from "./pages/Admin/ManageRequests";
 import HodDashboard from "./pages/Dashboards/HodDashboard";
 import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
 
@@ -79,6 +80,12 @@ function App() {
             <Route exact path='/departments' element={
               <PrivateRoute allowedRoles={['Admin']}>
                 <Departments />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/manage-requests' element={
+              <PrivateRoute allowedRoles={['Admin']}>
+                <ManageRequests />
               </PrivateRoute>
             } />
 

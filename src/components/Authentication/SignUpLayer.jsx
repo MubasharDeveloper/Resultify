@@ -73,6 +73,11 @@ const SignUpLayer = () => {
         email: signUpData.email.toLowerCase(),
         password: signUpData.password,
         status: false,
+        departmentId: '',
+        roleId: '',
+        name: '',
+        phone: '',
+        gen: '',
       });
 
       toast.success("User registered successfully!", {

@@ -169,7 +169,16 @@ const MasterLayout = ({ children }) => {
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
                       <Icon icon='mage:email' className='menu-icon' />
-                      <span>Manage Staff</span>
+                      <span>Staff</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/manage-requests'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Login Requests</span>
                     </NavLink>
                   </li>
                 </>
@@ -221,7 +230,7 @@ const MasterLayout = ({ children }) => {
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
                       <Icon icon='mage:email' className='menu-icon' />
-                      <span>Manage Staff</span>
+                      <span>Staff</span>
                     </NavLink>
                   </li>
                   <li>
