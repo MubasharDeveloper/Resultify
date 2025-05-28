@@ -16055,3 +16055,11 @@ h2.swal2-title {
   color: #fff !important;
   background: #000 !important;
 }
+
+.fs-20{
+  font-size: 20px !important;
+}
+
+.fw-500{
+  font-weight: 500 !important;
+}
