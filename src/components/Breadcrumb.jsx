@@ -16,7 +16,7 @@ const Breadcrumb = ({ title}) => {
             className='d-flex align-items-center gap-1 hover-text-primary'
           >
             <Icon
-              icon='solar:home-smile-angle-outline'
+              icon='tabler:layout-dashboard'
               className='icon text-lg'
             />
             Dashboard

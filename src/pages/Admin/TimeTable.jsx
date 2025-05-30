@@ -3,7 +3,7 @@ import MasterLayout from "../../masterLayout/MasterLayout";
 import Breadcrumb from "../../components/Breadcrumb";
 import TimeTableLayer from "../../components/Admin/TimeTableLayer";
 
-const Subjects = () => {
+const TimeTable = () => {
   return (
     <>
       <MasterLayout>
@@ -14,4 +14,4 @@ const Subjects = () => {
   );
 };
 
-export default Subjects; 
+export default TimeTable; 

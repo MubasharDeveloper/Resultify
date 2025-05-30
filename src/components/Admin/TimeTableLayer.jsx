@@ -13,7 +13,7 @@ import { Icon } from '@iconify/react';
 const SET_A_SEMESTERS = ['Semester 1', 'Semester 2', 'Semester 5', 'Semester 6'];
 const SET_B_SEMESTERS = ['Semester 3', 'Semester 4', 'Semester 7', 'Semester 8'];
 
-const AssignSubjectsComponent = () => {
+const TimeTableLayer = () => {
   const { user } = useAuth();
   const [setASemesters, setSetASemesters] = useState([]);
   const [setBSemesters, setSetBSemesters] = useState([]);
@@ -412,4 +412,4 @@ const AssignSubjectsComponent = () => {
   );
 };
 
-export default AssignSubjectsComponent;
+export default TimeTableLayer;

@@ -139,7 +139,7 @@ const MasterLayout = ({ children }) => {
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
                       <Icon
-                        icon='solar:home-smile-angle-outline'
+                        icon='tabler:layout-dashboard'
                         className='menu-icon'
                       />
                       <span>Dashboard</span>
@@ -150,7 +150,7 @@ const MasterLayout = ({ children }) => {
                       to='/departments'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='mage:email' className='menu-icon' />
+                      <Icon icon='tabler:building-skyscraper' className='menu-icon' />
                       <span>Departments</span>
                     </NavLink>
                   </li>
@@ -159,7 +159,7 @@ const MasterLayout = ({ children }) => {
                       to='/batches'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='mage:email' className='menu-icon' />
+                      <Icon icon='material-symbols:shield-outline' className='menu-icon' />
                       <span>Batch</span>
                     </NavLink>
                   </li>
@@ -168,7 +168,7 @@ const MasterLayout = ({ children }) => {
                       to='/manage-users'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='mage:email' className='menu-icon' />
+                      <Icon icon='solar:user-linear' className='menu-icon' />
                       <span>Staff</span>
                     </NavLink>
                   </li>
@@ -177,7 +177,7 @@ const MasterLayout = ({ children }) => {
                       to='/manage-requests'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='mage:email' className='menu-icon' />
+                      <Icon icon='tabler:login' className='menu-icon' />
                       <span>Login Requests</span>
                     </NavLink>
                   </li>
@@ -191,7 +191,7 @@ const MasterLayout = ({ children }) => {
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
                       <Icon
-                        icon='solar:home-smile-angle-outline'
+                        icon='tabler:layout-dashboard'
                         className='menu-icon'
                       />
                       <span>Dashboard</span>
@@ -518,7 +518,7 @@ const MasterLayout = ({ children }) => {
                               className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
                               onClick={logout}
                             >
-                              <Icon icon='lucide:power' className='icon text-xl' />{" "}
+                              <Icon icon='tabler:logout' className='icon text-xl' />{" "}
                               Log Out
                             </Button>
                           </li>

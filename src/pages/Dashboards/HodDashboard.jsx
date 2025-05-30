@@ -2,7 +2,7 @@ import React from "react";
 import MasterLayout from "../../masterLayout/MasterLayout";
 import Breadcrumb from "../../components/Breadcrumb";
 
-const HomePageOne = () => {
+const HodDashboard = () => {
   return (
     <>
       <MasterLayout>
@@ -12,4 +12,4 @@ const HomePageOne = () => {
   );
 };
 
-export default HomePageOne;
+export default HodDashboard;
