@@ -168,7 +168,7 @@ const MasterLayout = ({ children }) => {
                       to='/manage-users'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='solar:user-linear' className='menu-icon' />
+                      <Icon icon='solar:shield-user-linear' className='menu-icon' />
                       <span>Staff</span>
                     </NavLink>
                   </li>
@@ -229,7 +229,7 @@ const MasterLayout = ({ children }) => {
                       to='/manage-users'
                       className={(navData) => (navData.isActive ? "active-page" : "")}
                     >
-                      <Icon icon='mage:email' className='menu-icon' />
+                      <Icon icon='solar:shield-user-linear' className='menu-icon' />
                       <span>Staff</span>
                     </NavLink>
                   </li>
@@ -476,7 +476,7 @@ const MasterLayout = ({ children }) => {
                                 to='/profile'
                               >
                                 <Icon
-                                  icon='solar:user-linear'
+                                  icon='solar:user-id-linear'
                                   className='icon text-xl'
                                 />{" "}
                                 My Profile
@@ -497,20 +497,6 @@ const MasterLayout = ({ children }) => {
                           </>
                         )
                       }
-
-                      {/* <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                          to='/company'
-                        >
-                          <Icon
-                            icon='icon-park-outline:setting-two'
-                            className='icon text-xl'
-                          />
-                          Setting
-                        </Link>
-                      </li> */}
-
                       {
                         user ? (
                           <li>

@@ -474,9 +474,9 @@ const Batches = () => {
             selector: row => row.name,
             cell: row => (
                 <span
-                    className={`${currentYear === row.startYear
+                    className={`${currentYear >= row.startYear && currentYear <= row.endYear
                         ? 'bg-success-focus text-success-main border-success-main'
-                        : currentYear > row.startYear
+                        : currentYear > row.endYear
                             ? 'bg-danger-focus text-danger-main border-danger-main'
                             : 'bg-warning-focus text-warning-main border-warning-main'
                         } border px-8 py-2 radius-4 fw-medium text-sm`

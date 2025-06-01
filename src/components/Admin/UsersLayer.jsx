@@ -163,12 +163,12 @@ const UsersLayer = () => {
                 const allRolesSnap = await getDocs(collection(db, "Roles"));
                 roleSnap = {
                     docs: allRolesSnap.docs.filter(doc =>
-                        ['HOD', 'Teacher'].includes(doc.data().name)
+                        ['HOD', 'Teacher', 'Data Operator'].includes(doc.data().name)
                     ),
                 };
 
                 // ✅ Fetch users with matching departmentId and allowed roleIds
-                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM', 'tEF0AQzYzwEXhYTqopat']; // HOD & Teacher Role IDs
                 const usersQuery = query(
                     collection(db, "Users"),
                     where("roleId", "in", allowedRoleIds)
@@ -196,12 +196,12 @@ const UsersLayer = () => {
                 const allRolesSnap = await getDocs(collection(db, "Roles"));
                 roleSnap = {
                     docs: allRolesSnap.docs.filter(doc =>
-                        ['Teacher'].includes(doc.data().name)
+                        ['Teacher', 'Data Operator'].includes(doc.data().name)
                     ),
                 };
 
                 // ✅ Fetch users with matching departmentId and allowed roleIds
-                const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM', 'tEF0AQzYzwEXhYTqopat']; // HOD & Teacher Role IDs
                 const usersQuery = query(
                     collection(db, "Users"),
                     where("departmentId", "==", user.departmentId),
@@ -256,12 +256,12 @@ const UsersLayer = () => {
                     const allRolesSnap = await getDocs(collection(db, "Roles"));
                     roleSnap = {
                         docs: allRolesSnap.docs.filter(doc =>
-                            ['HOD', 'Teacher'].includes(doc.data().name)
+                            ['HOD', 'Teacher', 'Data Operator'].includes(doc.data().name)
                         ),
                     };
 
                     // ✅ Fetch users with matching departmentId and allowed roleIds
-                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                    const allowedRoleIds = ['odZ0FFPyMdvbXNFmrIfn', 'k1LBLXK6JLUlL7tblvMM', 'tEF0AQzYzwEXhYTqopat']; // HOD & Teacher Role IDs
                     const usersQuery = query(
                         collection(db, "Users"),
                         where("roleId", "in", allowedRoleIds)
@@ -289,12 +289,12 @@ const UsersLayer = () => {
                     const allRolesSnap = await getDocs(collection(db, "Roles"));
                     roleSnap = {
                         docs: allRolesSnap.docs.filter(doc =>
-                            ['Teacher'].includes(doc.data().name)
+                            ['Teacher', 'Data Operator'].includes(doc.data().name)
                         ),
                     };
 
                     // ✅ Fetch users with matching departmentId and allowed roleIds
-                    const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM']; // HOD & Teacher Role IDs
+                    const allowedRoleIds = ['k1LBLXK6JLUlL7tblvMM', 'tEF0AQzYzwEXhYTqopat']; // HOD & Teacher Role IDs
                     const usersQuery = query(
                         collection(db, "Users"),
                         where("departmentId", "==", user.departmentId),
@@ -500,13 +500,32 @@ const UsersLayer = () => {
         }
 
         // Check if the department already has an HOD
-        if (userForm.roleId === roles.find(role => role.name === 'HOD')?.id) {
+        const hodRoleId = roles.find(role => role.name === 'HOD')?.id;
+        if (hodRoleId && userForm.roleId === hodRoleId) {
             const existingHOD = users.find(
-                user => user.departmentId === userForm.departmentId && user.roleId === roles.find(role => role.name === 'HOD')?.id
+                user => user.departmentId === userForm.departmentId && user.roleId === hodRoleId
             );
 
             if (existingHOD) {
                 toast.error('This department already has an HOD!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "light",
+                    transition: Slide,
+                });
+                return;
+            }
+        }
+
+        // Check if the department already has a Data Operator
+        const dataOperatorRoleId = roles.find(role => role.name === 'Data Operator')?.id;
+        if (dataOperatorRoleId && userForm.roleId === dataOperatorRoleId) {
+            const existingDataOperator = users.find(
+                user => user.departmentId === userForm.departmentId && user.roleId === dataOperatorRoleId
+            );
+
+            if (existingDataOperator) {
+                toast.error('This department already has a Data Operator!', {
                     position: "top-right",
                     autoClose: 3000,
                     theme: "light",
@@ -560,6 +579,46 @@ const UsersLayer = () => {
         if (Object.keys(errors).length > 0) {
             setUpdateFormErrors(errors);
             return;
+        }
+
+        // Check if the department already has an HOD (excluding the current user being updated if they are HOD)
+        const hodRoleId = roles.find(role => role.name === 'HOD')?.id;
+        if (hodRoleId && updateForm.roleId === hodRoleId) {
+            const existingHOD = users.find(
+                user => user.id !== selectedUserId && 
+                        user.departmentId === updateForm.departmentId &&
+                        user.roleId === hodRoleId
+            );
+
+            if (existingHOD) {
+                toast.error('This department already has an HOD!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "light",
+                    transition: Slide,
+                });
+                return;
+            }
+        }
+
+        // Check if the department already has a Data Operator (excluding the current user being updated)
+        const dataOperatorRoleId = roles.find(role => role.name === 'Data Operator')?.id;
+        if (dataOperatorRoleId && updateForm.roleId === dataOperatorRoleId) {
+            const existingDataOperator = users.find(
+                user => user.id !== selectedUserId &&
+                        user.departmentId === updateForm.departmentId &&
+                        user.roleId === dataOperatorRoleId
+            );
+
+            if (existingDataOperator) {
+                toast.error('This department already has a Data Operator!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "light",
+                    transition: Slide,
+                });
+                return;
+            }
         }
 
         setIsUserLoading(true);
@@ -685,7 +744,7 @@ const UsersLayer = () => {
                     className={`${getRoleName(row.roleId) === 'Admin'
                         ? 'bg-success-focus text-success-main border-success-main'
                         : getRoleName(row.roleId) === 'HOD'
-                            ? 'bg-info-focus text-info-main border-info-main'
+                            ? 'bg-success-focus text-success-main border-success-main'
                             : getRoleName(row.roleId) === 'Teacher'
                                 ? 'bg-warning-focus text-warning-main border-warning-main'
                                 : 'bg-danger-focus text-danger-main border-danger-main'

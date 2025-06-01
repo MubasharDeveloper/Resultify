@@ -398,148 +398,152 @@ const AdminDashboardLayer = () => {
       ) : (
         <Row className="g-3">
           <Col md={12}>
-            <div className="row row-cols-xxxl-5 row-cols-lg-3 row-cols-sm-2 row-cols-1 g-3">
-              <div className="col">
-                <div className="card shadow-none border bg-gradient-start-1">
-                  <div className="card-body p-20">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                      <div>
-                        <p className="fw-medium text-primary-light mb-1">
-                          Total Staff
+            <Card>
+              <Card.Body>
+                <div className="row row-cols-xxxl-5 row-cols-lg-3 row-cols-sm-2 row-cols-1 g-3">
+                  <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-1">
+                      <div className="card-body p-20">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                          <div>
+                            <p className="fw-medium text-primary-light mb-1">
+                              Total Staff
+                            </p>
+                            <h6 className="mb-0">{totalStaff}</h6>
+                          </div>
+                          <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+                            <Icon
+                              icon="gridicons:multiple-users"
+                              className="text-base text-2xl mb-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
+                          <span className="text-success-main">
+                            <Icon icon="bxs:up-arrow" className="text-xs d-block" />
+                            +5000
+                          </span>
+                          {" "} Last 30 days users
                         </p>
-                        <h6 className="mb-0">{totalStaff}</h6>
-                      </div>
-                      <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
-                        <Icon
-                          icon="gridicons:multiple-users"
-                          className="text-base text-2xl mb-0"
-                        />
                       </div>
                     </div>
-                    <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
-                      <span className="text-success-main">
-                        <Icon icon="bxs:up-arrow" className="text-xs d-block" />
-                        +5000
-                      </span>
-                      {" "} Last 30 days users
-                    </p>
+                    {/* card end */}
                   </div>
-                </div>
-                {/* card end */}
-              </div>
-              <div className="col">
-                <div className="card shadow-none border bg-gradient-start-2">
-                  <div className="card-body p-20">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                      <div>
-                        <p className="fw-medium text-primary-light mb-1">
-                          Pending Requests
+                  <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-2">
+                      <div className="card-body p-20">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                          <div>
+                            <p className="fw-medium text-primary-light mb-1">
+                              Pending Requests
+                            </p>
+                            <h6 className="mb-0">{pendingRequests}</h6>
+                          </div>
+                          <div className="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
+                            <Icon
+                              icon="fa-solid:award"
+                              className="text-base text-2xl mb-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
+                          <span className="text-danger-main">
+                            <Icon icon="bxs:down-arrow" className="text-xs d-block" />
+                            -800
+                          </span>
+                          {" "} Last 30 days subscription
                         </p>
-                        <h6 className="mb-0">{pendingRequests}</h6>
-                      </div>
-                      <div className="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
-                        <Icon
-                          icon="fa-solid:award"
-                          className="text-base text-2xl mb-0"
-                        />
                       </div>
                     </div>
-                    <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
-                      <span className="text-danger-main">
-                        <Icon icon="bxs:down-arrow" className="text-xs d-block" />
-                        -800
-                      </span>
-                      {" "} Last 30 days subscription
-                    </p>
+                    {/* card end */}
                   </div>
-                </div>
-                {/* card end */}
-              </div>
-              <div className="col">
-                <div className="card shadow-none border bg-gradient-start-3">
-                  <div className="card-body p-20">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                      <div>
-                        <p className="fw-medium text-primary-light mb-1">
-                          Departments
+                  <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-3">
+                      <div className="card-body p-20">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                          <div>
+                            <p className="fw-medium text-primary-light mb-1">
+                              Departments
+                            </p>
+                            <h6 className="mb-0">{totalDepartments}</h6>
+                          </div>
+                          <div className="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
+                            <Icon
+                              icon="fluent:people-20-filled"
+                              className="text-base text-2xl mb-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
+                          <span className="text-success-main">
+                            <Icon icon="bxs:up-arrow" className="text-xs d-block" />
+                            +200
+                          </span>
+                          {" "} Last 30 days users
                         </p>
-                        <h6 className="mb-0">{totalDepartments}</h6>
-                      </div>
-                      <div className="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-                        <Icon
-                          icon="fluent:people-20-filled"
-                          className="text-base text-2xl mb-0"
-                        />
                       </div>
                     </div>
-                    <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
-                      <span className="text-success-main">
-                        <Icon icon="bxs:up-arrow" className="text-xs d-block" />
-                        +200
-                      </span>
-                      {" "} Last 30 days users
-                    </p>
+                    {/* card end */}
                   </div>
-                </div>
-                {/* card end */}
-              </div>
-              <div className="col">
-                <div className="card shadow-none border bg-gradient-start-4">
-                  <div className="card-body p-20">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                      <div>
-                        <p className="fw-medium text-primary-light mb-1">
-                          Total Batches
+                  <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-4">
+                      <div className="card-body p-20">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                          <div>
+                            <p className="fw-medium text-primary-light mb-1">
+                              Total Batches
+                            </p>
+                            <h6 className="mb-0">{totalBatches}</h6>
+                          </div>
+                          <div className="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
+                            <Icon
+                              icon="solar:wallet-bold"
+                              className="text-base text-2xl mb-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
+                          <span className="text-success-main">
+                            <Icon icon="bxs:up-arrow" className="text-xs d-block" />
+                            +$20,000
+                          </span>
+                          {" "} Last 30 days income
                         </p>
-                        <h6 className="mb-0">{totalBatches}</h6>
-                      </div>
-                      <div className="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
-                        <Icon
-                          icon="solar:wallet-bold"
-                          className="text-base text-2xl mb-0"
-                        />
                       </div>
                     </div>
-                    <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
-                      <span className="text-success-main">
-                        <Icon icon="bxs:up-arrow" className="text-xs d-block" />
-                        +$20,000
-                      </span>
-                      {" "} Last 30 days income
-                    </p>
+                    {/* card end */}
                   </div>
-                </div>
-                {/* card end */}
-              </div>
-              <div className="col">
-                <div className="card shadow-none border bg-gradient-start-5">
-                  <div className="card-body p-20">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                      <div>
-                        <p className="fw-medium text-primary-light mb-1">
-                          Total Students
+                  <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-5">
+                      <div className="card-body p-20">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                          <div>
+                            <p className="fw-medium text-primary-light mb-1">
+                              Total Students
+                            </p>
+                            <h6 className="mb-0">{totalStudents}</h6>
+                          </div>
+                          <div className="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
+                            <Icon
+                              icon="fa6-solid:file-invoice-dollar"
+                              className="text-base text-2xl mb-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
+                          <span className="text-success-main">
+                            <Icon icon="bxs:up-arrow" className="text-xs d-block" />
+                            +$5,000
+                          </span>
+                          {" "} Last 30 days expense
                         </p>
-                        <h6 className="mb-0">{totalStudents}</h6>
-                      </div>
-                      <div className="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
-                        <Icon
-                          icon="fa6-solid:file-invoice-dollar"
-                          className="text-base text-2xl mb-0"
-                        />
                       </div>
                     </div>
-                    <p className="fw-medium text-sm text-primary-light mt-12 mb-0">
-                      <span className="text-success-main">
-                        <Icon icon="bxs:up-arrow" className="text-xs d-block" />
-                        +$5,000
-                      </span>
-                      {" "} Last 30 days expense
-                    </p>
+                    {/* card end */}
                   </div>
                 </div>
-                {/* card end */}
-              </div>
-            </div>
+              </Card.Body>
+            </Card>
           </Col>
           {/* Placeholder for Graphs */}
           <Col md={12}>
