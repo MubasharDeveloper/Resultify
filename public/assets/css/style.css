@@ -13021,7 +13021,7 @@ select option {
 }
 
 .card .card-body {
-  padding: 0.875rem 1.5rem;
+  padding: 1rem;
   color: var(--text-secondary-light);
 }
 

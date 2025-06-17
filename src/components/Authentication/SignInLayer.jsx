@@ -172,6 +172,7 @@ const SignInLayer = () => {
           if (roleName === 'Admin') navigate('/admin-dashboard');
           else if (roleName === 'HOD') navigate('/hod-dashboard');
           else if (roleName === 'Teacher') navigate('/teacher-dashboard');
+          else if (roleName === 'Data Operator') navigate('/dashboard');
         },
       });
 

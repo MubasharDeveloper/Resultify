@@ -288,7 +288,7 @@ const TimeTableLayer = () => {
               <option value="">Select Teacher</option>
               {teachers.map((teacher) => (
                 <option key={teacher.id} value={teacher.id}>
-                  {`${teacher.name} - ${getRoleName(teacher.roleId)}`}
+                  {`${teacher.name} - (${getRoleName(teacher.roleId)})`}
                 </option>
               ))}
             </Form.Select>

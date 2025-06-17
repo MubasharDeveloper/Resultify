@@ -11,7 +11,7 @@ const MasterLayout = ({ children }) => {
   const location = useLocation(); // Hook to get the current route
   const { user, logout } = useAuth();
 
-  
+
   useEffect(() => {
     const handleDropdownClick = (event) => {
       event.preventDefault();
@@ -243,7 +243,43 @@ const MasterLayout = ({ children }) => {
                     </NavLink>
                   </li>
                 </>
-              ) : ('')
+              ) : user.roleName === 'Teacher' ? (
+                ''
+              ) : user.roleName === 'Data Operator' && (
+                <>
+                  <li className='sidebar-menu-group-title'>Data Operator</li>
+                  <li>
+                    <NavLink
+                      to='/dashboard'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon
+                        icon='tabler:layout-dashboard'
+                        className='menu-icon'
+                      />
+                      <span>Dashboard</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/add-students'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Admissions</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to='/subjects'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Subjects</span>
+                    </NavLink>
+                  </li>
+                </>
+              )
             }
           </ul>
         </div>

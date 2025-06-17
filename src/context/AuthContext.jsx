@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     Admin: "/admin-dashboard",
     HOD: "/hod-dashboard",
     Teacher: "/teacher-dashboard",
+    'Data Operator': "/dashboard",
   };
 
   const updateUser = (updatedData) => {

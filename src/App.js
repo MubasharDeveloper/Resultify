@@ -17,6 +17,9 @@ import AdminDashboard from "./pages/Dashboards/AdminDashboard";
 import ManageRequests from "./pages/Admin/ManageRequests";
 import HodDashboard from "./pages/Dashboards/HodDashboard";
 import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
+import Dashboard from "./pages/Dashboards/Dashboard";
+
+import AddStudent from "./pages/DataOperator/AddStudent";
 
 import LandingPage from "./pages/LandingPage/index";
 
@@ -30,9 +33,6 @@ import Profile from "./pages/Profile/Profile";
 
 
 const Loader = () => (
-  // <div className="loader-container">
-  //    <div className="spinner"></div>
-  // </div>
   <div id="preloader">
     <div id="loader"></div>
   </div>
@@ -108,7 +108,7 @@ function App() {
             } />
 
             <Route exact path='/subjects' element={
-              <PrivateRoute allowedRoles={['HOD']}>
+              <PrivateRoute allowedRoles={['HOD', 'Data Operator']}>
                 <Subjects />
               </PrivateRoute>
             } />
@@ -134,6 +134,18 @@ function App() {
             <Route exact path='/profile' element={
               <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher']}>
                 <Profile />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/dashboard' element={
+              <PrivateRoute allowedRoles={['Data Operator']}>
+                <Dashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/add-students' element={
+              <PrivateRoute allowedRoles={['Data Operator']}>
+                <AddStudent />
               </PrivateRoute>
             } />
 
