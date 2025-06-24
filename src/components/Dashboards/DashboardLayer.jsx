@@ -130,11 +130,10 @@ const HodDashboardLayer = () => {
       // Consider a separate loading state for stats if needed
       // setLoading(true); 
       try {
-        const usersRef = collection(db, "Users");
 
         // Fetch total teachers (assuming roleId '2' is for teachers)
         const teachersQuery = query(
-          usersRef,
+          collection(db, "Users"),
           where("departmentId", "==", user.departmentId),
           where("roleId", "==", "k1LBLXK6JLUlL7tblvMM") // Role ID for Teachers
         );
@@ -143,9 +142,8 @@ const HodDashboardLayer = () => {
 
         // Fetch total students (assuming roleId '3' is for students)
         const studentsQuery = query(
-          usersRef,
+          collection(db, "Students"),
           where("departmentId", "==", user.departmentId),
-          where("roleId", "==", "3") // Role ID for Students
         );
         const studentsSnap = await getDocs(studentsQuery);
         setTotalStudents(studentsSnap.size);
