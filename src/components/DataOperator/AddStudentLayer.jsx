@@ -5,9 +5,7 @@ import {
     Row,
     Col,
     Spinner,
-    Card,
-    Toast,
-    ToastContainer
+    Card
 } from 'react-bootstrap';
 import {
     collection,
@@ -19,19 +17,20 @@ import {
 } from 'firebase/firestore';
 import { db, doc, getDoc } from '../../Firebase_config';
 import { useAuth } from "../../context/AuthContext";
+import { toast } from 'react-toastify';
+import { Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StudentCreationForm = () => {
     // State management
     const [batches, setBatches] = useState([]);
     const [loadingBatches, setLoadingBatches] = useState(true);
-    const [departmentName, setDepartmentName] = useState('');
     const { user } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
         cnic: '',
-        departmentId: user?.departmentId || '',
         batchId: '',
         batchTime: '',
         rollNumber: '',
@@ -44,11 +43,6 @@ const StudentCreationForm = () => {
     });
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
-    const [showToast, setShowToast] = useState({
-        show: false,
-        message: '',
-        variant: 'success'
-    });
 
     // Fetch data on component mount
     useEffect(() => {
@@ -56,11 +50,6 @@ const StudentCreationForm = () => {
             if (!user?.departmentId) return;
 
             try {
-                // Fetch department name
-                const deptDocRef = doc(db, "Departments", user.departmentId);
-                const deptDocSnap = await getDoc(deptDocRef);
-                setDepartmentName(deptDocSnap.exists() ? deptDocSnap.data().name : 'Unknown Department');
-
                 // Fetch batches
                 const currentYear = new Date().getFullYear();
                 const batchesQuery = query(
@@ -87,7 +76,12 @@ const StudentCreationForm = () => {
                 setBatches(processedBatches);
             } catch (err) {
                 console.error('Error fetching data:', err);
-                showNotification('Failed to load required data', 'danger');
+                toast.error('Failed to load required data', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "light",
+                    transition: Slide,
+                });
             } finally {
                 setLoadingBatches(false);
             }
@@ -97,99 +91,146 @@ const StudentCreationForm = () => {
     }, [user]);
 
     // Helper functions
-    const showNotification = (message, variant = 'success') => {
-        setShowToast({ show: true, message, variant });
-        setTimeout(() => setShowToast(prev => ({ ...prev, show: false })), 5000);
+    const formatName = (value) => {
+        return value.replace(/[^a-zA-Z\s]/g, '')
+            .replace(/\s+/g, ' ')
+            .replace(/(^\w|\s\w)/g, m => m.toUpperCase());
     };
 
-    const validateName = (name) => name.replace(/[^a-zA-Z\s]/g, '');
+    const formatPhone = (value) => {
+        let cleaned = value.replace(/\D/g, '');
 
-    const validatePhone = (phone) => {
-        let cleaned = phone.replace(/\D/g, '');
         if (cleaned.length > 0 && !cleaned.startsWith('03')) {
             cleaned = '03' + cleaned.substring(2);
         }
-        return cleaned.substring(0, 11);
+
+        cleaned = cleaned.substring(0, 12);
+
+        if (cleaned.length > 4) {
+            cleaned = cleaned.substring(0, 4) + '-' + cleaned.substring(4);
+        }
+
+        return cleaned;
     };
 
-    const validateCNIC = (cnic) => {
-        let cleaned = cnic.replace(/\D/g, '');
-        if (cleaned.length > 5) cleaned = cleaned.substring(0, 5) + '-' + cleaned.substring(5);
-        if (cleaned.length > 13) cleaned = cleaned.substring(0, 13) + '-' + cleaned.substring(13);
+    const formatCNIC = (value) => {
+        let cleaned = value.replace(/\D/g, '');
+
+        if (cleaned.length > 5) {
+            cleaned = cleaned.substring(0, 5) + '-' + cleaned.substring(5);
+        }
+
+        if (cleaned.length > 13) {
+            cleaned = cleaned.substring(0, 13) + '-' + cleaned.substring(13);
+        }
+
         return cleaned.substring(0, 15);
     };
 
-    const checkEmailExists = async (email) => {
-        if (!email.includes('@')) return false;
+    const formatRollNumber = (value) => {
+        return value.replace(/\D/g, '').substring(0, 4);
+    };
+
+    const validateEmail = async (email) => {
+        if (!email) return 'Email is required';
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) return 'Invalid email format';
+
         const studentsQuery = query(collection(db, 'Students'), where('email', '==', email));
         const querySnapshot = await getDocs(studentsQuery);
-        return !querySnapshot.empty;
+        if (!querySnapshot.empty) return 'Email already exists';
+
+        return '';
+    };
+
+    const validatePhoneNumber = (phone) => {
+        if (!phone) return 'Phone number is required';
+
+        const digitsOnly = phone.replace(/\D/g, '');
+
+        if (digitsOnly.length !== 11) return 'Must be 11 digits (including 03 prefix)';
+        if (!digitsOnly.startsWith('03')) return 'Must start with 03';
+
+        return '';
+    };
+
+    const validateCNICNumber = async (cnic) => {
+        if (!cnic) return 'CNIC is required';
+
+        const cnicRegex = /^\d{5}-\d{7}-\d$/;
+        if (!cnicRegex.test(cnic)) return 'Must be in XXXXX-XXXXXXX-X format';
+
+        // Check if CNIC exists in database
+        const studentsQuery = query(collection(db, 'Students'), where('cnic', '==', cnic));
+        const querySnapshot = await getDocs(studentsQuery);
+        if (!querySnapshot.empty) return 'CNIC already exists';
+
+        return '';
+    };
+
+    const validateRequiredField = (value, fieldName) => {
+        if (!value || value.trim() === '') return `${fieldName} is required`;
+        return '';
     };
 
     // Form handlers
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         let processedValue = value;
 
         switch (name) {
             case 'name':
             case 'fatherName':
-                processedValue = validateName(value);
+                processedValue = formatName(value);
                 break;
             case 'phone':
-                processedValue = validatePhone(value);
+                processedValue = formatPhone(value);
                 break;
             case 'cnic':
-                processedValue = validateCNIC(value);
+                processedValue = formatCNIC(value);
+                break;
+            case 'rollNumber':
+                processedValue = formatRollNumber(value);
                 break;
         }
 
         setFormData(prev => ({ ...prev, [name]: processedValue }));
 
-        // Clear error when user types
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
-    const validateField = async (name, value) => {
+    const handleBlur = async (e) => {
+        const { name, value } = e.target;
         let error = '';
 
         switch (name) {
             case 'name':
-                if (!value.trim()) error = 'Full name is required';
-                else if (!/^[a-zA-Z\s]+$/.test(value)) error = 'Only letters allowed';
+            case 'fatherName':
+                error = validateRequiredField(value, name === 'name' ? 'Full name' : 'Father\'s name');
                 break;
             case 'email':
-                if (!value.trim()) error = 'Email is required';
-                else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
-                else if (await checkEmailExists(value)) error = 'Email already exists';
+                error = await validateEmail(value);
                 break;
             case 'phone':
-                if (!value) error = 'Phone is required';
-                else if (value.length !== 11) error = 'Must be 11 digits starting with 03';
+                error = validatePhoneNumber(value);
                 break;
             case 'cnic':
-                if (!value) error = 'CNIC is required';
-                else if (value.length !== 15) error = 'Must be in XXXXX-XXXXXXX-X format';
-                break;
-            case 'admissionDate':
-                if (!value) error = 'Admission date is required';
+                error = await validateCNICNumber(value);
                 break;
             case 'batchId':
-                if (!value) error = 'Batch selection is required';
+                error = validateRequiredField(value, 'Batch');
                 break;
             case 'batchTime':
-                if (!value) error = 'Batch schedule is required';
+                error = validateRequiredField(value, 'Batch schedule');
+                break;
+            case 'admissionDate':
+            case 'rollNumber':
                 break;
         }
 
-        return error;
-    };
-
-    const handleBlur = async (e) => {
-        const { name, value } = e.target;
-        const error = await validateField(name, value);
         setErrors(prev => ({ ...prev, [name]: error }));
     };
 
@@ -197,38 +238,51 @@ const StudentCreationForm = () => {
         e.preventDefault();
         setSubmitting(true);
 
-        // Validate all fields
+        // Validate all required fields
         const validationErrors = {};
-        for (const field in formData) {
-            if (['name', 'email', 'phone', 'cnic', 'admissionDate', 'batchId', 'batchTime'].includes(field)) {
-                validationErrors[field] = await validateField(field, formData[field]);
-            }
-        }
+
+        validationErrors.name = validateRequiredField(formData.name, 'Full name');
+        validationErrors.fatherName = validateRequiredField(formData.fatherName, 'Father\'s name');
+        validationErrors.email = await validateEmail(formData.email);
+        validationErrors.phone = validatePhoneNumber(formData.phone);
+        validationErrors.cnic = await validateCNICNumber(formData.cnic);
+        validationErrors.batchId = validateRequiredField(formData.batchId, 'Batch');
+        validationErrors.batchTime = validateRequiredField(formData.batchTime, 'Batch schedule');
 
         setErrors(validationErrors);
 
-        // Check if any errors exist
         if (Object.values(validationErrors).some(error => error)) {
             setSubmitting(false);
-            showNotification('Please fix the errors in the form', 'danger');
+            toast.error('Please fix the errors in the form', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
             return;
         }
 
         try {
             await addDoc(collection(db, 'Students'), {
                 ...formData,
+                departmentId: user.departmentId,
                 createdAt: serverTimestamp(),
-                createdBy: user.uid,
+                createdBy: user.id,
                 updatedAt: serverTimestamp(),
             });
 
-            showNotification('Student created successfully!');
+            toast.success('Student created successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
+
             setFormData({
                 name: '',
                 email: '',
                 phone: '',
                 cnic: '',
-                departmentId: user.departmentId,
                 batchId: '',
                 batchTime: '',
                 rollNumber: '',
@@ -242,7 +296,12 @@ const StudentCreationForm = () => {
             setErrors({});
         } catch (err) {
             console.error('Error creating student:', err);
-            showNotification('Failed to create student: ' + err.message, 'danger');
+            toast.error('Failed to create student: ' + err.message, {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+                transition: Slide,
+            });
         } finally {
             setSubmitting(false);
         }
@@ -262,28 +321,11 @@ const StudentCreationForm = () => {
 
     return (
         <>
-            <ToastContainer position="top-end" className="p-3">
-                <Toast
-                    show={showToast.show}
-                    onClose={() => setShowToast(prev => ({ ...prev, show: false }))}
-                    delay={5000}
-                    autohide
-                    bg={showToast.variant}
-                >
-                    <Toast.Header>
-                        <strong className="me-auto">Notification</strong>
-                    </Toast.Header>
-                    <Toast.Body className="text-white">
-                        {showToast.message}
-                    </Toast.Body>
-                </Toast>
-            </ToastContainer>
-
             <Card className="mt-4">
                 <Card.Body>
                     <Card.Title className="mb-4">Create New Student</Card.Title>
 
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit} noValidate>
                         <Row className="g-3">
                             {/* Name */}
                             <Col sm={6} md={4} lg={3}>
@@ -295,6 +337,7 @@ const StudentCreationForm = () => {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                         className={errors.name ? 'error-field' : ''}
+                                        placeholder="John Doe"
                                     />
                                     {errors.name && (
                                         <div className="error-message">{errors.name}</div>
@@ -305,13 +348,18 @@ const StudentCreationForm = () => {
                             {/* Father's Name */}
                             <Col sm={6} md={4} lg={3}>
                                 <Form.Group>
-                                    <Form.Label>Father's Name</Form.Label>
+                                    <Form.Label>Father's Name *</Form.Label>
                                     <Form.Control
                                         name="fatherName"
                                         value={formData.fatherName}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
                                         className={errors.fatherName ? 'error-field' : ''}
+                                        placeholder="Father's Name"
                                     />
+                                    {errors.fatherName && (
+                                        <div className="error-message">{errors.fatherName}</div>
+                                    )}
                                 </Form.Group>
                             </Col>
 
@@ -325,56 +373,54 @@ const StudentCreationForm = () => {
                                         value={formData.email}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        isInvalid={!!errors.email}
-                                        required
+                                        className={errors.email ? 'error-field' : ''}
+                                        placeholder="example@domain.com"
                                     />
-                                    <div className="invalid-feedback" style={{ display: errors.email ? 'block' : 'none' }}>
-                                        {errors.email}
-                                    </div>
+                                    {errors.email && (
+                                        <div className="error-message">{errors.email}</div>
+                                    )}
                                 </Form.Group>
                             </Col>
 
                             {/* Phone */}
                             <Col sm={6} md={4} lg={3}>
                                 <Form.Group>
-                                    <Form.Label>Phone *</Form.Label>
+                                    <Form.Label className="d-flex align-items-center justify-content-between pe-2">
+                                        <span>Phone*</span>
+                                        <small className="text-muted">Format: 03XX-XXXXXXX</small>
+                                    </Form.Label>
                                     <Form.Control
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        isInvalid={!!errors.phone}
-                                        required
+                                        className={errors.phone ? 'error-field' : ''}
+                                        placeholder="0300-1234567"
                                     />
-                                    <div className="invalid-feedback" style={{ display: errors.phone ? 'block' : 'none' }}>
-                                        {errors.phone}
-                                    </div>
+                                    {errors.phone && (
+                                        <div className="error-message">{errors.phone}</div>
+                                    )}
                                 </Form.Group>
                             </Col>
 
                             {/* CNIC */}
                             <Col sm={6} md={4} lg={3}>
                                 <Form.Group>
-                                    <Form.Label>CNIC *</Form.Label>
+                                    <Form.Label className="d-flex align-items-center justify-content-between pe-2">
+                                        <span>CNIC*</span>
+                                        <small className="text-muted">Format: XXXXX-XXXXXXX-X</small>
+                                    </Form.Label>
                                     <Form.Control
                                         name="cnic"
                                         value={formData.cnic}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        isInvalid={!!errors.cnic}
-                                        required
+                                        className={errors.cnic ? 'error-field' : ''}
+                                        placeholder="12345-1234567-1"
                                     />
-                                    <div className="invalid-feedback" style={{ display: errors.cnic ? 'block' : 'none' }}>
-                                        {errors.cnic}
-                                    </div>
-                                </Form.Group>
-                            </Col>
-
-                            {/* Department */}
-                            <Col sm={6} md={4} lg={3}>
-                                <Form.Group>
-                                    <Form.Label>Department</Form.Label>
-                                    <Form.Control readOnly value={user.departmentId} />
+                                    {errors.cnic && (
+                                        <div className="error-message">{errors.cnic}</div>
+                                    )}
                                 </Form.Group>
                             </Col>
 
@@ -387,16 +433,15 @@ const StudentCreationForm = () => {
                                         value={formData.batchTime}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        isInvalid={!!errors.batchTime}
-                                        required
+                                        className={errors.batchTime ? 'error-field' : ''}
                                     >
                                         <option value="">Select Schedule</option>
                                         <option value="morning">Morning</option>
                                         <option value="evening">Evening</option>
                                     </Form.Select>
-                                    <div className="invalid-feedback" style={{ display: errors.batchTime ? 'block' : 'none' }}>
-                                        {errors.batchTime}
-                                    </div>
+                                    {errors.batchTime && (
+                                        <span className="error-message">{errors.batchTime}</span>
+                                    )}
                                 </Form.Group>
                             </Col>
 
@@ -413,8 +458,7 @@ const StudentCreationForm = () => {
                                                 value={formData.batchId}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
-                                                isInvalid={!!errors.batchId}
-                                                required
+                                                className={errors.batchId ? 'error-field' : ''}
                                             >
                                                 <option value="">Select Batch</option>
                                                 {batches.map(batch => (
@@ -423,9 +467,9 @@ const StudentCreationForm = () => {
                                                     </option>
                                                 ))}
                                             </Form.Select>
-                                            <div className="invalid-feedback" style={{ display: errors.batchId ? 'block' : 'none' }}>
-                                                {errors.batchId}
-                                            </div>
+                                            {errors.batchId && (
+                                                <span className="error-message">{errors.batchId}</span>
+                                            )}
                                         </>
                                     )}
                                 </Form.Group>
@@ -439,6 +483,7 @@ const StudentCreationForm = () => {
                                         name="rollNumber"
                                         value={formData.rollNumber}
                                         onChange={handleChange}
+                                        placeholder="1234"
                                     />
                                 </Form.Group>
                             </Col>
@@ -485,6 +530,7 @@ const StudentCreationForm = () => {
                                         name="dateOfBirth"
                                         value={formData.dateOfBirth}
                                         onChange={handleChange}
+                                        max={new Date().toISOString().split('T')[0]}
                                     />
                                 </Form.Group>
                             </Col>
@@ -498,13 +544,9 @@ const StudentCreationForm = () => {
                                         name="admissionDate"
                                         value={formData.admissionDate}
                                         onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.admissionDate}
+                                        max={new Date().toISOString().split('T')[0]}
                                         required
                                     />
-                                    <div className="invalid-feedback" style={{ display: errors.admissionDate ? 'block' : 'none' }}>
-                                        {errors.admissionDate}
-                                    </div>
                                 </Form.Group>
                             </Col>
 
@@ -518,21 +560,23 @@ const StudentCreationForm = () => {
                                         name="address"
                                         value={formData.address}
                                         onChange={handleChange}
+                                        placeholder="Full residential address"
                                     />
                                 </Form.Group>
                             </Col>
                         </Row>
 
-                        <div className="mt-3">
+                        <div className="mt-4 d-flex justify-content-end">
                             <Button
                                 variant="primary"
                                 type="submit"
                                 disabled={submitting}
+                                className="px-4"
                             >
                                 {submitting ? (
                                     <>
                                         <Spinner animation="border" size="sm" className="me-2" />
-                                        Creating Student...
+                                        Creating...
                                     </>
                                 ) : (
                                     'Create Student'
