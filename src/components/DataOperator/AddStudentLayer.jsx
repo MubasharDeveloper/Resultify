@@ -38,6 +38,7 @@ const StudentCreationForm = () => {
         address: '',
         gender: 'male',
         dateOfBirth: '',
+        currentSemester: '1',
         admissionDate: new Date().toISOString().split('T')[0],
         status: 'active'
     });
@@ -290,6 +291,7 @@ const StudentCreationForm = () => {
                 address: '',
                 gender: 'male',
                 dateOfBirth: '',
+                currentSemester: '1',
                 admissionDate: new Date().toISOString().split('T')[0],
                 status: 'active'
             });
@@ -323,9 +325,11 @@ const StudentCreationForm = () => {
         <>
             <Card className="mt-4">
                 <Card.Body>
-                    <Card.Title className="mb-4">Create New Student</Card.Title>
+                    <h6 className="mb-0 h6 d-flex align-items-center gap- mb-3 mt-5" style={{ fontSize: '18px' }}>
+                        BS Computer Science
+                    </h6>
 
-                    <Form onSubmit={handleSubmit} noValidate>
+                    <Form onSubmit={handleSubmit} className='mb-5'>
                         <Row className="g-3">
                             {/* Name */}
                             <Col sm={6} md={4} lg={3}>
@@ -566,12 +570,12 @@ const StudentCreationForm = () => {
                             </Col>
                         </Row>
 
-                        <div className="mt-4 d-flex justify-content-end">
+                        <div className="mt-3 d-flex justify-content-center">
                             <Button
                                 variant="primary"
                                 type="submit"
                                 disabled={submitting}
-                                className="px-4"
+                                className="px-3"
                             >
                                 {submitting ? (
                                     <>
