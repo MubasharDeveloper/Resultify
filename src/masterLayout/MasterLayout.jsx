@@ -242,6 +242,15 @@ const MasterLayout = ({ children }) => {
                       <span>Leactures</span>
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to='/add-students'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='mage:email' className='menu-icon' />
+                      <span>Admissions</span>
+                    </NavLink>
+                  </li>
                 </>
               ) : user.roleName === 'Teacher' ? (
                 ''

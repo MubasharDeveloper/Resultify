@@ -144,7 +144,7 @@ function App() {
             } />
 
             <Route exact path='/add-students' element={
-              <PrivateRoute allowedRoles={['Data Operator']}>
+              <PrivateRoute allowedRoles={['Data Operator', 'HOD']}>
                 <AddStudent />
               </PrivateRoute>
             } />

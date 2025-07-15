@@ -15,7 +15,7 @@ import {
     addDoc,
     serverTimestamp
 } from 'firebase/firestore';
-import { db, doc, getDoc } from '../../Firebase_config';
+import { db } from '../../Firebase_config';
 import { useAuth } from "../../context/AuthContext";
 import { toast } from 'react-toastify';
 import { Slide } from 'react-toastify';
@@ -38,12 +38,12 @@ const StudentCreationForm = () => {
         address: '',
         gender: 'male',
         dateOfBirth: '',
-        currentSemester: '1',
         admissionDate: new Date().toISOString().split('T')[0],
         status: 'active'
     });
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
+    const [currentSemester, setCurrentSemester] = useState(1);
 
     // Fetch data on component mount
     useEffect(() => {
@@ -203,6 +203,15 @@ const StudentCreationForm = () => {
         }
     };
 
+    const handleBatchChange = (e) => {
+        const selectedIndex = e.target.selectedIndex - 1; // -1 to account for the default option
+        if (selectedIndex >= 0) {
+            // Set semester based on option index: 1st option = 1, 2nd = 3, 3rd = 5, 4th = 7
+            setCurrentSemester(selectedIndex * 2 + 1);
+        }
+        handleChange(e);
+    };
+
     const handleBlur = async (e) => {
         const { name, value } = e.target;
         let error = '';
@@ -264,13 +273,21 @@ const StudentCreationForm = () => {
         }
 
         try {
-            await addDoc(collection(db, 'Students'), {
+            const studentData = {
                 ...formData,
                 departmentId: user.departmentId,
                 createdAt: serverTimestamp(),
                 createdBy: user.id,
                 updatedAt: serverTimestamp(),
-            });
+                currentSemester,
+            };
+
+            // Log the student data to console before creating
+            console.log('Creating student with data:', studentData);
+
+            const docRef = await addDoc(collection(db, 'Students'), studentData);
+
+            console.log('Student created with ID:', docRef.id);
 
             toast.success('Student created successfully!', {
                 position: "top-right",
@@ -279,6 +296,7 @@ const StudentCreationForm = () => {
                 transition: Slide,
             });
 
+            // Reset form
             setFormData({
                 name: '',
                 email: '',
@@ -291,10 +309,10 @@ const StudentCreationForm = () => {
                 address: '',
                 gender: 'male',
                 dateOfBirth: '',
-                currentSemester: '1',
                 admissionDate: new Date().toISOString().split('T')[0],
                 status: 'active'
             });
+            setCurrentSemester(1);
             setErrors({});
         } catch (err) {
             console.error('Error creating student:', err);
@@ -460,13 +478,13 @@ const StudentCreationForm = () => {
                                             <Form.Select
                                                 name="batchId"
                                                 value={formData.batchId}
-                                                onChange={handleChange}
+                                                onChange={handleBatchChange}
                                                 onBlur={handleBlur}
                                                 className={errors.batchId ? 'error-field' : ''}
                                             >
                                                 <option value="">Select Batch</option>
-                                                {batches.map(batch => (
-                                                    <option key={batch.id} value={batch.id}>
+                                                {batches.map((batch, index) => (
+                                                    <option key={index} value={batch.id}>
                                                         {batch.name} ({batch.startYear}-{batch.endYear})
                                                     </option>
                                                 ))}
