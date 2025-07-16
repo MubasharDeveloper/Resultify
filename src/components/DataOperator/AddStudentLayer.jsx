@@ -280,6 +280,7 @@ const StudentCreationForm = () => {
                 createdBy: user.id,
                 updatedAt: serverTimestamp(),
                 currentSemester,
+                currentSemesterName: 'Semester ' + currentSemester,
             };
 
             // Log the student data to console before creating

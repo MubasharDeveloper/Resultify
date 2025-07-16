@@ -71,9 +71,27 @@ function App() {
             <Route exact path='/forgot-password' element={<ForgotPasswordPage />} />
             <Route exact path='/unauthorized' element={<AccessDeniedPage />} />
 
+            <Route exact path='/dashboard' element={
+              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher', 'Data Operator']}>
+                <Dashboard />
+              </PrivateRoute>
+            } />
+
             <Route exact path='/admin-dashboard' element={
               <PrivateRoute allowedRoles={['Admin']}>
                 <AdminDashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/hod-dashboard' element={
+              <PrivateRoute allowedRoles={['HOD']}>
+                <HodDashboard />
+              </PrivateRoute>
+            } />
+
+            <Route exact path='/teacher-dashboard' element={
+              <PrivateRoute allowedRoles={['Teacher']}>
+                <TeacherDashboard />
               </PrivateRoute>
             } />
 
@@ -101,12 +119,6 @@ function App() {
               </PrivateRoute>
             } />
 
-            <Route exact path='/hod-dashboard' element={
-              <PrivateRoute allowedRoles={['HOD']}>
-                <HodDashboard />
-              </PrivateRoute>
-            } />
-
             <Route exact path='/subjects' element={
               <PrivateRoute allowedRoles={['HOD', 'Data Operator']}>
                 <Subjects />
@@ -125,21 +137,9 @@ function App() {
               </PrivateRoute>
             } />
 
-            <Route exact path='/teacher-dashboard' element={
-              <PrivateRoute allowedRoles={['Teacher']}>
-                <TeacherDashboard />
-              </PrivateRoute>
-            } />
-
             <Route exact path='/profile' element={
-              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher']}>
+              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher', 'Data Operator']}>
                 <Profile />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/dashboard' element={
-              <PrivateRoute allowedRoles={['Data Operator']}>
-                <Dashboard />
               </PrivateRoute>
             } />
 

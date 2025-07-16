@@ -142,7 +142,7 @@ const MasterLayout = ({ children }) => {
                         icon='tabler:layout-dashboard'
                         className='menu-icon'
                       />
-                      <span>Dashboard</span>
+                      <span>Admin Dashboard</span>
                     </NavLink>
                   </li>
                   <li>
@@ -194,7 +194,7 @@ const MasterLayout = ({ children }) => {
                         icon='tabler:layout-dashboard'
                         className='menu-icon'
                       />
-                      <span>Dashboard</span>
+                      <span>HOD Dashboard</span>
                     </NavLink>
                   </li>
                   <li>
@@ -290,6 +290,30 @@ const MasterLayout = ({ children }) => {
                 </>
               )
             }
+            <li className='sidebar-menu-group-title'>Settings</li>
+            <li>
+              <NavLink
+                to='/profile'
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon
+                  icon='tabler:layout-dashboard'
+                  className='menu-icon'
+                />
+                <span>My Profile</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={logout}
+              >
+                <Icon
+                  icon='tabler:layout-dashboard'
+                  className='menu-icon'
+                />
+                <span>Logout</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </aside>
