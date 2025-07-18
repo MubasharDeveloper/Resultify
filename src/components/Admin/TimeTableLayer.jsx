@@ -5,9 +5,9 @@ import { useAuth } from "../../context/AuthContext";
 import DataTable from 'react-data-table-component';
 import NoDataTable from '../NoDataTable';
 import { CustomLoader } from '../CustomLoader';
-import { toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 
 const SET_A_SEMESTERS = ['Semester 1', 'Semester 2', 'Semester 5', 'Semester 6'];
@@ -23,7 +23,7 @@ const TimeTableLayer = () => {
   const [roles, setRoles] = useState([]);
   const [existingAssignments, setExistingAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false); // New state for processing status
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const fetchSubjects = async () => {
     try {
@@ -46,7 +46,7 @@ const TimeTableLayer = () => {
     if (!user || !user.departmentId) return;
 
     const loadData = async () => {
-      setLoading(true); // Set loading to true when data fetching starts
+      setLoading(true);
       const now = new Date();
 
       // Fetch Semesters
@@ -85,14 +85,13 @@ const TimeTableLayer = () => {
       const userSnapQuery = await getDocs(usersQuery);
       const usersList = userSnapQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setTeachers(usersList);
-      setLoading(false); // Set loading to false when data fetching completes
+      setLoading(false);
     };
 
     fetchSubjects();
     loadData();
   }, [user]);
 
-  // New useEffect to fetch existing assignments
   useEffect(() => {
     const fetchExistingAssignments = async () => {
       if (!user || !user.departmentId || setASemesters.length === 0 && setBSemesters.length === 0) return;
@@ -104,7 +103,7 @@ const TimeTableLayer = () => {
             collection(db, 'Lectures'),
             where('departmentId', '==', user.departmentId),
             where('semesterId', '==', sem.id),
-            where('batchId', '==', sem.batchId) // Assuming batchId is available on semester object
+            where('batchId', '==', sem.batchId)
           )
         );
 
@@ -120,14 +119,15 @@ const TimeTableLayer = () => {
     };
 
     fetchExistingAssignments();
-  }, [user, setASemesters, setBSemesters]); // Depend on semesters to ensure they are loaded
+  }, [user, setASemesters, setBSemesters]);
 
-  const handleChange = (semesterId, rowIndex, type, value) => {
+  const handleChange = (semesterId, rowIndex, type, value, sessionType) => {
     setAssignments(prev => {
       const newAssignments = { ...prev };
-      if (!newAssignments[semesterId]) newAssignments[semesterId] = [];
-      if (!newAssignments[semesterId][rowIndex]) newAssignments[semesterId][rowIndex] = {};
-      newAssignments[semesterId][rowIndex][type] = value;
+      if (!newAssignments[semesterId]) newAssignments[semesterId] = {};
+      if (!newAssignments[semesterId][sessionType]) newAssignments[semesterId][sessionType] = [];
+      if (!newAssignments[semesterId][sessionType][rowIndex]) newAssignments[semesterId][sessionType][rowIndex] = {};
+      newAssignments[semesterId][sessionType][rowIndex][type] = value;
       return newAssignments;
     });
   };
@@ -165,92 +165,91 @@ const TimeTableLayer = () => {
     setIsProcessing(true);
     try {
       await deleteDoc(doc(db, 'Lectures', assignmentId));
-      toast.success('Assignment deleted successfully!'); // Use toast for success
-      // Re-fetch existing assignments to update the UI
-      setSetASemesters([...setASemesters]); // Trigger re-fetch
+      toast.success('Assignment deleted successfully!');
+      setSetASemesters([...setASemesters]);
     } catch (error) {
       console.error('Error deleting assignment:', error);
-      toast.error('Failed to delete assignment'); // Use toast for error
+      toast.error('Failed to delete assignment');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleSave = async (row, index) => {
+  const handleSave = async (row, index, sessionType) => {
     const semesterId = row.semesterId;
     const subjectId = row.subjectIds[index];
-    const teacherId = assignments[semesterId]?.[index]?.teacher;
+    const teacherId = assignments[semesterId]?.[sessionType]?.[index]?.teacher;
 
     if (!teacherId) {
-      toast.error('Please select a teacher'); // Use toast for error
+      toast.error('Please select a teacher');
       return;
     }
 
     setIsProcessing(true);
     try {
-      // Find the semester to get batchId
       const semester = [...setASemesters, ...setBSemesters].find(s => s.id === semesterId);
 
       if (!semester) {
-        toast.error('Semester not found'); // Use toast for error
+        toast.error('Semester not found');
         return;
       }
 
-      // Check if an assignment already exists for this subject, semester, and batch
+      // Check if an assignment already exists for this subject, semester, batch and session
       const existingAssignment = existingAssignments.find(assign =>
         assign.semesterId === semesterId &&
         assign.subjectId === subjectId &&
-        assign.batchId === semester.batchId
+        assign.batchId === semester.batchId &&
+        assign.sessionType === sessionType
       );
 
       if (existingAssignment) {
         Swal.fire({
           icon: 'warning',
           title: 'Assignment Exists',
-          text: `Subject '${getSubjectName(subjectId)}' is already assigned to '${getTeacherName(existingAssignment.teacherId)}' for this semester and batch.`,
+          text: `Subject '${getSubjectName(subjectId)}' is already assigned to '${getTeacherName(existingAssignment.teacherId)}' for this semester, batch and session.`,
         });
         return;
       }
 
-      // Check if the teacher is already assigned to 2 subjects in this semester
+      // Check if the teacher is already assigned to 2 subjects in this semester and session
       const teacherAssignmentsInSemester = existingAssignments.filter(assign =>
         assign.semesterId === semesterId &&
-        assign.teacherId === teacherId
+        assign.teacherId === teacherId &&
+        assign.sessionType === sessionType
       );
 
       if (teacherAssignmentsInSemester.length >= 2) {
         Swal.fire({
           icon: 'warning',
           title: 'Assignment Limit Reached',
-          text: `${getTeacherName(teacherId)} is already assigned to 2 subjects in this semester. A teacher can be assigned a maximum of 2 subjects per semester.`,
+          text: `${getTeacherName(teacherId)} is already assigned to 2 subjects in this semester and session. A teacher can be assigned a maximum of 2 subjects per semester per session.`,
         });
         return;
       }
 
-      // Save to Firebase
+      // Save to Firebase with sessionType
       await addDoc(collection(db, 'Lectures'), {
         semesterId,
         batchId: semester.batchId,
         departmentId: user.departmentId,
         subjectId,
         teacherId,
+        sessionType, // Add sessionType to the document
         assignedDate: Timestamp.now(),
         status: 'active'
       });
 
-      toast.success('Assignment saved successfully!'); // Use toast for success
-      // Re-fetch existing assignments to update the UI
-      // This will trigger the useEffect for existingAssignments
-      setSetASemesters([...setASemesters]); // Trigger re-fetch by updating state that useEffect depends on
+      toast.success('Assignment saved successfully!');
+      setSetASemesters([...setASemesters]);
     } catch (error) {
       console.error('Error saving assignment:', error);
-      toast.error('Failed to save assignment'); // Use toast for error
+      toast.error('Failed to save assignment');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const columns = [
+  const columns = (sessionType) => [
     {
       name: '#',
       selector: (row, index) => index + 1,
@@ -271,7 +270,8 @@ const TimeTableLayer = () => {
         const assignedLecture = existingAssignments.find(assign =>
           assign.semesterId === row.semesterId &&
           assign.subjectId === row.subjectIds[index] &&
-          assign.batchId === semester?.batchId // Check for batchId if semester is found
+          assign.batchId === semester?.batchId &&
+          assign.sessionType === sessionType
         );
 
         if (assignedLecture) {
@@ -282,8 +282,8 @@ const TimeTableLayer = () => {
           return (
             <Form.Select
               className='form-select-sm'
-              value={assignments[row.semesterId]?.[index]?.teacher || ''}
-              onChange={e => handleChange(row.semesterId, index, 'teacher', e.target.value)}
+              value={assignments[row.semesterId]?.[sessionType]?.[index]?.teacher || ''}
+              onChange={e => handleChange(row.semesterId, index, 'teacher', e.target.value, sessionType)}
             >
               <option value="">Select Teacher</option>
               {teachers.map((teacher) => (
@@ -304,7 +304,8 @@ const TimeTableLayer = () => {
         const assignedLecture = existingAssignments.find(assign =>
           assign.semesterId === row.semesterId &&
           assign.subjectId === row.subjectIds[index] &&
-          assign.batchId === semester?.batchId
+          assign.batchId === semester?.batchId &&
+          assign.sessionType === sessionType
         );
 
         if (assignedLecture) {
@@ -313,7 +314,7 @@ const TimeTableLayer = () => {
               variant={'danger'}
               className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-danger-600 p-2"
               onClick={() => handleDelete(assignedLecture.id)}
-              disabled={isProcessing} // Disable button while processing
+              disabled={isProcessing}
             >
               <Icon icon="mingcute:delete-2-line" />
             </Button>
@@ -323,8 +324,8 @@ const TimeTableLayer = () => {
             <Button
               variant={'success'}
               className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-success-600 p-2"
-              onClick={() => handleSave(row, index)}
-              disabled={isProcessing} // Disable button while processing
+              onClick={() => handleSave(row, index, sessionType)}
+              disabled={isProcessing}
             >
               <Icon icon="lucide:edit" />
             </Button>
@@ -346,7 +347,7 @@ const TimeTableLayer = () => {
     }));
 
     return (
-      <Col lg={6}>
+      <Col>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h6 className="mb-0 h6 d-flex align-items-center gap-2" style={{ fontSize: '18px' }}>
             {sem.name}
@@ -355,20 +356,51 @@ const TimeTableLayer = () => {
             {`Session: ${sem.batchStart} - ${sem.batchEnd}`}
           </small>
         </div>
-        <DataTable
-          columns={columns}
-          data={data}
-          pagination
-          responsive
-          striped
-          highlightOnHover
-          noDataComponent={
-            <NoDataTable
-              img={'../assets/images/no-data.svg'}
-              text={'No Subjects Found!'}
-            />
-          }
-        />
+
+        <Row className='g-3'>
+          <Col md={6}>
+            <Card className="mb-4">
+              <Card.Header className='fs-16 fw-500 text-center'>Morning Session</Card.Header>
+              <Card.Body>
+                <DataTable
+                  columns={columns('morning')}
+                  data={data}
+                  pagination
+                  responsive
+                  striped
+                  highlightOnHover
+                  noDataComponent={
+                    <NoDataTable
+                      img={'../assets/images/no-data.svg'}
+                      text={'No Subjects Found!'}
+                    />
+                  }
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={6}>
+            <Card>
+              <Card.Header className='fs-16 fw-500 text-center'>Evening Session</Card.Header>
+              <Card.Body>
+                <DataTable
+                  columns={columns('evening')}
+                  data={data}
+                  pagination
+                  responsive
+                  striped
+                  highlightOnHover
+                  noDataComponent={
+                    <NoDataTable
+                      img={'../assets/images/no-data.svg'}
+                      text={'No Subjects Found!'}
+                    />
+                  }
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </Col>
     );
   };

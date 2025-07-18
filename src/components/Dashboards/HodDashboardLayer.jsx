@@ -102,7 +102,7 @@ const HodDashboardLayer = () => {
 
         // Filter lectures to include only those from current semesters
         const currentSemesterIds = currentSemesters.map(cs => cs.id);
-        const filteredLectures = fetchedLectures.filter(lecture => 
+        const filteredLectures = fetchedLectures.filter(lecture =>
           lecture.semesterId && currentSemesterIds.includes(lecture.semesterId)
         );
 
@@ -227,11 +227,18 @@ const HodDashboardLayer = () => {
                                 </div>
                               </div>
                             </div>
-                            <p className="text-sm mb-0">
-                              Batch: <span className="fw-medium text-primary-main text-sm">
-                                {lecture.batchName || 'Batch N/A'}
-                              </span>
-                            </p>
+                            <div className="d-flex justify-content-between">
+                              <p className="text-sm mb-0">
+                                Batch: <span className="fw-medium text-primary-main text-sm">
+                                  {lecture.batchName || 'Batch N/A'}
+                                </span>
+                              </p>
+                              <p className="text-sm mb-0">
+                                Batch Time: <span className="fw-medium text-primary-main text-sm text-capitalize">
+                                  {lecture.sessionType || 'Batch N/A'}
+                                </span>
+                              </p>
+                            </div>
                           </Card.Body>
                         </Card>
                       </Col>
