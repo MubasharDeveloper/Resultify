@@ -170,6 +170,22 @@ const StudentCreationForm = () => {
         return '';
     };
 
+    const validateRollNumber = async (rollNumber, batchId) => {
+        if (!rollNumber) return 'Roll number is required';
+        if (!batchId) return 'Please select a batch first';
+
+        // Check if roll number exists in the same batch
+        const studentsQuery = query(
+            collection(db, 'Students'),
+            where('batchId', '==', batchId),
+            where('rollNumber', '==', rollNumber)
+        );
+        const querySnapshot = await getDocs(studentsQuery);
+        if (!querySnapshot.empty) return 'Roll number already exists in this batch';
+
+        return '';
+    };
+
     const validateRequiredField = (value, fieldName) => {
         if (!value || value.trim() === '') return `${fieldName} is required`;
         return '';
@@ -236,8 +252,10 @@ const StudentCreationForm = () => {
             case 'batchTime':
                 error = validateRequiredField(value, 'Batch schedule');
                 break;
-            case 'admissionDate':
             case 'rollNumber':
+                error = await validateRollNumber(value, formData.batchId);
+                break;
+            case 'admissionDate':
                 break;
         }
 
@@ -258,7 +276,7 @@ const StudentCreationForm = () => {
         validationErrors.cnic = await validateCNICNumber(formData.cnic);
         validationErrors.batchId = validateRequiredField(formData.batchId, 'Batch');
         validationErrors.batchTime = validateRequiredField(formData.batchTime, 'Batch schedule');
-        validationErrors.rollNumber = validateRequiredField(formData.rollNumber, 'Roll Number');
+        validationErrors.rollNumber = await validateRollNumber(formData.rollNumber, formData.batchId);
 
         setErrors(validationErrors);
 
@@ -284,12 +302,7 @@ const StudentCreationForm = () => {
                 currentSemesterName: 'Semester ' + currentSemester,
             };
 
-            // Log the student data to console before creating
-            console.log('Creating student with data:', studentData);
-
             const docRef = await addDoc(collection(db, 'Students'), studentData);
-
-            console.log('Student created with ID:', docRef.id);
 
             toast.success('Student created successfully!', {
                 position: "top-right",
@@ -502,19 +515,19 @@ const StudentCreationForm = () => {
                             {/* Roll Number */}
                             <Col sm={6} md={4} lg={3}>
                                 <Form.Group>
-                                    <Form.Label>Roll Number</Form.Label>
+                                    <Form.Label>Roll Number *</Form.Label>
                                     <Form.Control
                                         name="rollNumber"
                                         value={formData.rollNumber}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        className={errors.rollNumber ? 'error-field' : ''}  
+                                        className={errors.rollNumber ? 'error-field' : ''}
                                         placeholder="1234"
                                     />
+                                    {errors.rollNumber && (
+                                        <div className="error-message">{errors.rollNumber}</div>
+                                    )}
                                 </Form.Group>
-                                {errors.batchId && (
-                                    <span className="error-message">{errors.rollNumber}</span>
-                                )}
                             </Col>
 
                             {/* Gender */}
