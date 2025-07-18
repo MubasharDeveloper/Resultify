@@ -63,8 +63,8 @@ const ManageResults = () => {
                     .filter(student => student.status === "active")
                     .sort((a, b) => {
                         // Convert roll numbers to numbers for proper numeric sorting
-                        const rollNoA = parseInt(a.rollNo || '0', 10);
-                        const rollNoB = parseInt(b.rollNo || '0', 10);
+                        const rollNoA = parseInt(a.rollNumber || '0', 10);
+                        const rollNoB = parseInt(b.rollNumber || '0', 10);
                         return rollNoA - rollNoB;
                     });
 
@@ -222,8 +222,9 @@ const ManageResults = () => {
     const columns = [
         {
             name: 'Roll No',
-            selector: row => row.rollNo || '-',
+            selector: row => row.rollNumber || '-',
             sortable: true,
+            sorted: "asc",
             width: '100px'
         },
         {
@@ -450,7 +451,7 @@ const ManageResults = () => {
                                     highlightOnHover
                                     pointerOnHover
                                 />
-
+                                {console.log(filteredStudents)}
                                 <div className="d-flex justify-content-end mt-3">
                                     <Button
                                         variant="outline-secondary"

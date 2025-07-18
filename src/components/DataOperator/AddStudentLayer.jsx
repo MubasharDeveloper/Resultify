@@ -258,6 +258,7 @@ const StudentCreationForm = () => {
         validationErrors.cnic = await validateCNICNumber(formData.cnic);
         validationErrors.batchId = validateRequiredField(formData.batchId, 'Batch');
         validationErrors.batchTime = validateRequiredField(formData.batchTime, 'Batch schedule');
+        validationErrors.rollNumber = validateRequiredField(formData.rollNumber, 'Roll Number');
 
         setErrors(validationErrors);
 
@@ -506,9 +507,14 @@ const StudentCreationForm = () => {
                                         name="rollNumber"
                                         value={formData.rollNumber}
                                         onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        className={errors.rollNumber ? 'error-field' : ''}  
                                         placeholder="1234"
                                     />
                                 </Form.Group>
+                                {errors.batchId && (
+                                    <span className="error-message">{errors.rollNumber}</span>
+                                )}
                             </Col>
 
                             {/* Gender */}
