@@ -5,6 +5,7 @@ import { CustomLoader } from '../CustomLoader';
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from '@iconify/react';
 import NoDataTable from '../NoDataTable';
+import { useNavigate } from "react-router-dom";
 
 const HodDashboardLayer = () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const HodDashboardLayer = () => {
   const [totalTeachers, setTotalTeachers] = useState(0); // Define totalTeachers state
   const [totalStudents, setTotalStudents] = useState(0); // Define totalStudents state
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCurrentSemesters = async () => {
@@ -161,6 +163,11 @@ const HodDashboardLayer = () => {
     }
   }, [user]); // Rerun if user object changes
 
+  const handleViewDetails = (lecture) => {
+    // Navigate to details page with lecture data as state
+    navigate('/manage-result', { state: { lecture } });
+  };
+
   return (
     <div className="admin-dashboard">
       {loading ? (
@@ -238,6 +245,14 @@ const HodDashboardLayer = () => {
                                   {lecture.sessionType || 'Batch N/A'}
                                 </span>
                               </p>
+                            </div>
+                            <div className="d-flex justify-content-center mt-3">
+                              <button
+                                className="btn btn-sm btn-primary"
+                                onClick={() => handleViewDetails(lecture)}
+                              >
+                                Manage Result
+                              </button>
                             </div>
                           </Card.Body>
                         </Card>

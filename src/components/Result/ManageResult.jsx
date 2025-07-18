@@ -1,0 +1,472 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, Button, Table, Form, Spinner } from 'react-bootstrap';
+import { Icon } from '@iconify/react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import MasterLayout from '../../masterLayout/MasterLayout';
+import Breadcrumb from '../Breadcrumb';
+import { useAuth } from "../../context/AuthContext";
+import { db, collection, query, where, getDocs, doc, getDoc, setDoc } from '../../Firebase_config';
+import DataTable from 'react-data-table-component';
+
+const ManageResults = () => {
+    const { user } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { lecture } = location.state || {};
+
+    const [students, setStudents] = useState([]);
+    const [filteredStudents, setFilteredStudents] = useState([]);
+    const [subjectDetails, setSubjectDetails] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [results, setResults] = useState({});
+    const [editingStudent, setEditingStudent] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const studentsPerPage = 15;
+
+    useEffect(() => {
+        if (!lecture) return;
+
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+
+                // Fetch subject details
+                const subjectRef = doc(db, "Subjects", lecture.subjectId);
+                const subjectSnap = await getDoc(subjectRef);
+                if (subjectSnap.exists()) {
+                    const subjectData = subjectSnap.data();
+                    setSubjectDetails({
+                        ...subjectData,
+                        totalMarks: subjectData.creditHours * 20
+                    });
+                }
+
+                // Fetch students
+                const studentsQuery = query(
+                    collection(db, "Students"),
+                    where("departmentId", "==", user.departmentId),
+                    where("batchId", "==", lecture.batchId),
+                    where("batchTime", "==", lecture.sessionType)
+                );
+
+                const studentsSnap = await getDocs(studentsQuery);
+                let studentsData = studentsSnap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Filter active students and sort by roll number
+                studentsData = studentsData
+                    .filter(student => student.status === "active")
+                    .sort((a, b) => {
+                        // Convert roll numbers to numbers for proper numeric sorting
+                        const rollNoA = parseInt(a.rollNo || '0', 10);
+                        const rollNoB = parseInt(b.rollNo || '0', 10);
+                        return rollNoA - rollNoB;
+                    });
+
+                setStudents(studentsData);
+                setFilteredStudents(studentsData);
+
+                // Fetch existing results and initialize state
+                const resultsQuery = query(
+                    collection(db, "Results"),
+                    where("subjectId", "==", lecture.subjectId),
+                    where("batchId", "==", lecture.batchId)
+                );
+
+                const resultsSnap = await getDocs(resultsQuery);
+                const existingResults = {};
+                resultsSnap.forEach(doc => {
+                    const data = doc.data();
+                    existingResults[data.studentId] = {
+                        presentationMarks: data.presentationMarks || 0,
+                        midMarks: data.midMarks || 0,
+                        finalMarks: data.finalMarks || 0,
+                        totalObtained: data.totalObtained || 0,
+                        percentage: data.percentage || 0,
+                        grade: data.grade || '',
+                        exists: true
+                    };
+                });
+
+                // Initialize results state
+                const initialResults = {};
+                studentsData.forEach(student => {
+                    initialResults[student.id] = existingResults[student.id] || {
+                        presentationMarks: 0,
+                        midMarks: 0,
+                        finalMarks: 0,
+                        totalObtained: 0,
+                        percentage: 0,
+                        grade: '',
+                        exists: false
+                    };
+                });
+
+                setResults(initialResults);
+
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                toast.error("Failed to load data. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [lecture, user.departmentId]);
+
+    const handleMarksChange = (studentId, field, value) => {
+        const numericValue = parseFloat(value) || 0;
+
+        let maxLimit = 0;
+        if (field === 'presentationMarks') maxLimit = subjectDetails.totalMarks * 0.2;
+        else if (field === 'midMarks') maxLimit = subjectDetails.totalMarks * 0.2;
+        else if (field === 'finalMarks') maxLimit = subjectDetails.totalMarks * 0.6;
+
+        if (numericValue < 0 || numericValue > maxLimit) return;
+
+        setResults(prev => {
+            const totalObtained = field === 'presentationMarks'
+                ? numericValue + (prev[studentId].midMarks || 0) + (prev[studentId].finalMarks || 0)
+                : field === 'midMarks'
+                    ? (prev[studentId].presentationMarks || 0) + numericValue + (prev[studentId].finalMarks || 0)
+                    : (prev[studentId].presentationMarks || 0) + (prev[studentId].midMarks || 0) + numericValue;
+
+            const percentage = (totalObtained / subjectDetails.totalMarks) * 100;
+            const grade = calculateGrade(percentage);
+
+            return {
+                ...prev,
+                [studentId]: {
+                    ...prev[studentId],
+                    [field]: numericValue,
+                    totalObtained,
+                    percentage,
+                    grade
+                }
+            };
+        });
+    };
+
+    const calculateGrade = (percentage) => {
+        if (percentage >= 90) return 'A+';
+        if (percentage >= 85) return 'A';
+        if (percentage >= 80) return 'A-';
+        if (percentage >= 75) return 'B+';
+        if (percentage >= 70) return 'B';
+        if (percentage >= 65) return 'B-';
+        if (percentage >= 60) return 'C+';
+        if (percentage >= 55) return 'C';
+        if (percentage >= 50) return 'D';
+        return 'F';
+    };
+
+    const handleSubmitResult = async (studentId) => {
+        if (!subjectDetails || !studentId) return;
+
+        try {
+            setSaving(true);
+            
+            const result = results[studentId];
+            const percentage = (result.totalObtained / subjectDetails.totalMarks) * 100;
+            const grade = calculateGrade(percentage);
+
+            const resultDocRef = doc(db, "Results", `${studentId}_${lecture.subjectId}_${lecture.semesterId}`);
+
+            await setDoc(resultDocRef, {
+                studentId,
+                studentCNIC: students.find(s => s.id === studentId)?.cnic || '',
+                departmentId: user.departmentId,
+                subjectId: lecture.subjectId,
+                subjectName: lecture.subjectName,
+                semesterId: lecture.semesterId,
+                semesterName: lecture.semesterName,
+                batchId: lecture.batchId,
+                batchName: lecture.batchName,
+                batchType: lecture.sessionType,
+                totalMarks: subjectDetails.totalMarks,
+                totalObtained: result.totalObtained,
+                presentationMarks: result.presentationMarks,
+                midMarks: result.midMarks,
+                finalMarks: result.finalMarks,
+                percentage,
+                grade,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+
+            // Update local state to mark as saved
+            setResults(prev => ({
+                ...prev,
+                [studentId]: {
+                    ...prev[studentId],
+                    exists: true
+                }
+            }));
+
+            toast.success("Result saved successfully!");
+            setEditingStudent(null);
+        } catch (err) {
+            console.error("Error saving result:", err);
+            toast.error(`Failed to save result for student. Please try again.`);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const columns = [
+        {
+            name: 'Roll No',
+            selector: row => row.rollNo || '-',
+            sortable: true,
+            width: '100px'
+        },
+        {
+            name: 'Student Name',
+            selector: row => row.name,
+            sortable: true
+        },
+        {
+            name: 'CNIC',
+            selector: row => row.cnic,
+            sortable: true
+        },
+        {
+            name: (
+                <span>Total Marks - ({subjectDetails?.totalMarks || 0})</span> 
+            ),
+            cell: row => subjectDetails?.totalMarks || '-'
+        },
+        {
+            name: (
+                <span>
+                    Presentation - ({subjectDetails ? subjectDetails.totalMarks * 0.2 : 0})
+                </span>
+            ),
+            cell: row => (
+                editingStudent === row.id ? (
+                    <Form.Control
+                        type="number"
+                        min="0"
+                        max={subjectDetails ? subjectDetails.totalMarks * 0.2 : 0}
+                        value={results[row.id]?.presentationMarks || 0}
+                        onChange={(e) => handleMarksChange(row.id, 'presentationMarks', e.target.value)}
+                        disabled={!subjectDetails}
+                        size="sm"
+                    />
+                ) : (
+                    results[row.id]?.presentationMarks || '-'
+                )
+            )
+        },
+        {
+            name: (
+                <span>
+                    Mid-Term - ({subjectDetails ? subjectDetails.totalMarks * 0.2 : 0})
+                </span>
+            ),
+            cell: row => (
+                editingStudent === row.id ? (
+                    <Form.Control
+                        type="number"
+                        min="0"
+                        max={subjectDetails ? subjectDetails.totalMarks * 0.2 : 0}
+                        value={results[row.id]?.midMarks || 0}
+                        onChange={(e) => handleMarksChange(row.id, 'midMarks', e.target.value)}
+                        disabled={!subjectDetails}
+                        size="sm"
+                    />
+                ) : (
+                    results[row.id]?.midMarks || '-'
+                )
+            )
+        },
+        {
+            name: (
+                <span>
+                    Final-Term - ({subjectDetails ? subjectDetails.totalMarks * 0.6 : 0})
+                </span>
+            ),
+            cell: row => (
+                editingStudent === row.id ? (
+                    <Form.Control
+                        type="number"
+                        min="0"
+                        max={subjectDetails ? subjectDetails.totalMarks * 0.6 : 0}
+                        value={results[row.id]?.finalMarks || 0}
+                        onChange={(e) => handleMarksChange(row.id, 'finalMarks', e.target.value)}
+                        disabled={!subjectDetails}
+                        size="sm"
+                    />
+                ) : (
+                    results[row.id]?.finalMarks || '-'
+                )
+            )
+        },
+        {
+            name: 'Total Obtained',
+            cell: row => results[row.id]?.totalObtained || '-'
+        },
+        {
+            name: 'Percentage',
+            cell: row => results[row.id]?.percentage ? `${results[row.id].percentage.toFixed(2)}%` : '-'
+        },
+        {
+            name: 'Grade',
+            cell: row => results[row.id]?.grade || '-',
+        },
+        {
+            name: 'Actions',
+            cell: row => (
+                <div className="d-flex gap-2">
+                    {editingStudent === row.id ? (
+                        <>
+                            <Button
+                                variant="success"
+                                size="sm"
+                                onClick={() => handleSubmitResult(row.id)}
+                                disabled={saving}
+                                title="Save"
+                            >
+                                <Icon icon="mdi:content-save" />
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setEditingStudent(null)}
+                                disabled={saving}
+                                title="Cancel"
+                            >
+                                <Icon icon="mdi:cancel" />
+                            </Button>
+                        </>
+                    ) : (
+                        <Button
+                            variant={results[row.id]?.exists ? 'warning' : 'primary'}
+                            size="sm"
+                            onClick={() => setEditingStudent(row.id)}
+                            title={results[row.id]?.exists ? 'Edit' : 'Add'}
+                        >
+                            <Icon icon={results[row.id]?.exists ? 'mdi:pencil' : 'mdi:plus'} />
+                        </Button>
+                    )}
+                </div>
+            ),
+            width: '120px'
+        }
+    ];
+
+    if (!lecture) {
+        return (
+            <MasterLayout>
+                <Breadcrumb title="Lecture Not Found" />
+                <div className="py-4">
+                    <Card>
+                        <Card.Body className="text-center">
+                            <Icon icon="mdi:alert-circle-outline" width={48} height={48} className="text-danger mb-3" />
+                            <h4>No lecture data found</h4>
+                            <p>Please go back and select a valid lecture</p>
+                            <Button
+                                variant="primary"
+                                onClick={() => navigate(-1)}
+                            >
+                                Back to Dashboard
+                            </Button>
+                        </Card.Body>
+                    </Card>
+                </div>
+            </MasterLayout>
+        );
+    }
+
+    return (
+        <MasterLayout>
+            <Breadcrumb
+                title={`Result`}
+                items={[
+                    { title: 'Dashboard', path: '/dashboard' },
+                    { title: 'Manage Results', active: true }
+                ]}
+            />
+
+            <div className="py-4">
+                <Card>
+                    <Card.Body>
+                        <div className="margin-bottom-15">
+                            <div className="d-flex justify-content-between">
+                                <h5 className="margin-bottom-10 mt-3 modal-heading">
+                                    {`Department of ${user.departmentName}`}
+                                </h5>
+                            </div>
+                            <div className="d-flex justify-content-center">
+                                <h5 className="margin-bottom-25 modal-heading">Manage Result</h5>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <h5 className="margin-bottom-10 modal-sub-heading text-capitalize">
+                                    <strong>Subject:</strong> {lecture.subjectName} / <strong>Batch Time:</strong> {lecture.sessionType}
+                                </h5>
+                                <span><strong>Session:</strong> {lecture.batchName}</span>
+                            </div>
+                        </div>
+
+                        {loading ? (
+                            <div className="text-center py-4">
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                                <p>Loading students data...</p>
+                            </div>
+                        ) : filteredStudents.length === 0 ? (
+                            <div className="text-center py-4">
+                                <Icon icon="mdi:account-remove" width={48} height={48} className="text-info mb-3" />
+                                <h5>No active students found for this batch and session.</h5>
+                            </div>
+                        ) : (
+                            <>
+                                <DataTable
+                                    columns={columns}
+                                    data={filteredStudents}
+                                    pagination
+                                    paginationPerPage={studentsPerPage}
+                                    paginationRowsPerPageOptions={[15, 30, 50]}
+                                    customStyles={{
+                                        headCells: {
+                                            style: {
+                                                fontWeight: 'bold',
+                                                backgroundColor: '#f8f9fa'
+                                            }
+                                        },
+                                        cells: {
+                                            style: {
+                                                verticalAlign: 'middle'
+                                            }
+                                        }
+                                    }}
+                                    highlightOnHover
+                                    pointerOnHover
+                                />
+
+                                <div className="d-flex justify-content-end mt-3">
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => navigate(-1)}
+                                    >
+                                        <Icon icon="mdi:arrow-left" className="me-1" />
+                                        Back to Dashboard
+                                    </Button>
+                                </div>
+                            </>
+                        )}
+                    </Card.Body>
+                </Card>
+            </div>
+        </MasterLayout>
+    );
+};
+
+export default ManageResults;

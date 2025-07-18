@@ -3,26 +3,21 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
-
-// Used Pages
-
 import RouteScrollToTop from "./helper/RouteScrollToTop";
+
+// Pages
 import SignInPage from "./pages/Authentication/SignInPage";
 import SignUpPage from "./pages/Authentication/SignUpPage";
 import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 import ErrorPage from "./pages/ErrorPage";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
-
 import AdminDashboard from "./pages/Dashboards/AdminDashboard";
 import ManageRequests from "./pages/Admin/ManageRequests";
 import HodDashboard from "./pages/Dashboards/HodDashboard";
 import TeacherDashboard from "./pages/Dashboards/TeacherDashboard";
 import Dashboard from "./pages/Dashboards/Dashboard";
-
 import AddStudent from "./pages/DataOperator/AddStudent";
-
 import LandingPage from "./pages/LandingPage/index";
-
 import Departments from "./pages/Admin/Departments";
 import Batches from "./pages/Admin/Batches";
 import Subjects from "./pages/Admin/Subjects";
@@ -31,6 +26,7 @@ import Users from "./pages/Admin/Users";
 import TimeTable from "./pages/Admin/TimeTable";
 import Profile from "./pages/Profile/Profile";
 
+import ManageResult from './components/Result/ManageResult';
 
 const Loader = () => (
   <div id="preloader">
@@ -43,9 +39,9 @@ const PageWrapper = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    setLoading(true); // Show loader on route change
+    setLoading(true);
     const timer = setTimeout(() => {
-      setLoading(false); // Hide loader after 1.5 sec
+      setLoading(false);
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -54,6 +50,90 @@ const PageWrapper = ({ children }) => {
   return loading ? <Loader /> : children;
 };
 
+// Route configuration
+const routeConfig = [
+  // Public routes
+  { path: '/', element: <LandingPage />, public: true },
+  { path: '/sign-in', element: <SignInPage />, public: true },
+  { path: '/sign-up', element: <SignUpPage />, public: true },
+  { path: '/forgot-password', element: <ForgotPasswordPage />, public: true },
+  { path: '/unauthorized', element: <AccessDeniedPage />, public: true },
+
+  // Protected routes with role requirements
+  { 
+    path: '/dashboard', 
+    element: <Dashboard />, 
+    roles: ['Admin', 'HOD', 'Teacher', 'Data Operator'] 
+  },
+  { 
+    path: '/admin-dashboard', 
+    element: <AdminDashboard />, 
+    roles: ['Admin'] 
+  },
+  { 
+    path: '/hod-dashboard', 
+    element: <HodDashboard />, 
+    roles: ['HOD'] 
+  },
+  { 
+    path: '/teacher-dashboard', 
+    element: <TeacherDashboard />, 
+    roles: ['Teacher'] 
+  },
+  { 
+    path: '/departments', 
+    element: <Departments />, 
+    roles: ['Admin'] 
+  },
+  { 
+    path: '/manage-requests', 
+    element: <ManageRequests />, 
+    roles: ['Admin'] 
+  },
+  { 
+    path: '/batches', 
+    element: <Batches />, 
+    roles: ['Admin', 'HOD'] 
+  },
+  { 
+    path: '/manage-users', 
+    element: <Users />, 
+    roles: ['Admin', 'HOD'] 
+  },
+  { 
+    path: '/subjects', 
+    element: <Subjects />, 
+    roles: ['HOD', 'Data Operator'] 
+  },
+  { 
+    path: '/semesters', 
+    element: <Semesters />, 
+    roles: ['HOD'] 
+  },
+  { 
+    path: '/leactures', 
+    element: <TimeTable />, 
+    roles: ['HOD'] 
+  },
+  { 
+    path: '/profile', 
+    element: <Profile />, 
+    roles: ['Admin', 'HOD', 'Teacher', 'Data Operator'] 
+  },
+  { 
+    path: '/add-students', 
+    element: <AddStudent />, 
+    roles: ['Data Operator', 'HOD'] 
+  },
+  { 
+    path: '/manage-result', 
+    element: <ManageResult />, 
+    roles: ['Teacher', 'HOD'] 
+  },
+
+  // Catch-all route
+  { path: '*', element: <ErrorPage />, public: true }
+];
 
 function App() {
   return (
@@ -63,96 +143,31 @@ function App() {
           <RouteScrollToTop />
           <ToastContainer />
           <Routes>
-
-            <Route exact path='/' element={<LandingPage />} />
-
-            <Route exact path='/sign-in' element={<SignInPage />} />
-            <Route exact path='/sign-up' element={<SignUpPage />} />
-            <Route exact path='/forgot-password' element={<ForgotPasswordPage />} />
-            <Route exact path='/unauthorized' element={<AccessDeniedPage />} />
-
-            <Route exact path='/dashboard' element={
-              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher', 'Data Operator']}>
-                <Dashboard />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/admin-dashboard' element={
-              <PrivateRoute allowedRoles={['Admin']}>
-                <AdminDashboard />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/hod-dashboard' element={
-              <PrivateRoute allowedRoles={['HOD']}>
-                <HodDashboard />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/teacher-dashboard' element={
-              <PrivateRoute allowedRoles={['Teacher']}>
-                <TeacherDashboard />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/departments' element={
-              <PrivateRoute allowedRoles={['Admin']}>
-                <Departments />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/manage-requests' element={
-              <PrivateRoute allowedRoles={['Admin']}>
-                <ManageRequests />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/batches' element={
-              <PrivateRoute allowedRoles={['Admin', 'HOD']}>
-                <Batches />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/manage-users' element={
-              <PrivateRoute allowedRoles={['Admin', 'HOD']}>
-                <Users />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/subjects' element={
-              <PrivateRoute allowedRoles={['HOD', 'Data Operator']}>
-                <Subjects />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/semesters' element={
-              <PrivateRoute allowedRoles={['HOD']}>
-                <Semesters />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/leactures' element={
-              <PrivateRoute allowedRoles={['HOD']}>
-                <TimeTable />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/profile' element={
-              <PrivateRoute allowedRoles={['Admin', 'HOD', 'Teacher', 'Data Operator']}>
-                <Profile />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='/add-students' element={
-              <PrivateRoute allowedRoles={['Data Operator', 'HOD']}>
-                <AddStudent />
-              </PrivateRoute>
-            } />
-
-            <Route exact path='*' element={<ErrorPage />} />
-
-            {/* End Used Routes */}
-
+            {routeConfig.map((route, index) => {
+              if (route.public) {
+                return (
+                  <Route 
+                    key={index} 
+                    exact 
+                    path={route.path} 
+                    element={route.element} 
+                  />
+                );
+              } else {
+                return (
+                  <Route 
+                    key={index} 
+                    exact 
+                    path={route.path} 
+                    element={
+                      <PrivateRoute allowedRoles={route.roles}>
+                        {route.element}
+                      </PrivateRoute>
+                    } 
+                  />
+                );
+              }
+            })}
           </Routes>
         </PageWrapper>
       </AuthProvider>
