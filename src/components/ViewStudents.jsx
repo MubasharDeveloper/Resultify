@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { db, collection, getDocs, query, where, doc, updateDoc } from '../Firebase_config';
-import { Card, Table, Button, Badge, Spinner } from 'react-bootstrap';
+import { Card, Button, Badge, Spinner } from 'react-bootstrap';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
+import DataTable from 'react-data-table-component';
+import NoDataTable from './NoDataTable';
 
 const ViewStudents = () => {
   const [loading, setLoading] = useState(true);
@@ -16,90 +18,58 @@ const ViewStudents = () => {
   const { semester } = location.state || {};
   const navigate = useNavigate();
 
-  // Helper function to safely process Firestore documents
-  const processFirestoreDocs = (snapshot) => {
-    return snapshot.docs.map(doc => {
-      try {
-        const data = doc.data();
-        if (!data) {
-          console.warn(`Document ${doc.id} has no data`);
-          return null;
+  const fetchStudents = async () => {
+    if (!user?.departmentId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Fetch all students in the department
+      const studentsQuery = query(
+        collection(db, "Students"),
+        where("departmentId", "==", user.departmentId)
+      );
+
+      const studentsSnap = await getDocs(studentsQuery);
+      const studentsData = studentsSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })).filter(student => student.status === "active");
+
+      setStudents(studentsData);
+
+      // Fetch results for all students
+      const resultsQuery = query(
+        collection(db, "Results"),
+        where("departmentId", "==", user.departmentId)
+      );
+
+      const resultsSnap = await getDocs(resultsQuery);
+      const resultsMap = {};
+      
+      resultsSnap.docs.forEach(doc => {
+        const result = doc.data();
+        if (!resultsMap[result.studentCnic]) {
+          resultsMap[result.studentCnic] = [];
         }
-        return { id: doc.id, ...data };
-      } catch (error) {
-        console.error(`Error processing document ${doc.id}:`, error);
-        return null;
-      }
-    }).filter(Boolean); // Remove any null entries
+        resultsMap[result.studentCnic].push(result);
+      });
+
+      setResults(resultsMap);
+    } catch (error) {
+      console.error("Data fetch error:", error);
+      toast.error("Failed to load student data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user?.departmentId || !semester?.batchId || !semester?.name) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        
-        // 1. Fetch students
-        const studentsQuery = query(
-          collection(db, "Students"),
-          where("departmentId", "==", user.departmentId),
-          where("batchId", "==", semester.batchId),
-          where("currentSemester", "==", semester.name)
-        );
-
-        const studentsSnap = await getDocs(studentsQuery);
-        const studentsData = processFirestoreDocs(studentsSnap);
-        
-        if (!studentsData.length) {
-          toast.info("No students found for this semester");
-          setStudents([]);
-          setResults({});
-          return;
-        }
-
-        setStudents(studentsData);
-
-        // 2. Fetch results for each student
-        const resultsPromises = studentsData.map(async (student) => {
-          if (!student.cnic) {
-            console.warn(`Student ${student.id} missing CNIC`);
-            return { cnic: student.cnic, results: [] };
-          }
-
-          const resultsQuery = query(
-            collection(db, "Results"),
-            where("studentCnic", "==", student.cnic),
-            where("semesterId", "==", semester.id)
-          );
-
-          const resultsSnap = await getDocs(resultsQuery);
-          return {
-            cnic: student.cnic,
-            results: processFirestoreDocs(resultsSnap)
-          };
-        });
-
-        const resultsData = await Promise.all(resultsPromises);
-        const resultsMap = resultsData.reduce((acc, { cnic, results }) => {
-          if (cnic) acc[cnic] = results;
-          return acc;
-        }, {});
-
-        setResults(resultsMap);
-      } catch (error) {
-        console.error("Data fetch error:", error);
-        toast.error("Failed to load student data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user, semester]);
+    fetchStudents();
+  }, [user?.departmentId]);
 
   const handleViewResult = (studentCnic) => {
     const student = students.find(s => s.cnic === studentCnic);
@@ -110,8 +80,7 @@ const ViewStudents = () => {
     navigate('/student-result', { 
       state: { 
         student,
-        results: results[studentCnic] || [],
-        semester 
+        results: results[studentCnic] || []
       } 
     });
   };
@@ -164,11 +133,7 @@ const ViewStudents = () => {
         lastUpdated: new Date()
       });
 
-      setStudents(students.map(student => 
-        student.id === studentId 
-          ? { ...student, status: "dropped" } 
-          : student
-      ));
+      setStudents(students.filter(student => student.id !== studentId));
       
       toast.success("Student status updated to dropped");
     } catch (error) {
@@ -188,41 +153,162 @@ const ViewStudents = () => {
     });
   };
 
-  if (!semester) {
-    return (
-      <Card className="mt-3">
-        <Card.Body className="text-center">
-          <h5>No semester selected</h5>
-          <Button 
-            variant="primary" 
-            onClick={() => navigate(-1)}
-            className="mt-3"
+  const columns = [
+    {
+      name: '#',
+      selector: (row, index) => index + 1,
+      width: '60px',
+      sortable: true
+    },
+    {
+      name: 'Student Info',
+      cell: row => (
+        <div className="d-flex align-items-center">
+          <Icon 
+            icon="mdi:account-circle" 
+            width={24} 
+            className="me-2 text-primary" 
+          />
+          <div>
+            <strong>{row.name}</strong>
+            <div className="small text-muted">{row.cnic}</div>
+            <div className="small">Roll No: {row.rollNumber || 'N/A'}</div>
+          </div>
+        </div>
+      ),
+      sortable: true,
+      sortField: 'name'
+    },
+    {
+      name: 'Batch',
+      selector: row => row.batchName || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Semester',
+      selector: row => row.currentSemester || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Status',
+      cell: row => (
+        <Badge 
+          bg={row.status === "active" ? "success" : "danger"}
+          className="text-capitalize"
+        >
+          {row.status}
+        </Badge>
+      ),
+      sortable: true
+    },
+    {
+      name: 'Progress',
+      cell: row => (
+        results[row.cnic]?.length > 0 ? (
+          <Badge bg={hasPassedAllSubjects(row.cnic) ? "success" : "warning"}>
+            {hasPassedAllSubjects(row.cnic) ? "Eligible" : "Not Eligible"}
+          </Badge>
+        ) : (
+          <Badge bg="secondary">No Results</Badge>
+        )
+      )
+    },
+    {
+      name: 'Actions',
+      cell: row => (
+        <div className="d-flex gap-2">
+          <Button
+            variant="info"
+            size="sm"
+            onClick={() => handleViewResult(row.cnic)}
+            disabled={!results[row.cnic]?.length}
+            className="d-flex align-items-center"
           >
-            <Icon icon="ion:arrow-back" className="me-2" />
-            Return to Dashboard
+            <Icon icon="mdi:file-document-outline" className="me-1" />
+            Results
           </Button>
-        </Card.Body>
-      </Card>
-    );
-  }
+
+          {row.status === "active" && (
+            <>
+              <Button
+                variant="success"
+                size="sm"
+                onClick={() => handlePromoteStudent(row.id, row.currentSemester)}
+                disabled={processing || !hasPassedAllSubjects(row.cnic)}
+                className="d-flex align-items-center"
+              >
+                {processing ? (
+                  <Spinner size="sm" animation="border" />
+                ) : (
+                  <>
+                    <Icon icon="mdi:arrow-up" className="me-1" />
+                    Promote
+                  </>
+                )}
+              </Button>
+
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => handleDropStudent(row.id)}
+                disabled={processing}
+                className="d-flex align-items-center"
+              >
+                <Icon icon="mdi:account-remove" className="me-1" />
+                Drop
+              </Button>
+            </>
+          )}
+        </div>
+      ),
+      width: '300px'
+    }
+  ];
+
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: 'bold',
+        backgroundColor: '#f8f9fa',
+      },
+    },
+    cells: {
+      style: {
+        paddingTop: '8px',
+        paddingBottom: '8px',
+      },
+    },
+  };
 
   return (
     <Card className="mt-3">
       <Card.Header className="d-flex justify-content-between align-items-center bg-light">
         <div>
           <h4 className="mb-0">
-            {semester.name} Students - {semester.batchName}
+            Department Students
           </h4>
           <small className="text-muted">
-            Department: {user?.departmentName || 'N/A'}
+            Department: {user?.departmentName || 'N/A'} | Total Students: {students.length}
           </small>
         </div>
-        <Button 
-          variant="outline-secondary" 
-          onClick={() => navigate(-1)}
-        >
-          <Icon icon="ion:arrow-back" className="me-1" /> Back
-        </Button>
+        <div className="d-flex gap-2">
+          <Button 
+            variant="primary"
+            size="sm"
+            onClick={fetchStudents}
+            disabled={loading}
+          >
+            <Icon icon="mdi:refresh" className="me-1" />
+            Refresh
+          </Button>
+          <Button 
+            variant="outline-secondary" 
+            onClick={() => navigate(-1)}
+            size="sm"
+          >
+            <Icon icon="ion:arrow-back" className="me-1" /> Back
+          </Button>
+        </div>
       </Card.Header>
 
       <Card.Body>
@@ -232,107 +318,25 @@ const ViewStudents = () => {
             <p className="mt-3">Loading student data...</p>
           </div>
         ) : students.length === 0 ? (
-          <div className="text-center py-5">
-            <Icon icon="mdi:account-group-off" width={48} className="text-muted mb-3" />
-            <h5>No students found</h5>
-            <p>There are no students enrolled in this semester.</p>
-          </div>
+          <NoDataTable
+            img="../assets/images/no-data.svg"
+            text="No active students found in this department"
+          />
         ) : (
-          <div className="table-responsive">
-            <Table striped bordered hover className="mb-0">
-              <thead className="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Student Name</th>
-                  <th>Roll No</th>
-                  <th>Status</th>
-                  <th>Academic Progress</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student, index) => (
-                  <tr key={student.id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <Icon 
-                          icon="mdi:account-circle" 
-                          width={24} 
-                          className="me-2 text-primary" 
-                        />
-                        <div>
-                          <strong>{student.name}</strong>
-                          <div className="small text-muted">{student.cnic}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{student.rollNumber || 'N/A'}</td>
-                    <td>
-                      <Badge 
-                        bg={student.status === "active" ? "success" : "danger"}
-                        pill
-                      >
-                        {student.status?.toUpperCase()}
-                      </Badge>
-                    </td>
-                    <td>
-                      {results[student.cnic]?.length > 0 ? (
-                        <Badge bg={hasPassedAllSubjects(student.cnic) ? "success" : "warning"}>
-                          {hasPassedAllSubjects(student.cnic) ? "Eligible" : "Not Eligible"}
-                        </Badge>
-                      ) : (
-                        <Badge bg="secondary">No Results</Badge>
-                      )}
-                    </td>
-                    <td>
-                      <div className="d-flex gap-2">
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => handleViewResult(student.cnic)}
-                          disabled={!results[student.cnic]?.length}
-                        >
-                          <Icon icon="mdi:file-document-outline" className="me-1" />
-                          View Results
-                        </Button>
-
-                        {student.status === "active" && (
-                          <>
-                            <Button
-                              variant="success"
-                              size="sm"
-                              onClick={() => handlePromoteStudent(student.id, student.currentSemester)}
-                              disabled={processing || !hasPassedAllSubjects(student.cnic)}
-                            >
-                              {processing ? (
-                                <Spinner size="sm" animation="border" />
-                              ) : (
-                                <>
-                                  <Icon icon="mdi:arrow-up" className="me-1" />
-                                  Promote
-                                </>
-                              )}
-                            </Button>
-
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleDropStudent(student.id)}
-                              disabled={processing}
-                            >
-                              <Icon icon="mdi:account-remove" className="me-1" />
-                              Drop
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={students}
+            pagination
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[10, 25, 50, 100]}
+            customStyles={customStyles}
+            highlightOnHover
+            pointerOnHover
+            defaultSortFieldId={1}
+            defaultSortAsc={true}
+            responsive
+            striped
+          />
         )}
       </Card.Body>
     </Card>

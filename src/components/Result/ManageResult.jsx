@@ -39,9 +39,19 @@ const ManageResults = () => {
                 const subjectSnap = await getDoc(subjectRef);
                 if (subjectSnap.exists()) {
                     const subjectData = subjectSnap.data();
+
+                    console.log(subjectData)
+                    
+                    // Calculate marks distribution
+                    const theoryMarks = subjectData.theory * 20;
+                    const practicalMarks = subjectData.practical ? subjectData.practical * 20 : 0;
+                    const totalMarks = theoryMarks + practicalMarks;
+                    
                     setSubjectDetails({
                         ...subjectData,
-                        totalMarks: subjectData.creditHours * 20
+                        theoryMarks,
+                        practicalMarks,
+                        totalMarks
                     });
                 }
 
@@ -63,7 +73,6 @@ const ManageResults = () => {
                 studentsData = studentsData
                     .filter(student => student.status === "active")
                     .sort((a, b) => {
-                        // Convert roll numbers to numbers for proper numeric sorting
                         const rollNoA = parseInt(a.rollNumber || '0', 10);
                         const rollNoB = parseInt(b.rollNumber || '0', 10);
                         return rollNoA - rollNoB;
@@ -87,6 +96,7 @@ const ManageResults = () => {
                         presentationMarks: data.presentationMarks || 0,
                         midMarks: data.midMarks || 0,
                         finalMarks: data.finalMarks || 0,
+                        practicalMarks: data.practicalMarks || 0,
                         totalObtained: data.totalObtained || 0,
                         percentage: data.percentage || 0,
                         grade: data.grade || '',
@@ -101,6 +111,7 @@ const ManageResults = () => {
                         presentationMarks: 0,
                         midMarks: 0,
                         finalMarks: 0,
+                        practicalMarks: 0,
                         totalObtained: 0,
                         percentage: 0,
                         grade: '',
@@ -112,7 +123,7 @@ const ManageResults = () => {
 
             } catch (err) {
                 console.error("Error fetching data:", err);
-                // toast.error("Failed to load data. Please try again.");
+                toast.error("Failed to load data. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -125,18 +136,19 @@ const ManageResults = () => {
         const numericValue = parseFloat(value) || 0;
 
         let maxLimit = 0;
-        if (field === 'presentationMarks') maxLimit = subjectDetails.totalMarks * 0.2;
-        else if (field === 'midMarks') maxLimit = subjectDetails.totalMarks * 0.2;
-        else if (field === 'finalMarks') maxLimit = subjectDetails.totalMarks * 0.6;
+        if (field === 'presentationMarks') maxLimit = subjectDetails.theoryMarks * 0.2;
+        else if (field === 'midMarks') maxLimit = subjectDetails.theoryMarks * 0.2;
+        else if (field === 'finalMarks') maxLimit = subjectDetails.theoryMarks * 0.6;
+        else if (field === 'practicalMarks') maxLimit = subjectDetails.practicalMarks;
 
         if (numericValue < 0 || numericValue > maxLimit) return;
 
         setResults(prev => {
-            const totalObtained = field === 'presentationMarks'
-                ? numericValue + (prev[studentId].midMarks || 0) + (prev[studentId].finalMarks || 0)
-                : field === 'midMarks'
-                    ? (prev[studentId].presentationMarks || 0) + numericValue + (prev[studentId].finalMarks || 0)
-                    : (prev[studentId].presentationMarks || 0) + (prev[studentId].midMarks || 0) + numericValue;
+            const totalObtained = 
+                (field === 'presentationMarks' ? numericValue : prev[studentId].presentationMarks || 0) +
+                (field === 'midMarks' ? numericValue : prev[studentId].midMarks || 0) +
+                (field === 'finalMarks' ? numericValue : prev[studentId].finalMarks || 0) +
+                (field === 'practicalMarks' ? numericValue : prev[studentId].practicalMarks || 0);
 
             const percentage = (totalObtained / subjectDetails.totalMarks) * 100;
             const grade = calculateGrade(percentage);
@@ -192,9 +204,10 @@ const ManageResults = () => {
                 batchType: lecture.sessionType,
                 totalMarks: subjectDetails.totalMarks,
                 totalObtained: result.totalObtained,
-                presentationMarks: result.presentationMarks,
-                midMarks: result.midMarks,
-                finalMarks: result.finalMarks,
+                presentationMarks: subjectDetails.theory > 0 ? result.presentationMarks : 0,
+                midMarks: subjectDetails.theory > 0 ? result.midMarks : 0,
+                finalMarks: subjectDetails.theory > 0 ? result.finalMarks : 0,
+                practicalMarks: subjectDetails.practical > 0 ? result.practicalMarks : 0,
                 percentage,
                 grade,
                 createdAt: new Date(),
@@ -220,7 +233,7 @@ const ManageResults = () => {
         }
     };
 
-    const columns = [
+    const baseColumns = [
         {
             name: 'Roll No',
             selector: row => row.rollNumber || '-',
@@ -243,11 +256,14 @@ const ManageResults = () => {
                 <span>Total Marks - ({subjectDetails?.totalMarks || 0})</span>
             ),
             cell: row => subjectDetails?.totalMarks || '-'
-        },
+        }
+    ];
+
+    const theoryColumns = subjectDetails?.theory > 0 ? [
         {
             name: (
                 <span>
-                    Presentation - ({subjectDetails ? subjectDetails.totalMarks * 0.2 : 0})
+                    Presentation - ({subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.2) : 0})
                 </span>
             ),
             cell: row => (
@@ -255,7 +271,7 @@ const ManageResults = () => {
                     <Form.Control
                         type="number"
                         min="0"
-                        max={subjectDetails ? subjectDetails.totalMarks * 0.2 : 0}
+                        max={subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.2) : 0}
                         value={results[row.id]?.presentationMarks || 0}
                         onChange={(e) => handleMarksChange(row.id, 'presentationMarks', e.target.value)}
                         disabled={!subjectDetails}
@@ -269,7 +285,7 @@ const ManageResults = () => {
         {
             name: (
                 <span>
-                    Mid-Term - ({subjectDetails ? subjectDetails.totalMarks * 0.2 : 0})
+                    Mid-Term - ({subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.2) : 0})
                 </span>
             ),
             cell: row => (
@@ -277,7 +293,7 @@ const ManageResults = () => {
                     <Form.Control
                         type="number"
                         min="0"
-                        max={subjectDetails ? subjectDetails.totalMarks * 0.2 : 0}
+                        max={subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.2) : 0}
                         value={results[row.id]?.midMarks || 0}
                         onChange={(e) => handleMarksChange(row.id, 'midMarks', e.target.value)}
                         disabled={!subjectDetails}
@@ -291,7 +307,7 @@ const ManageResults = () => {
         {
             name: (
                 <span>
-                    Final-Term - ({subjectDetails ? subjectDetails.totalMarks * 0.6 : 0})
+                    Final-Term - ({subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.6) : 0})
                 </span>
             ),
             cell: row => (
@@ -299,7 +315,7 @@ const ManageResults = () => {
                     <Form.Control
                         type="number"
                         min="0"
-                        max={subjectDetails ? subjectDetails.totalMarks * 0.6 : 0}
+                        max={subjectDetails ? Math.round(subjectDetails.theoryMarks * 0.6) : 0}
                         value={results[row.id]?.finalMarks || 0}
                         onChange={(e) => handleMarksChange(row.id, 'finalMarks', e.target.value)}
                         disabled={!subjectDetails}
@@ -309,7 +325,35 @@ const ManageResults = () => {
                     results[row.id]?.finalMarks || '-'
                 )
             )
-        },
+        }
+    ] : [];
+
+    const practicalColumn = subjectDetails?.practical > 0 ? [
+        {
+            name: (
+                <span>
+                    Practical - ({subjectDetails?.practicalMarks || 0})
+                </span>
+            ),
+            cell: row => (
+                editingStudent === row.id ? (
+                    <Form.Control
+                        type="number"
+                        min="0"
+                        max={subjectDetails?.practicalMarks || 0}
+                        value={results[row.id]?.practicalMarks || 0}
+                        onChange={(e) => handleMarksChange(row.id, 'practicalMarks', e.target.value)}
+                        disabled={!subjectDetails}
+                        size="sm"
+                    />
+                ) : (
+                    results[row.id]?.practicalMarks || '-'
+                )
+            )
+        }
+    ] : [];
+
+    const resultColumns = [
         {
             name: 'Total Obtained',
             cell: row => results[row.id]?.totalObtained || '-'
@@ -365,6 +409,13 @@ const ManageResults = () => {
         }
     ];
 
+    const columns = [
+        ...baseColumns,
+        ...theoryColumns,
+        ...practicalColumn,
+        ...resultColumns
+    ];
+
     if (!lecture) {
         return (
             <MasterLayout>
@@ -415,7 +466,13 @@ const ManageResults = () => {
                                 <h5 className="margin-bottom-10 modal-sub-heading text-capitalize">
                                     <strong>Subject:</strong> {lecture.subjectName} / <strong>Session:</strong> {lecture.sessionType}
                                 </h5>
-                                <span><strong>Batch:</strong> {lecture.batchName}</span>
+                                <span>
+                                    <strong>Batch:</strong> {lecture.batchName} | 
+                                    <strong> Theory:</strong> {subjectDetails?.theory || 0}hrs | 
+                                    {subjectDetails?.practical > 0 && 
+                                        <><strong> Practical:</strong> {subjectDetails.practical}hrs</>
+                                    }
+                                </span>
                             </div>
                         </div>
 
@@ -424,7 +481,7 @@ const ManageResults = () => {
                         ) : filteredStudents.length === 0 ? (
                             <NoDataTable
                                 img={'../assets/images/no-data.svg'}
-                                text={'No Request Found!'}
+                                text={'No Students Found!'}
                             />
                         ) : (
                             <>
@@ -450,7 +507,6 @@ const ManageResults = () => {
                                     highlightOnHover
                                     pointerOnHover
                                 />
-                                {/* {console.log(filteredStudents)} */}
                                 <div className="d-flex justify-content-end mt-3">
                                     <Button
                                         variant="outline-secondary"
