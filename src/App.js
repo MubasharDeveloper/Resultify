@@ -25,6 +25,7 @@ import Semesters from "./pages/Admin/Semesters";
 import Users from "./pages/Admin/Users";
 import TimeTable from "./pages/Admin/TimeTable";
 import Profile from "./pages/Profile/Profile";
+import ViewStudents from './components/ViewStudents'
 
 import ManageResult from './components/Result/ManageResult';
 
@@ -104,6 +105,11 @@ const routeConfig = [
     path: '/subjects', 
     element: <Subjects />, 
     roles: ['HOD', 'Data Operator'] 
+  },
+  { 
+    path: '/view-students', 
+    element: <ViewStudents />, 
+    roles: ['HOD'] 
   },
   { 
     path: '/semesters', 

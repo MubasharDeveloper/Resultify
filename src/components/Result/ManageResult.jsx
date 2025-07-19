@@ -9,6 +9,8 @@ import Breadcrumb from '../Breadcrumb';
 import { useAuth } from "../../context/AuthContext";
 import { db, collection, query, where, getDocs, doc, getDoc, setDoc } from '../../Firebase_config';
 import DataTable from 'react-data-table-component';
+import NoDataTable from '../NoDataTable';
+import { CustomLoader } from '../CustomLoader';
 
 const ManageResults = () => {
     const { user } = useAuth();
@@ -23,7 +25,6 @@ const ManageResults = () => {
     const [saving, setSaving] = useState(false);
     const [results, setResults] = useState({});
     const [editingStudent, setEditingStudent] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 15;
 
     useEffect(() => {
@@ -111,7 +112,7 @@ const ManageResults = () => {
 
             } catch (err) {
                 console.error("Error fetching data:", err);
-                toast.error("Failed to load data. Please try again.");
+                // toast.error("Failed to load data. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -171,7 +172,7 @@ const ManageResults = () => {
 
         try {
             setSaving(true);
-            
+
             const result = results[studentId];
             const percentage = (result.totalObtained / subjectDetails.totalMarks) * 100;
             const grade = calculateGrade(percentage);
@@ -239,7 +240,7 @@ const ManageResults = () => {
         },
         {
             name: (
-                <span>Total Marks - ({subjectDetails?.totalMarks || 0})</span> 
+                <span>Total Marks - ({subjectDetails?.totalMarks || 0})</span>
             ),
             cell: row => subjectDetails?.totalMarks || '-'
         },
@@ -324,37 +325,39 @@ const ManageResults = () => {
         {
             name: 'Actions',
             cell: row => (
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-1">
                     {editingStudent === row.id ? (
                         <>
                             <Button
                                 variant="success"
-                                size="sm"
+                                className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-success-600 p-2"
                                 onClick={() => handleSubmitResult(row.id)}
                                 disabled={saving}
                                 title="Save"
                             >
-                                <Icon icon="mdi:content-save" />
+                                <Icon icon="lucide:edit" />
                             </Button>
                             <Button
-                                variant="secondary"
-                                size="sm"
+                                variant="danger"
+                                className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-danger-600 p-2"
                                 onClick={() => setEditingStudent(null)}
                                 disabled={saving}
                                 title="Cancel"
                             >
-                                <Icon icon="mdi:cancel" />
+                                <Icon icon="tabler:cancel" />
                             </Button>
                         </>
                     ) : (
-                        <Button
-                            variant={results[row.id]?.exists ? 'warning' : 'primary'}
-                            size="sm"
-                            onClick={() => setEditingStudent(row.id)}
-                            title={results[row.id]?.exists ? 'Edit' : 'Add'}
-                        >
-                            <Icon icon={results[row.id]?.exists ? 'mdi:pencil' : 'mdi:plus'} />
-                        </Button>
+                        <>
+                            <Button
+                                className={`w-32-px h-32-px me-8 rounded-circle d-inline-flex align-items-center justify-content-center border-0 p-2
+                                    ${results[row.id]?.exists ? 'text-warning-600 bg-warning-focus text-warning-main' : 'text-success-600 bg-success-focus text-success-main'}`}
+                                onClick={() => setEditingStudent(row.id)}
+                                title={results[row.id]?.exists ? 'Edit' : 'Add'}
+                            >
+                                <Icon icon={results[row.id]?.exists ? 'lucide:edit' : 'tabler:plus'} />
+                            </Button>
+                        </>
                     )}
                 </div>
             ),
@@ -373,8 +376,9 @@ const ManageResults = () => {
                             <h4>No lecture data found</h4>
                             <p>Please go back and select a valid lecture</p>
                             <Button
-                                variant="primary"
+                                variant="outline-secondary"
                                 onClick={() => navigate(-1)}
+                                size='sm'
                             >
                                 Back to Dashboard
                             </Button>
@@ -409,24 +413,19 @@ const ManageResults = () => {
                             </div>
                             <div className="d-flex justify-content-between">
                                 <h5 className="margin-bottom-10 modal-sub-heading text-capitalize">
-                                    <strong>Subject:</strong> {lecture.subjectName} / <strong>Batch Time:</strong> {lecture.sessionType}
+                                    <strong>Subject:</strong> {lecture.subjectName} / <strong>Session:</strong> {lecture.sessionType}
                                 </h5>
-                                <span><strong>Session:</strong> {lecture.batchName}</span>
+                                <span><strong>Batch:</strong> {lecture.batchName}</span>
                             </div>
                         </div>
 
                         {loading ? (
-                            <div className="text-center py-4">
-                                <Spinner animation="border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                                <p>Loading students data...</p>
-                            </div>
+                            <CustomLoader size={'80px'} />
                         ) : filteredStudents.length === 0 ? (
-                            <div className="text-center py-4">
-                                <Icon icon="mdi:account-remove" width={48} height={48} className="text-info mb-3" />
-                                <h5>No active students found for this batch and session.</h5>
-                            </div>
+                            <NoDataTable
+                                img={'../assets/images/no-data.svg'}
+                                text={'No Request Found!'}
+                            />
                         ) : (
                             <>
                                 <DataTable
@@ -451,13 +450,13 @@ const ManageResults = () => {
                                     highlightOnHover
                                     pointerOnHover
                                 />
-                                {console.log(filteredStudents)}
+                                {/* {console.log(filteredStudents)} */}
                                 <div className="d-flex justify-content-end mt-3">
                                     <Button
                                         variant="outline-secondary"
                                         onClick={() => navigate(-1)}
+                                        size='sm'
                                     >
-                                        <Icon icon="mdi:arrow-left" className="me-1" />
                                         Back to Dashboard
                                     </Button>
                                 </div>

@@ -105,7 +105,7 @@ const StudentCreationForm = () => {
             cleaned = '03' + cleaned.substring(2);
         }
 
-        cleaned = cleaned.substring(0, 12);
+        cleaned = cleaned.substring(0, 11);
 
         if (cleaned.length > 4) {
             cleaned = cleaned.substring(0, 4) + '-' + cleaned.substring(4);
@@ -282,12 +282,6 @@ const StudentCreationForm = () => {
 
         if (Object.values(validationErrors).some(error => error)) {
             setSubmitting(false);
-            toast.error('Please fix the errors in the form', {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "light",
-                transition: Slide,
-            });
             return;
         }
 

@@ -15632,7 +15632,7 @@ td.fc-header-center {
 .sidebar-menu li a:hover {
   /* color: var(--brand); */
   background-color: var(--brand);
-  color: #fff;
+  color: #fff !important;
 }
 
 .sidebar-menu li a .menu-icon {
@@ -16095,4 +16095,8 @@ h2.swal2-title {
   display: -webkit-box !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+}
+
+.fs-18{
+  font-size: 18px !important;
 }

@@ -4,15 +4,15 @@ import { Card, Row, Col } from 'react-bootstrap';
 import { CustomLoader } from '../CustomLoader';
 import { useAuth } from "../../context/AuthContext";
 import { Icon } from '@iconify/react';
-import NoDataTable from '../NoDataTable';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const HodDashboardLayer = () => {
   const [loading, setLoading] = useState(true);
   const [currentSemesters, setCurrentSemesters] = useState([]);
   const [assignedLectures, setAssignedLectures] = useState([]);
-  const [totalTeachers, setTotalTeachers] = useState(0); // Define totalTeachers state
-  const [totalStudents, setTotalStudents] = useState(0); // Define totalStudents state
+  const [totalTeachers, setTotalTeachers] = useState(0);
+  const [totalStudents, setTotalStudents] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -25,8 +25,6 @@ const HodDashboardLayer = () => {
 
       try {
         const now = new Date();
-
-        // Fetch Semesters
         const semSnap = await getDocs(collection(db, 'Semesters'));
         const currentSem = semSnap.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
@@ -42,6 +40,7 @@ const HodDashboardLayer = () => {
         setCurrentSemesters(currentSem);
       } catch (error) {
         console.error("Error fetching current semesters:", error);
+        toast.error("Failed to load current semesters");
       } finally {
         setLoading(false);
       }
@@ -50,17 +49,15 @@ const HodDashboardLayer = () => {
     fetchCurrentSemesters();
   }, [user]);
 
-  // New useEffect to fetch assigned lectures
   useEffect(() => {
     const fetchAssignedLectures = async () => {
-      if (!user || !user.id || currentSemesters.length === 0) { // Wait for currentSemesters to be populated
-        // If no current semesters, or user not loaded, potentially clear lectures or do nothing
-        setAssignedLectures([]); // Clear lectures if no current semesters or user
-        setLoading(false); // Ensure loading is false if we return early
+      if (!user || !user.id || currentSemesters.length === 0) {
+        setAssignedLectures([]);
+        setLoading(false);
         return;
       }
 
-      setLoading(true); // Set loading true at the start of data fetching
+      setLoading(true);
       try {
         const lecturesCollectionRef = collection(db, "Lectures");
         const q = query(
@@ -71,38 +68,34 @@ const HodDashboardLayer = () => {
         const lecturesDataPromises = querySnapshot.docs.map(async (lectureDoc) => {
           const lectureData = { id: lectureDoc.id, ...lectureDoc.data() };
 
-          // Fetch Subject Name
+          // Fetch related data
           if (lectureData.subjectId) {
             const subjectRef = doc(db, "Subjects", lectureData.subjectId);
             const subjectSnap = await getDoc(subjectRef);
             if (subjectSnap.exists()) {
-              lectureData.subjectName = subjectSnap.data().name; // Assuming 'name' field in Subjects
+              lectureData.subjectName = subjectSnap.data().name;
             }
           }
 
-          // Fetch Semester Name
           if (lectureData.semesterId) {
             const semesterRef = doc(db, "Semesters", lectureData.semesterId);
             const semesterSnap = await getDoc(semesterRef);
             if (semesterSnap.exists()) {
-              lectureData.semesterName = semesterSnap.data().name; // Assuming 'name' field in Semesters
+              lectureData.semesterName = semesterSnap.data().name;
             }
           }
 
-          // Fetch Batch Name
           if (lectureData.batchId) {
             const batchRef = doc(db, "Batches", lectureData.batchId);
             const batchSnap = await getDoc(batchRef);
             if (batchSnap.exists()) {
-              lectureData.batchName = batchSnap.data().name; // Assuming 'name' field in Batches
+              lectureData.batchName = batchSnap.data().name;
             }
           }
           return lectureData;
         });
 
         const fetchedLectures = await Promise.all(lecturesDataPromises);
-
-        // Filter lectures to include only those from current semesters
         const currentSemesterIds = currentSemesters.map(cs => cs.id);
         const filteredLectures = fetchedLectures.filter(lecture =>
           lecture.semesterId && currentSemesterIds.includes(lecture.semesterId)
@@ -110,62 +103,57 @@ const HodDashboardLayer = () => {
 
         setAssignedLectures(filteredLectures);
       } catch (error) {
-        console.error("Error fetching assigned lectures or related data:", error);
-        setAssignedLectures([]); // Clear lectures on error
+        console.error("Error fetching assigned lectures:", error);
+        toast.error("Failed to load assigned lectures");
+        setAssignedLectures([]);
       } finally {
-        setLoading(false); // Set loading false after all operations complete
+        setLoading(false);
       }
     };
 
-    if (user && user.id) { // Ensure user.id is available before fetching
+    if (user && user.id) {
       fetchAssignedLectures();
     }
-  }, [user, currentSemesters]); // Add currentSemesters to dependency array
+  }, [user, currentSemesters]);
 
-  // useEffect to fetch department stats (teachers and students)
   useEffect(() => {
     const fetchDepartmentStats = async () => {
-      if (!user || !user.departmentId) {
-        return;
-      }
+      if (!user || !user.departmentId) return;
 
-      // Consider a separate loading state for stats if needed
-      // setLoading(true); 
       try {
-        // Fetch total teachers (assuming roleId '2' is for teachers)
+        // Fetch total teachers
         const teachersQuery = query(
           collection(db, "Users"),
           where("departmentId", "==", user.departmentId),
-          where("roleId", "==", "k1LBLXK6JLUlL7tblvMM") // Role ID for Teachers
+          where("roleId", "==", "k1LBLXK6JLUlL7tblvMM")
         );
         const teachersSnap = await getDocs(teachersQuery);
         setTotalTeachers(teachersSnap.size);
 
-        // Fetch total students (assuming roleId '3' is for students)
+        // Fetch total students
         const studentsQuery = query(
           collection(db, "Students"),
           where("departmentId", "==", user.departmentId),
         );
         const studentsSnap = await getDocs(studentsQuery);
         setTotalStudents(studentsSnap.size);
-
       } catch (error) {
         console.error("Error fetching department stats:", error);
-        setTotalTeachers(0);
-        setTotalStudents(0);
-      } finally {
-        // setLoading(false); // Set to false if a separate loading state was used
+        toast.error("Failed to load department statistics");
       }
     };
 
     if (user && user.departmentId) {
       fetchDepartmentStats();
     }
-  }, [user]); // Rerun if user object changes
+  }, [user]);
 
   const handleViewDetails = (lecture) => {
-    // Navigate to details page with lecture data as state
     navigate('/manage-result', { state: { lecture } });
+  };
+
+  const handleViewStudents = (semester) => {
+    navigate('/view-students', { state: { semester } });
   };
 
   return (
@@ -178,7 +166,7 @@ const HodDashboardLayer = () => {
         </Card>
       ) : (
         <Row className="g-3">
-          {currentSemesters.length > 0 &&
+          {user.roleName == 'HOD' && currentSemesters.length > 0 &&
             <Col md={12}>
               <Card>
                 <Card.Body>
@@ -194,16 +182,24 @@ const HodDashboardLayer = () => {
                                   <Icon icon="solar:calendar-bold" width="24" height="24" />
                                 </span>
                                 <div>
-                                  <span className="mb-2 fw-medium text-secondary-light text-sm">Active Semesters</span>
-                                  <h6 className="fw-semibold">{semester.name}</h6>
+                                  <span className="mb-2 fw-medium text-secondary-light text-sm">Active Semester</span>
+                                  <h6 className="fw-500 fs-18">{semester.name}</h6>
                                 </div>
                               </div>
                             </div>
-                            <p className="text-sm mb-0">
-                              Batch : <span className="fw-medium text-primary-main text-sm">
-                                {semester.batchName}
-                              </span>
-                            </p>
+                            <div className="d-flex justify-content-between gap-3 align-items-center">
+                              <p className="text-sm mb-0">
+                                Batch: <span className="fw-medium text-primary-main text-sm">
+                                  {semester.batchName}
+                                </span>
+                              </p>
+                              <button
+                                className="btn btn-sm btn-link"
+                                onClick={() => handleViewStudents(semester)}
+                              >
+                                View Students
+                              </button>
+                            </div>
                           </Card.Body>
                         </Card>
                       </Col>
@@ -221,7 +217,7 @@ const HodDashboardLayer = () => {
                   <Row className="g-3">
                     {assignedLectures.map((lecture, index) => (
                       <Col xxl={3} sm={6} key={lecture.id}>
-                        <Card className={`p-3 shadow-none radius-8 border h-100 bg-gradient-end-${index + 3}`}>
+                        <Card className={`p-3 shadow-none radius-8 border h-100 bg-gradient-end-${(index + 1) % 6}`}>
                           <Card.Body className="p-0">
                             <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                               <div className="d-flex align-items-center gap-2">
@@ -230,7 +226,7 @@ const HodDashboardLayer = () => {
                                 </span>
                                 <div>
                                   <span className="mb-2 fw-medium text-secondary-light text-sm">{lecture.semesterName || 'Semester N/A'}</span>
-                                  <h6 className="fw-semibold text-1">{lecture.subjectName || 'Subject N/A'}</h6>
+                                  <h6 className="fw-500 fs-18 text-1">{lecture.subjectName || 'Subject N/A'}</h6>
                                 </div>
                               </div>
                             </div>
@@ -248,7 +244,7 @@ const HodDashboardLayer = () => {
                             </div>
                             <div className="d-flex justify-content-center mt-3">
                               <button
-                                className="btn btn-sm btn-primary"
+                                className="btn btn-sm btn-link"
                                 onClick={() => handleViewDetails(lecture)}
                               >
                                 Manage Result
@@ -278,7 +274,7 @@ const HodDashboardLayer = () => {
                             </span>
                             <div>
                               <span className="mb-2 fw-medium text-secondary-light text-sm">Total Teachers</span>
-                              <h6 className="fw-semibold">{totalTeachers}</h6>
+                              <h6 className="fw-500 fs-18">{totalTeachers}</h6>
                             </div>
                           </div>
                         </div>
@@ -295,7 +291,7 @@ const HodDashboardLayer = () => {
                             </span>
                             <div>
                               <span className="mb-2 fw-medium text-secondary-light text-sm">Total Students (All Batches)</span>
-                              <h6 className="fw-semibold">{totalStudents}</h6>
+                              <h6 className="fw-500 fs-18">{totalStudents}</h6>
                             </div>
                           </div>
                         </div>
