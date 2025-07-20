@@ -41,12 +41,12 @@ const ManageResults = () => {
                     const subjectData = subjectSnap.data();
 
                     console.log(subjectData)
-                    
+
                     // Calculate marks distribution
                     const theoryMarks = subjectData.theory * 20;
                     const practicalMarks = subjectData.practical ? subjectData.practical * 20 : 0;
                     const totalMarks = theoryMarks + practicalMarks;
-                    
+
                     setSubjectDetails({
                         ...subjectData,
                         theoryMarks,
@@ -144,7 +144,7 @@ const ManageResults = () => {
         if (numericValue < 0 || numericValue > maxLimit) return;
 
         setResults(prev => {
-            const totalObtained = 
+            const totalObtained =
                 (field === 'presentationMarks' ? numericValue : prev[studentId].presentationMarks || 0) +
                 (field === 'midMarks' ? numericValue : prev[studentId].midMarks || 0) +
                 (field === 'finalMarks' ? numericValue : prev[studentId].finalMarks || 0) +
@@ -467,10 +467,10 @@ const ManageResults = () => {
                                     <strong>Subject:</strong> {lecture.subjectName} / <strong>Session:</strong> {lecture.sessionType}
                                 </h5>
                                 <span>
-                                    <strong>Batch:</strong> {lecture.batchName} | 
-                                    <strong> Theory:</strong> {subjectDetails?.theory || 0}hrs | 
-                                    {subjectDetails?.practical > 0 && 
-                                        <><strong> Practical:</strong> {subjectDetails.practical}hrs</>
+                                    <strong>Batch:</strong> {lecture.batchName} |
+                                    <strong> Theory:</strong> {subjectDetails?.theory || 0}hrs
+                                    {subjectDetails?.practical > 0 &&
+                                        <> | <strong> Practical:</strong> {subjectDetails.practical}hrs</>
                                     }
                                 </span>
                             </div>
