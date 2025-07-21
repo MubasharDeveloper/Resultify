@@ -26,6 +26,7 @@ import Users from "./pages/Admin/Users";
 import TimeTable from "./pages/Admin/TimeTable";
 import Profile from "./pages/Profile/Profile";
 import ViewStudents from './components/ViewStudents'
+import DropoutStudents from './components/DropoutStudents'
 
 import ManageResult from './components/Result/ManageResult';
 
@@ -109,6 +110,11 @@ const routeConfig = [
   { 
     path: '/view-students', 
     element: <ViewStudents />, 
+    roles: ['HOD'] 
+  },
+  { 
+    path: '/dropout-students', 
+    element: <DropoutStudents />, 
     roles: ['HOD'] 
   },
   { 

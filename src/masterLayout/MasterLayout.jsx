@@ -251,9 +251,32 @@ const MasterLayout = ({ children }) => {
                       <span>Admissions</span>
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to='/dropout-students'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon icon='tabler:school-off' className='menu-icon' />
+                      <span>DropOut Students</span>
+                    </NavLink>
+                  </li>
                 </>
               ) : user.roleName === 'Teacher' ? (
-                ''
+                <>
+                  <li className='sidebar-menu-group-title'>Teacher</li>
+                  <li>
+                    <NavLink
+                      to='/teacher-dashboard'
+                      className={(navData) => (navData.isActive ? "active-page" : "")}
+                    >
+                      <Icon
+                        icon='tabler:brand-tabler'
+                        className='menu-icon'
+                      />
+                      <span>Dashboard</span>
+                    </NavLink>
+                  </li>
+                </>
               ) : user.roleName === 'Data Operator' && (
                 <>
                   <li className='sidebar-menu-group-title'>Data Operator</li>
@@ -331,10 +354,15 @@ const MasterLayout = ({ children }) => {
                   className='sidebar-toggle'
                   onClick={sidebarControl}
                 >
-                  <Icon
+                  {sidebarActive ? (
+                    <Icon icon='tabler:chevron-right-pipe' className='icon text-2xl non-active ' />
+                  ) : (
+                    <Icon icon='tabler:chevron-left-pipe' className='icon text-2xl non-active ' />
+                  )}
+                  {/* <Icon
                     icon='heroicons:bars-3-solid'
                     className='icon text-2xl non-active '
-                  />
+                  /> */}
                 </button>
                 <button
                   onClick={mobileMenuControl}

@@ -25,7 +25,6 @@ const ManageResults = () => {
     const [saving, setSaving] = useState(false);
     const [results, setResults] = useState({});
     const [editingStudent, setEditingStudent] = useState(null);
-    const studentsPerPage = 15;
 
     useEffect(() => {
         if (!lecture) return;
@@ -197,8 +196,6 @@ const ManageResults = () => {
                 departmentId: user.departmentId,
                 subjectId: lecture.subjectId,
                 subjectName: lecture.subjectName,
-                semesterId: lecture.semesterId,
-                semesterName: lecture.semesterName,
                 batchId: lecture.batchId,
                 batchName: lecture.batchName,
                 batchType: lecture.sessionType,
@@ -423,14 +420,18 @@ const ManageResults = () => {
                 <div className="py-4">
                     <Card>
                         <Card.Body className="text-center">
-                            <Icon icon="mdi:alert-circle-outline" width={48} height={48} className="text-danger mb-3" />
-                            <h4>No lecture data found</h4>
+                            <NoDataTable
+                                img={'../assets/images/no-data.svg'}
+                                text={'No lecture data found'}
+                            />
                             <p>Please go back and select a valid lecture</p>
                             <Button
                                 variant="outline-secondary"
                                 onClick={() => navigate(-1)}
-                                size='sm'
+                                size="sm"
+                                className="d-flex justify-content-center align-items-center gap-1"
                             >
+                                <Icon icon="tabler:chevron-left" className="fs-18" />
                                 Back to Dashboard
                             </Button>
                         </Card.Body>
@@ -489,8 +490,8 @@ const ManageResults = () => {
                                     columns={columns}
                                     data={filteredStudents}
                                     pagination
-                                    paginationPerPage={studentsPerPage}
-                                    paginationRowsPerPageOptions={[15, 30, 50]}
+                                    paginationPerPage={10}
+                                    paginationRowsPerPageOptions={[10, 25, 50]}
                                     customStyles={{
                                         headCells: {
                                             style: {
@@ -511,8 +512,10 @@ const ManageResults = () => {
                                     <Button
                                         variant="outline-secondary"
                                         onClick={() => navigate(-1)}
-                                        size='sm'
+                                        size="sm"
+                                        className="d-flex justify-content-center align-items-center gap-1"
                                     >
+                                        <Icon icon="tabler:chevron-left" className="fs-18" />
                                         Back to Dashboard
                                     </Button>
                                 </div>

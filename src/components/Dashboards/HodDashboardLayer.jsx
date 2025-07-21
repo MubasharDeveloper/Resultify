@@ -217,7 +217,7 @@ const HodDashboardLayer = () => {
                   <Row className="g-3">
                     {assignedLectures.map((lecture, index) => (
                       <Col xxl={3} sm={6} key={lecture.id}>
-                        <Card className={`p-3 shadow-none radius-8 border h-100 bg-gradient-end-${(index + 1) % 6}`}>
+                        <Card className={`p-3 shadow-none radius-8 border h-100 bg-gradient-end-${((index + 1) % 6) + 1}`}>
                           <Card.Body className="p-0">
                             <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                               <div className="d-flex align-items-center gap-2">

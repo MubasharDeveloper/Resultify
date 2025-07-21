@@ -16016,37 +16016,42 @@ h2.swal2-title {
   font-weight: 400;
 }
 
-.margin-bottom-10{
+.margin-bottom-10 {
   margin-bottom: 10px !important;
 }
-.margin-bottom-15{
+
+.margin-bottom-15 {
   margin-bottom: 15px !important;
 }
-.margin-bottom-20{
+
+.margin-bottom-20 {
   margin-bottom: 20px !important;
 }
-.margin-bottom-25{
+
+.margin-bottom-25 {
   margin-bottom: 25px !important;
 }
-.margin-bottom-30{
+
+.margin-bottom-30 {
   margin-bottom: 30px !important;
 }
 
-.basic-data-table header{
+.basic-data-table header {
   padding-right: 10px !important;
   box-shadow: none !important;
 }
 
-.index-99{
+.index-99 {
   z-index: 99 !important;
 }
 
-.h6{
+.h6 {
   font-size: 18px !important;
 }
 
 
-::-moz-selection { /* Code for Firefox */
+::-moz-selection {
+  /* Code for Firefox */
   color: #fff !important;
   background: #000 !important;
 }
@@ -16056,11 +16061,11 @@ h2.swal2-title {
   background: #000 !important;
 }
 
-.fs-20{
+.fs-20 {
   font-size: 20px !important;
 }
 
-.fw-500{
+.fw-500 {
   font-weight: 500 !important;
 }
 
@@ -16097,6 +16102,6 @@ h2.swal2-title {
   text-overflow: ellipsis !important;
 }
 
-.fs-18{
+.fs-18 {
   font-size: 18px !important;
 }

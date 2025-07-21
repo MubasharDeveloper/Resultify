@@ -292,8 +292,8 @@ const StudentCreationForm = () => {
                 createdAt: serverTimestamp(),
                 createdBy: user.id,
                 updatedAt: serverTimestamp(),
-                currentSemester,
-                currentSemesterName: 'Semester ' + currentSemester,
+                // currentSemester,
+                // currentSemesterName: 'Semester ' + currentSemester,
             };
 
             const docRef = await addDoc(collection(db, 'Students'), studentData);
@@ -550,9 +550,9 @@ const StudentCreationForm = () => {
                                         onChange={handleChange}
                                     >
                                         <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
+                                        {/* <option value="inactive">Inactive</option>
                                         <option value="graduated">Graduated</option>
-                                        <option value="suspended">Suspended</option>
+                                        <option value="suspended">Suspended</option> */}
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
