@@ -13,7 +13,7 @@ const StudentResultsPage = () => {
 
     const handleSearch = () => {
         if (!selectedSemesterId) return;
-        
+
         const semester = student.semesters?.find(s => s.id === selectedSemesterId);
         if (semester) {
             setSelectedSemester(semester);
@@ -25,72 +25,79 @@ const StudentResultsPage = () => {
 
     return (
         <div className="container py-4">
-            <h2 className="mb-4">Student Result</h2>
+            <h2 className="fs-28 fw-500 pt-5 pb-3 mb-0">Welcome To Resultify</h2>
 
-            <Row className="mb-4">
-                <Col md={6}>
-                    <Card className="h-100">
-                        <Card.Body>
-                            <Card.Title>Student Information</Card.Title>
-                            <Card.Text>
-                                <div className="mb-2">
-                                    <strong>Name:</strong> {student.name}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>Father's Name:</strong> {student.fatherName}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>Roll Number:</strong> {student.rollNumber}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>CNIC:</strong> {student.cnic}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>Email:</strong> {student.email}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>Phone:</strong> {student.phone}
-                                </div>
-                                <div className="mb-2">
-                                    <strong>Batch:</strong> {student.batchInfo?.[0]?.name}
-                                </div>
-                                <div>
-                                    <strong>Current Semester:</strong> {student.currentSemesterName}
-                                </div>
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={6}>
-                    <Card className="h-100">
-                        <Card.Body>
-                            <Card.Title>View Results</Card.Title>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Select Semester</Form.Label>
-                                <Form.Select 
-                                    value={selectedSemesterId}
-                                    onChange={(e) => setSelectedSemesterId(e.target.value)}
-                                >
-                                    <option value="">Choose semester...</option>
-                                    {student.semesters?.map((semester) => (
-                                        <option key={semester.id} value={semester.id}>
-                                            {semester.name} ({new Date(semester.startDate?.seconds * 1000).toLocaleDateString()} - {new Date(semester.endDate?.seconds * 1000).toLocaleDateString()})
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                            <Button 
-                                variant="primary" 
-                                onClick={handleSearch}
-                                disabled={!selectedSemesterId}
+            <Card>
+                <Card.Body className="d-flex flex-column">
+                    <img src='assets/images/student.svg' alt="" style={{ maxWidth: '360px', margin: '16px auto 36px' }} />
+                    <div className="table-responsive" style={{ maxWidth: 540, margin: '0 auto', width: '100%' }}>
+                        <table className="table vertical-striped-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th colspan='2'>Student Info</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>{student.name}</td>
+                                </tr>
+                                <tr>
+                                    <td>Fatder's Name</td>
+                                    <td>{student.fatherName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Roll No</td>
+                                    <td>{student.rollNumber}</td>
+                                </tr>
+                                <tr>
+                                    <td>CNIC</td>
+                                    <td>{student.cnic}</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone No</td>
+                                    <td>{student.phone}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>{student.email}</td>
+                                </tr>
+                                <tr>
+                                    <td>Batch</td>
+                                    <td>{student.batchInfo?.[0]?.name}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style={{ maxWidth: 540, margin: '24px auto 0', width: '100%' }}>
+                        <h4 className="fs-18 fw-500 my-3">View Result</h4>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Select Semester</Form.Label>
+                            <Form.Select
+                                value={selectedSemesterId}
+                                onChange={(e) => setSelectedSemesterId(e.target.value)}
+                                className="table-search-2"
                             >
-                                <Icon icon="bx:search" className="me-2" />
-                                View Results
-                            </Button>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+                                <option value="">Choose semester...</option>
+                                {student.semesters?.map((semester) => (
+                                    <option key={semester.id} value={semester.id}>
+                                        {semester.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                        <Button
+                            variant="primary" size='sm'
+                            onClick={handleSearch}
+                            disabled={!selectedSemesterId}
+                            className="btn-primary-custom mx-auto mb-5"
+                        >
+                            <Icon icon="bx:search" className="me-2" />
+                            View Results
+                        </Button>
+                    </div>
+                </Card.Body>
+            </Card>
 
             {/* Result Modal */}
             {selectedSemester && (

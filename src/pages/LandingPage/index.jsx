@@ -319,7 +319,7 @@ const ResultifyLandingPage = () => {
       <section className="cta fade-in">
         <h2>Ready to Take Control of Your Academic Progress?</h2>
         <p>Join thousands of students using Resultify to stay informed, motivated, and ahead in their academic goals</p>
-        <Link to="#" className="cta-button btn-free-trial" onClick={(e) => e.preventDefault()}><Icon icon='tabler:school' className='fs-28' /> Check Your Result</Link>
+        <Link to="/check-result" className="cta-button btn-free-trial"><Icon icon='tabler:school' className='fs-28' /> Check Your Result</Link>
       </section>
 
       {/* Footer */}

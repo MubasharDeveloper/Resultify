@@ -16139,6 +16139,12 @@ h2.swal2-title {
   height: 40px !important;
 }
 
+.table-search-2 {
+  width: 100% !important;
+  font-size: 14px !important;
+  height: 40px !important;
+}
+
 .btn-link {
   --bs-btn-font-weight: 400;
   --bs-btn-color: var(--primary-600);
