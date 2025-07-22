@@ -574,11 +574,12 @@ const Batches = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Search batches..."
-                                        className="w-auto"
+                                        className="table-search"
                                         value={searchText}
                                         onChange={(e) => setSearchText(e.target.value)}
                                     />
-                                    <Button variant="primary" onClick={() => setShowModal(true)}>
+                                    <Button variant="primary" className='btn-primary-custom' size='sm' onClick={() => setShowModal(true)}>
+                                        <Icon icon='tabler:plus' />
                                         Add Batch
                                     </Button>
                                 </div>

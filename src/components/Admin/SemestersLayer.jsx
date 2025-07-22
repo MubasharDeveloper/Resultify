@@ -778,11 +778,12 @@ const Semesters = () => {
                   <Form.Control
                     type="text"
                     placeholder="Search Semesters..."
-                    className="w-auto"
+                    className="table-search"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                   />
-                  <Button variant="primary" className='px-24' onClick={() => setShowModal(true)}>
+                  <Button variant="primary" size='sm' className='btn-primary-custom' onClick={() => setShowModal(true)}>
+                    <Icon icon='tabler:plus' />
                     Add Semester
                   </Button>
                 </div>

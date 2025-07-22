@@ -1,23 +1,23 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { db, collection, getDocs, query, where, doc, updateDoc } from '../Firebase_config';
-import { Card, Button, Badge, Spinner, Modal, Table, Form } from 'react-bootstrap';
+import { db, collection, getDocs, query, where } from '../Firebase_config';
+import { Card, Button, Form } from 'react-bootstrap';
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { Icon } from '@iconify/react';
 import DataTable from 'react-data-table-component';
 import NoDataTable from './NoDataTable';
 import MasterLayout from '../masterLayout/MasterLayout';
 import Breadcrumb from './Breadcrumb';
-import { CustomLoader, BodyLoading } from './CustomLoader';
+import { CustomLoader } from './CustomLoader';
 
 const ViewStudents = () => {
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
+  const [batchNames, setBatchNames] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuth();
 
-  const fetchStudents = async () => {
+  // Fetch students and their batch names
+  const fetchData = async () => {
     if (!user?.departmentId) {
       setLoading(false);
       return;
@@ -26,19 +26,36 @@ const ViewStudents = () => {
     try {
       setLoading(true);
 
-      // Rest of your existing fetchStudents code...
+      // Fetch inactive/dropped students
       const studentsQuery = query(
         collection(db, "Students"),
         where("departmentId", "==", user.departmentId),
         where("status", "in", ["dropped", "inactive"])
       );
-
       const studentsSnap = await getDocs(studentsQuery);
       const studentsData = studentsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }));
 
+      // Get unique batch IDs from students
+      const batchIds = [...new Set(studentsData.map(s => s.batchId))].filter(Boolean);
+
+      // Fetch batch names in chunks (Firebase limits "in" queries to 10 items)
+      let batchesData = {};
+      for (let i = 0; i < batchIds.length; i += 10) {
+        const batchChunk = batchIds.slice(i, i + 10);
+        const batchesQuery = query(
+          collection(db, "Batches"),
+          where("__name__", "in", batchChunk.length ? batchChunk : [''])
+        );
+        const batchesSnap = await getDocs(batchesQuery);
+        batchesSnap.forEach(doc => {
+          batchesData[doc.id] = doc.data().name;
+        });
+      }
+
+      setBatchNames(batchesData);
       setStudents(studentsData);
     } catch (error) {
       console.error("Data fetch error:", error);
@@ -49,7 +66,7 @@ const ViewStudents = () => {
   };
 
   useEffect(() => {
-    fetchStudents();
+    fetchData();
   }, [user?.departmentId]);
 
   const filteredStudents = useMemo(() => {
@@ -75,13 +92,13 @@ const ViewStudents = () => {
       name: 'Name',
       selector: row => row.name,
       sortable: true,
-      cell: row => row.name
+      cell: row => row.name || 'N/A'
     },
     {
       name: 'Phone',
       selector: row => row.phone,
       sortable: true,
-      cell: row => row.phone
+      cell: row => row.phone || 'N/A'
     },
     {
       name: 'CNIC',
@@ -98,41 +115,33 @@ const ViewStudents = () => {
       )
     },
     {
+      name: 'Batch',
+      selector: row => row.batchId,
+      sortable: false,
+      cell: row => batchNames[row.batchId] || 'N/A'
+    },
+    {
       name: 'Status',
       selector: row => row.status,
       sortable: false,
       cell: row => (
         <span className={`${row.status === "active" ? "bg-success-focus text-success-main border-success-main" : "bg-danger-focus text-danger-main border-danger-main"} text-capitalize border px-8 py-2 radius-4 fw-medium text-sm`}>
-          {row.status}
+          {row.status || 'N/A'}
         </span>
       )
     },
     {
-      name: 'Status',
+      name: 'Dropout Reason',
       selector: row => row.dropoutReason,
       sortable: false,
-      cell: row => ( <span className="text-capitalize">{row.dropoutReason}</span> )
-    },
-    // {
-    //   name: 'Actions',
-    //   cell: row => (
-    //     <div className="d-flex">
-    //       <Button
-    //         variant={'info'}
-    //         className="w-32-px h-32-px me-8 bg-warning-focus text-warning-main rounded-circle d-inline-flex align-items-center justify-content-center border-0 text-warning-600 p-2"
-    //         title="View Result"
-    //       >
-    //         <Icon icon="solar:document-text-outline" />
-    //       </Button>
-    //     </div>
-    //   ),
-    // }
+      cell: row => <span className="text-capitalize">{row.dropoutReason || 'N/A'}</span>
+    }
   ];
 
   return (
     <MasterLayout>
       <Breadcrumb
-        title={`Dropout Students`}
+        title="Dropout Students"
         items={[
           { title: 'Dashboard', path: '/dashboard' },
           { title: 'View Students', active: true }
@@ -154,7 +163,7 @@ const ViewStudents = () => {
           ) : students.length === 0 ? (
             <NoDataTable
               img="../assets/images/no-data.svg"
-              text={`No students found`}
+              text="No students found"
             />
           ) : (
             <>
@@ -172,7 +181,7 @@ const ViewStudents = () => {
                 </Form.Group>
               </div>
 
-              {filteredStudents.length > 0 && (
+              {filteredStudents.length > 0 ? (
                 <div className="mb-4">
                   <DataTable
                     columns={columns}
@@ -186,13 +195,15 @@ const ViewStudents = () => {
                     defaultSortAsc={true}
                     responsive
                     striped
+                    noDataComponent={<NoDataTable text="No matching students found" />}
                   />
                 </div>
+              ) : (
+                <NoDataTable text="No matching students found" />
               )}
             </>
           )}
         </Card.Body>
-
       </Card>
     </MasterLayout>
   );

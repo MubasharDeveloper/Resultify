@@ -349,7 +349,7 @@ const UsersLayer = () => {
         <input
             type="text"
             placeholder="Search users..."
-            className="form-control w-auto"
+            className="form-control table-search"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
         />
@@ -838,7 +838,8 @@ const UsersLayer = () => {
                                 <div className="d-flex gap-3 align-items-center">
                                     {searchComponent}
                                     {isAdmin && (
-                                        <Button variant="primary" onClick={() => setShowModal(true)}>
+                                        <Button variant="primary" size='sm' className='btn-primary-custom' onClick={() => setShowModal(true)}>
+                                            <Icon icon='tabler:plus' />
                                             Add Staff
                                         </Button>
                                     )}

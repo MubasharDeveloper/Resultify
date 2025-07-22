@@ -20,6 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from 'react-toastify';
 import { Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Icon } from '@iconify/react';
 
 const StudentCreationForm = () => {
     // State management
@@ -606,8 +607,9 @@ const StudentCreationForm = () => {
                             <Button
                                 variant="primary"
                                 type="submit"
+                                size='sm'
                                 disabled={submitting}
-                                className="px-3"
+                                className="btn-primary-custom"
                             >
                                 {submitting ? (
                                     <>
@@ -615,7 +617,10 @@ const StudentCreationForm = () => {
                                         Creating...
                                     </>
                                 ) : (
-                                    'Create Student'
+                                    <>
+                                        <Icon icon='tabler:plus' />
+                                        Create Student
+                                    </>
                                 )}
                             </Button>
                         </div>

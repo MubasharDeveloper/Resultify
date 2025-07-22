@@ -1,7 +1,7 @@
 :root {
-  --primary: #1027ff;
-  --secondary: #3f37c9;
-  --accent: #1027ff;
+  --primary: #d63384;
+  --secondary: #c02d8a;
+  --accent: #d63384;
   --light: #f8f9fa;
   --dark: #212529;
   --success: #4cc9f0;
@@ -346,7 +346,7 @@
 .step-number {
   min-width: 60px;
   max-width: 60px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   height: 60px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   border-radius: 50%;

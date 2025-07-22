@@ -37,7 +37,7 @@ const DepartmentsLayer = () => {
         <input
             type="text"
             placeholder="Search by department name..."
-            className="form-control w-auto"
+            className="form-control table-search"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
         />
@@ -313,7 +313,8 @@ const DepartmentsLayer = () => {
                                     <div className="d-flex justify-content-end align-items-center mb-4">
                                         <div className="d-flex gap-3 align-items-center">
                                             {SearchComponent}
-                                            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+                                            <Button variant="primary" size='sm' className='btn-primary-custom' onClick={() => setShowCreateModal(true)}>
+                                                <Icon icon='tabler:plus' />
                                                 Add Department
                                             </Button>
                                         </div>

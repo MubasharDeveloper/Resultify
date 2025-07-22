@@ -9,6 +9,7 @@ import RouteScrollToTop from "./helper/RouteScrollToTop";
 import SignInPage from "./pages/Authentication/SignInPage";
 import SignUpPage from "./pages/Authentication/SignUpPage";
 import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
+import CheckResultPage from "./pages/Authentication/CheckResultPage";
 import ErrorPage from "./pages/ErrorPage";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
 import AdminDashboard from "./pages/Dashboards/AdminDashboard";
@@ -29,6 +30,7 @@ import ViewStudents from './components/ViewStudents'
 import DropoutStudents from './components/DropoutStudents'
 
 import ManageResult from './components/Result/ManageResult';
+import StudentResult from './components/Result/StudentResult';
 
 const Loader = () => (
   <div id="preloader">
@@ -59,6 +61,8 @@ const routeConfig = [
   { path: '/sign-in', element: <SignInPage />, public: true },
   { path: '/sign-up', element: <SignUpPage />, public: true },
   { path: '/forgot-password', element: <ForgotPasswordPage />, public: true },
+  { path: '/check-result', element: <CheckResultPage />, public: true },
+  { path: '/student-results', element: <StudentResult />, public: true },
   { path: '/unauthorized', element: <AccessDeniedPage />, public: true },
 
   // Protected routes with role requirements

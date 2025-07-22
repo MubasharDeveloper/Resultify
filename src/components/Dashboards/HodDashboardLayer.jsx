@@ -179,7 +179,7 @@ const HodDashboardLayer = () => {
                             <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                               <div className="d-flex align-items-center gap-2">
                                 <span className="mb-0 w-48-px h-48-px bg-primary-600 flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
-                                  <Icon icon="solar:calendar-bold" width="24" height="24" />
+                                  <Icon icon="tabler:calendar-week" width="24" height="24" />
                                 </span>
                                 <div>
                                   <span className="mb-2 fw-medium text-secondary-light text-sm">Active Semester</span>
@@ -222,7 +222,7 @@ const HodDashboardLayer = () => {
                             <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                               <div className="d-flex align-items-center gap-2">
                                 <span className="mb-0 w-48-px h-48-px bg-primary-600 flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
-                                  <Icon icon="solar:book-bold" width="24" height="24" />
+                                  <Icon icon="tabler:book-2" width="24" height="24" />
                                 </span>
                                 <div>
                                   <span className="mb-2 fw-medium text-secondary-light text-sm">{lecture.semesterName || 'Semester N/A'}</span>
@@ -269,8 +269,8 @@ const HodDashboardLayer = () => {
                       <Card.Body className="p-0">
                         <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                           <div className="d-flex align-items-center gap-2">
-                            <span className="mb-0 w-48-px h-48-px bg-info-main flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
-                              <Icon icon="clarity:users-solid" width="24" height="24" />
+                            <span className="mb-0 w-48-px h-48-px bg-primary-600 flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
+                              <Icon icon="tabler:user-square-rounded" width="24" height="24" />
                             </span>
                             <div>
                               <span className="mb-2 fw-medium text-secondary-light text-sm">Total Teachers</span>
@@ -286,8 +286,8 @@ const HodDashboardLayer = () => {
                       <Card.Body className="p-0">
                         <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                           <div className="d-flex align-items-center gap-2">
-                            <span className="mb-0 w-48-px h-48-px bg-success-main flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
-                              <Icon icon="fa-solid:user-graduate" width="24" height="24" />
+                            <span className="mb-0 w-48-px h-48-px bg-primary-600 flex-shrink-0 text-white d-flex justify-content-center align-items-center rounded-circle h6 mb-0">
+                              <Icon icon="tabler:school" width="24" height="24" />
                             </span>
                             <div>
                               <span className="mb-2 fw-medium text-secondary-light text-sm">Total Students (All Batches)</span>

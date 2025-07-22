@@ -382,15 +382,16 @@ const MasterLayout = ({ children }) => {
                 {/* Notification dropdown end */}
                 <div className='dropdown'>
                   <button
-                    className='d-flex justify-content-center align-items-center rounded-circle'
-                    type='button'
+                    className='d-flex justify-content-center align-items-center rounded-circle text-white bg-primary-600'
+                    type='button' style={{width: 40, height: 40}}
                     data-bs-toggle='dropdown'
                   >
-                    <img
+                    {/* <img
                       src={user?.gen ? `assets/images/${user.gen}-user.png` : 'assets/images/user.jpg'}
                       alt='image_user'
                       className='w-40-px h-40-px object-fit-cover rounded-circle'
-                    />
+                    /> */}
+                    <Icon icon='tabler:user-square-rounded' className="fs-28 text-white" />
                   </button>
                   <div className='dropdown-menu to-top dropdown-menu-sm'>
                     {

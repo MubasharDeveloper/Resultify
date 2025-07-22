@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   faChartLine,
   faBars,
@@ -92,77 +93,76 @@ const ResultifyLandingPage = () => {
 
   const features = [
     {
-      icon: faTachometerAlt,
-      title: 'Real-time Analytics',
-      description: 'Get instant insights with our powerful analytics dashboard that tracks student performance in real-time.'
+      icon: 'brand-speedtest',
+      title: 'Real-time Performance Insights',
+      description: 'Track your progress instantly with real-time analytics. Identify strengths and areas for improvement without waiting for semester-end reports.'
     },
     {
-      icon: faLock,
-      title: 'Secure Platform',
-      description: 'Bank-level security ensures your data is always protected with encryption and regular backups.'
+      icon: 'cloud-lock-open',
+      title: 'Secure & Private',
+      description: 'Your results are protected with enterprise-level security and can only be accessed by you and your institution — no data leaks, ever.'
     },
     {
-      icon: faMobileAlt,
-      title: 'Mobile Friendly',
-      description: 'Access results and analytics from any device, anywhere with our fully responsive design.'
+      icon: 'device-mobile-check',
+      title: 'Mobile Access',
+      description: 'Check your results from any device — whether you\'re at home, at school, or on the go.'
     },
     {
-      icon: faFileExport,
-      title: 'Easy Export',
-      description: 'Export results in multiple formats (PDF, Excel, CSV) with just a few clicks.'
+      icon: 'cloud-down',
+      title: 'Instant Result Downloads',
+      description: 'Download your results instantly in PDF, Excel, or CSV format for easy sharing with family, teachers, or for scholarship applications.'
     },
     {
-      icon: faBell,
-      title: 'Automated Alerts',
-      description: 'Set up custom notifications for students, parents, and staff when results are published.'
+      icon: 'bell-plus',
+      title: 'Personalized Alerts',
+      description: 'Receive timely notifications when new results are published, or when academic thresholds are crossed.'
     },
     {
-      icon: faChartPie,
-      title: 'Detailed Reports',
-      description: 'Generate comprehensive reports with visualizations to track performance trends over time.'
+      icon: 'chart-pie',
+      title: 'Visual Performance Reports',
+      description: 'See how your performance evolves over time through visual dashboards that help you stay motivated and goal-oriented.'
     }
   ];
-
   const steps = [
     {
       number: 1,
-      title: 'Create Your Account',
-      description: 'Sign up for a free account and set up your institution profile. It takes less than 5 minutes.'
+      title: 'Create Your Profile',
+      description: 'Sign up quickly and verify your student identity — takes less than 2 minutes.'
     },
     {
       number: 2,
-      title: 'Import Student Data',
-      description: 'Upload your existing student records or add them manually through our intuitive interface.'
+      title: 'Get Connected',
+      description: 'Your profile syncs with your school to automatically fetch your latest academic data.'
     },
     {
       number: 3,
-      title: 'Enter Results',
-      description: 'Input student results either individually or through our bulk upload feature to save time.'
+      title: 'View & Track Results',
+      description: 'Instantly access detailed results and track your semester-wise performance.'
     },
     {
       number: 4,
-      title: 'Publish & Share',
-      description: 'With one click, publish results and share access with students and parents through secure portals.'
+      title: 'Download & Share',
+      description: 'Share your progress with family or apply for internships and scholarships using official result exports.'
     }
   ];
 
   const testimonials = [
     {
-      quote: "Resultify has transformed how we manage student results. What used to take days now takes hours, and the analytics help us identify at-risk students early.",
-      name: "Sarah Johnson",
-      role: "Principal, Greenfield High School",
+      quote: "I used to stress for days waiting for my report card — now I check my results online and get instant feedback on my performance.",
+      name: "Ayesha N.",
+      role: "BSCS Student",
       image: "https://randomuser.me/api/portraits/women/45.jpg"
     },
     {
-      quote: "The mobile access feature is a game-changer. Parents can now check their children's results instantly without waiting for report cards.",
-      name: "Michael Chen",
-      role: "IT Director, Riverside College",
+      quote: "Resultify helped me identify where I was falling behind. I used the analytics to focus better and improve my GPA last semester.",
+      name: "Ali R.",
+      role: "BBA Student",
       image: "https://randomuser.me/api/portraits/men/32.jpg"
     },
     {
-      quote: "We've reduced administrative workload by 60% since implementing Resultify. The automated reports save us countless hours each semester.",
-      name: "Amina Diallo",
-      role: "Registrar, Westside University",
+      quote: "The mobile result access is a life-saver! My parents love seeing my grades right when they're out.",
+      name: "Zara M.",
+      role: "B.Ed Student",
       image: "https://randomuser.me/api/portraits/women/68.jpg"
     }
   ];
@@ -221,12 +221,14 @@ const ResultifyLandingPage = () => {
           </li>
           <li>
             {user ?
-              <Link to={user.rootLink}  className="cta-button hover-none">
+              <Link to={user.rootLink} className="cta-button hover-none d-flex align-items-center gap-1 justify-content-center">
+                <Icon icon='tabler:brand-tabler' stroke='1px' className='fs-22' />
                 Dashboard
-                {console.log('dashboard: ',user)}
+                {console.log('dashboard: ', user)}
               </Link>
               :
-              <Link to="/sign-in" className="cta-button hover-none">
+              <Link to="/sign-in" className="cta-button hover-none d-flex align-items-center gap-1 justify-content-center">
+                <Icon icon='tabler:login-2' className='fs-22' />
                 Login
               </Link>
             }
@@ -237,14 +239,14 @@ const ResultifyLandingPage = () => {
       {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-content">
-          <h1 className="fade-in">Transform Your <span>Result Management</span> System</h1>
-          <p className="fade-in delay-1">Resultify provides an all-in-one solution for educational institutions to manage, analyze, and publish student results efficiently and securely.</p>
+          <h1 className="fade-in">Transform Your <span>Academic Journey</span> with Smarter System</h1>
+          <p className="fade-in delay-1">Resultify empowers students by providing instant, secure access to their academic performance — anytime, anywhere.</p>
           <div className="hero-buttons fade-in delay-2">
-            <Link to="#" onClick={(e) => e.preventDefault()} className="secondary-button">Check Result</Link>
+            <Link to="/check-result" className="secondary-button"><Icon icon='tabler:school' className='fs-28' /> Check Your Result</Link>
           </div>
         </div>
         <div className="hero-image fade-in delay-3">
-          <img src='assets/images/dashboard-1.png' alt="Result Management Dashboard" />
+          <img src='assets/images/dashboard.svg' alt="Result Management Dashboard" />
         </div>
         <div className="hero-bg"></div>
       </section>
@@ -259,7 +261,7 @@ const ResultifyLandingPage = () => {
           {features.map((feature, index) => (
             <div className={`feature-card fade-in ${index % 2 === 0 ? 'delay-1' : 'delay-2'}`} key={index}>
               <div className="feature-icon">
-                <FontAwesomeIcon icon={feature.icon} />
+                <Icon icon={`tabler:${feature.icon}`} className='fs-42' />
               </div>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>
@@ -290,7 +292,7 @@ const ResultifyLandingPage = () => {
       {/* Testimonials Section */}
       <section className="testimonials" id="testimonials">
         <div className="section-title fade-in">
-          <h2>What Our Clients Say</h2>
+          <h2>What Our Students Say</h2>
           <p>Trusted by educational institutions worldwide</p>
         </div>
         <div className="testimonials-grid">
@@ -315,9 +317,9 @@ const ResultifyLandingPage = () => {
 
       {/* CTA Section */}
       <section className="cta fade-in">
-        <h2>Ready to Transform Your Result Management?</h2>
-        <p>Join thousands of educational institutions using Resultify to streamline their processes and improve student outcomes.</p>
-        <Link to="#" className="cta-button btn-free-trial" onClick={(e) => e.preventDefault()}>Start Your Free Trial</Link>
+        <h2>Ready to Take Control of Your Academic Progress?</h2>
+        <p>Join thousands of students using Resultify to stay informed, motivated, and ahead in their academic goals</p>
+        <Link to="#" className="cta-button btn-free-trial" onClick={(e) => e.preventDefault()}><Icon icon='tabler:school' className='fs-28' /> Check Your Result</Link>
       </section>
 
       {/* Footer */}
@@ -325,7 +327,7 @@ const ResultifyLandingPage = () => {
         <div className="footer-content">
           <div className="footer-column fade-in">
             <h3>About Resultify</h3>
-            <p>Resultify is a comprehensive result management system designed to help educational institutions manage student performance data efficiently.</p>
+            <p>Resultify is designed to empower students and institutions by simplifying result management, improving access, and enhancing academic outcomes.</p>
             <div className="social-links">
               <Link to="#"><FontAwesomeIcon icon={faFacebookF} /></Link>
               <Link to="#"><FontAwesomeIcon icon={faTwitter} /></Link>
@@ -355,9 +357,9 @@ const ResultifyLandingPage = () => {
           </div>
           <div className="footer-column fade-in delay-3">
             <h3>Contact Info</h3>
-            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Nishatabad, Faisalabad</p>
-            <p><FontAwesomeIcon icon={faPhone} /> +92 304 6321166</p>
-            <p><FontAwesomeIcon icon={faEnvelope} /> mubashardev0203@gmail.com</p>
+            <p><Icon icon='tabler:map-pin' className='fs-25' /> Nishatabad, Faisalabad</p>
+            <p><Icon icon='tabler:phone-call' className='fs-25' /> +92 304 6321166</p>
+            <p><Icon icon='tabler:mail' className='fs-25' /> mubashardev0203@gmail.com</p>
           </div>
         </div>
         <div className="footer-bottom fade-in">

@@ -156,7 +156,7 @@
   --font-sm: 0.875rem;
   --font-xs: 0.75rem;
   --font-xxs: 0.625rem;
-  --primary-50: #cfd4ff;
+  /* --primary-50: #cfd4ff;
   --primary-100: #afb7ff;
   --primary-200: #8f9aff;
   --primary-300: #707dff;
@@ -165,7 +165,17 @@
   --primary-600: #1027ff;
   --primary-700: #0017ef;
   --primary-800: #0014cf;
-  --primary-900: #0011af;
+  --primary-900: #0011af; */
+  --primary-50: #f5d3e8;
+  --primary-100: #eeb5d9;
+  --primary-200: #e798ca;
+  --primary-300: #e07abb;
+  --primary-400: #d95dab;
+  --primary-500: #d23f9c;
+  --primary-600: #c02d8a;
+  --primary-700: #a22675;
+  --primary-800: #851f60;
+  --primary-900: #67184a;
   --neutral-50: #f5f6fa;
   --neutral-100: #f3f4f6;
   --neutral-200: #ebecef;
@@ -8534,8 +8544,8 @@ h6,
 }
 
 .btn.btn-sm {
-  padding: 8px 12px 8px 10px !important;
-  font-size: 13px !important;
+  padding: 8px 20px 8px 18px !important;
+  font-size: 14px !important;
 }
 
 .btn-success {
@@ -16104,4 +16114,54 @@ h2.swal2-title {
 
 .fs-18 {
   font-size: 18px !important;
+}
+
+.fs-22 {
+  font-size: 22px !important;
+}
+
+.fs-25 {
+  font-size: 25px !important;
+}
+
+.fs-28 {
+  font-size: 28px !important;
+}
+
+.fs-42 {
+  font-size: 42px !important;
+}
+
+
+.table-search {
+  width: 320px !important;
+  font-size: 14px !important;
+  height: 40px !important;
+}
+
+.btn-link {
+  --bs-btn-font-weight: 400;
+  --bs-btn-color: var(--primary-600);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: var(--primary-700);
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-color: var(--primary-700);
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-disabled-color: var(--primary-500);
+  --bs-btn-disabled-border-color: transparent;
+  --bs-btn-box-shadow: 0 0 0 #000;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  text-decoration: underline;
+}
+
+.btn-primary-custom {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+
+  & svg{
+    font-size: 20px !important;
+  }
 }
