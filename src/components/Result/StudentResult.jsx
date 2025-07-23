@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { Icon } from '@iconify/react';
 import ResultModal from '../ResultModal';
@@ -27,14 +27,14 @@ const StudentResultsPage = () => {
         <div className="container py-4">
             <h2 className="fs-28 fw-500 pt-5 pb-3 mb-0">Welcome To Resultify</h2>
 
-            <Card>
+            <Card className="mb-5">
                 <Card.Body className="d-flex flex-column">
                     <img src='assets/images/student.svg' alt="" style={{ maxWidth: '360px', margin: '16px auto 36px' }} />
                     <div className="table-responsive" style={{ maxWidth: 540, margin: '0 auto', width: '100%' }}>
                         <table className="table vertical-striped-table mb-0">
                             <thead>
                                 <tr>
-                                    <th colspan='2'>Student Info</th>
+                                    <th colspan='2' className="text-center">Student Info</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,7 +70,7 @@ const StudentResultsPage = () => {
                         </table>
                     </div>
                     <div style={{ maxWidth: 540, margin: '24px auto 0', width: '100%' }}>
-                        <h4 className="fs-18 fw-500 my-3">View Result</h4>
+                        <h4 className="fs-18 fw-500 my-3 text-center">View Result</h4>
                         <Form.Group className="mb-3">
                             <Form.Label>Select Semester</Form.Label>
                             <Form.Select
@@ -90,11 +90,22 @@ const StudentResultsPage = () => {
                             variant="primary" size='sm'
                             onClick={handleSearch}
                             disabled={!selectedSemesterId}
-                            className="btn-primary-custom mx-auto mb-5"
+                            className="btn-primary-custom mx-auto mb-3"
                         >
                             <Icon icon="bx:search" className="me-2" />
                             View Results
                         </Button>
+                        <hr />
+                        <div className="d-flex justify-content-center align-items-center mt-3 mb-3 gap-2">
+                            <Link to='/' className='btn btn-sm btn-outline-secondary btn-primary-custom'>
+                                <Icon icon='tabler:chevron-left' className="fs-18" />
+                                Back to Home
+                            </Link>
+                            <Link to='/check-result' className='btn btn-sm btn-primary btn-primary-custom'>
+                                <Icon icon='tabler:zoom-reset' className="fs-18" />
+                                Search Other Result
+                            </Link>
+                        </div>
                     </div>
                 </Card.Body>
             </Card>

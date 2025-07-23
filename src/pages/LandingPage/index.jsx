@@ -316,10 +316,18 @@ const ResultifyLandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="cta fade-in">
+      <section className="cta fade-in" id='contact'>
         <h2>Ready to Take Control of Your Academic Progress?</h2>
         <p>Join thousands of students using Resultify to stay informed, motivated, and ahead in their academic goals</p>
-        <Link to="/check-result" className="cta-button btn-free-trial"><Icon icon='tabler:school' className='fs-28' /> Check Your Result</Link>
+        <Link
+          to="https://wa.me/923046321166"
+          className="cta-button btn-free-trial"
+          target="_blank" // Opens in new tab
+          rel="noopener noreferrer" // Security best practice
+        >
+          <Icon icon='tabler:phone-call' className='fs-28' />
+          Contact Us
+        </Link>
       </section>
 
       {/* Footer */}
@@ -341,18 +349,16 @@ const ResultifyLandingPage = () => {
               <li><Link to="#features" onClick={(e) => { e.preventDefault(); scrollToSection('features'); }}>Features</Link></li>
               <li><Link to="#how-it-works" onClick={(e) => { e.preventDefault(); scrollToSection('how-it-works'); }}>How It Works</Link></li>
               <li><Link to="#testimonials" onClick={(e) => { e.preventDefault(); scrollToSection('testimonials'); }}>Testimonials</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Pricing</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Blog</Link></li>
+              <li><Link to="https://wa.me/923046321166" target='_blank'>Contact Us</Link></li>
             </ul>
           </div>
           <div className="footer-column fade-in delay-2">
             <h3>Support</h3>
             <ul className="footer-links">
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Help Center</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Documentation</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>API Reference</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Community</Link></li>
-              <li><Link to="#" onClick={(e) => e.preventDefault()}>Contact Us</Link></li>
+              <li><Link to="/documentation">Documentation</Link></li>
+              <li><Link to="/api-rference">API Reference</Link></li>
+              <li><Link to="/community">Community</Link></li>
+
             </ul>
           </div>
           <div className="footer-column fade-in delay-3">
