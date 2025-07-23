@@ -9,8 +9,10 @@ import Swal from 'sweetalert2';
 import { CustomLoader, BodyLoading } from '../CustomLoader';
 import NoDataTable from '../NoDataTable';
 import { useAuth } from "../../context/AuthContext";
+import { LinkedinLogo } from '@phosphor-icons/react';
 
 const Semesters = () => {
+
   const { user } = useAuth();
 
   const [semesters, setSemesters] = useState([]);
@@ -142,7 +144,6 @@ const Semesters = () => {
 
   const sortSemesters = (semesters) => {
     return [...semesters].sort((a, b) => {
-
       // If dates are equal, sort by semester number
       const semesterA = parseInt(a.name.split(' ')[1]);
       const semesterB = parseInt(b.name.split(' ')[1]);
@@ -503,19 +504,31 @@ const Semesters = () => {
     try {
       setCreating(true);
 
-      const newSemesterData = {
-        ...newSemester,
-        departmentId: user.departmentId,
-        startDate: Timestamp.fromDate(new Date(newSemester.startDate)),
-        endDate: Timestamp.fromDate(new Date(newSemester.endDate)),
-        createdAt: Timestamp.now(),
-      };
+      // Fetch batch data and add to newSemester
+      const batchDoc = await getDoc(doc(db, "Batches", newSemester.batchId));
+      if (batchDoc.exists()) {
+        const batchData = batchDoc.data();
 
-      await addDoc(collection(db, "Semesters"), newSemesterData);
+        const newSemesterData = {
+          ...newSemester,
+          departmentId: user.departmentId,
+          startDate: Timestamp.fromDate(new Date(newSemester.startDate)),
+          endDate: Timestamp.fromDate(new Date(newSemester.endDate)),
+          createdAt: Timestamp.now(),
+          batchStart: batchData.startYear,
+          batchEnd: batchData.endYear,
+          batchName: batchData.name,
+          departmentName: user.departmentName,
+        };
 
-      toast.success("Semester created successfully!");
-      resetModal();
-      fetchSemestersData();
+        await addDoc(collection(db, "Semesters"), newSemesterData);
+
+        toast.success("Semester created successfully!");
+        resetModal();
+        fetchSemestersData();
+      } else {
+        toast.error("Selected batch not found");
+      }
     } catch (error) {
       console.error("Error creating semester:", error);
       toast.error("Something went wrong!");
@@ -731,7 +744,6 @@ const Semesters = () => {
     },
   ];
 
-
   const groupSemestersByBatch = (semesters) => {
     const sortedSemesters = sortSemesters(semesters);
 
@@ -762,8 +774,6 @@ const Semesters = () => {
       }))
       .sort((a, b) => b.earliestStart - a.earliestStart); // Newest batches first
   };
-
-
 
   return (
     <>

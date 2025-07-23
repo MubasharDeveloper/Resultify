@@ -39,8 +39,6 @@ const ManageResults = () => {
                 if (subjectSnap.exists()) {
                     const subjectData = subjectSnap.data();
 
-                    console.log(subjectData)
-
                     // Calculate marks distribution
                     const theoryMarks = subjectData.theory * 20;
                     const practicalMarks = subjectData.practical ? subjectData.practical * 20 : 0;
@@ -205,6 +203,7 @@ const ManageResults = () => {
                 midMarks: subjectDetails.theory > 0 ? result.midMarks : 0,
                 finalMarks: subjectDetails.theory > 0 ? result.finalMarks : 0,
                 practicalMarks: subjectDetails.practical > 0 ? result.practicalMarks : 0,
+                semesterId: lecture.semesterId,
                 percentage,
                 grade,
                 createdAt: new Date(),
