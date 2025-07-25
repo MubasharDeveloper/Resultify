@@ -953,10 +953,11 @@ const Semesters = () => {
               </Col>
             </Row>
             <div className="d-flex justify-content-end gap-2">
-              <Button variant="secondary" className='px-24' onClick={handleModalClose}>
+              <Button variant="secondary" size='sm' className='px-24' onClick={handleModalClose}>
                 Cancel
               </Button>
-              <Button variant="primary" className='px-24' onClick={handleCreateSemester} disabled={creating}>
+              <Button variant="primary" size='sm' className='px-24 btn-primary-custom' onClick={handleCreateSemester} disabled={creating}>
+                <Icon icon='tabler:plus' />
                 {creating ? "Creating..." : "Create"}
               </Button>
             </div>
@@ -1071,10 +1072,11 @@ const Semesters = () => {
                 </Col>
               </Row>
               <div className="d-flex justify-content-end gap-2">
-                <Button variant="secondary" className='px-24' onClick={handleEditModalClose}>
+                <Button variant="secondary" size='sm' className='px-24' onClick={handleEditModalClose}>
                   Cancel
                 </Button>
-                <Button variant="primary" className='px-24' onClick={handleUpdateSemester} disabled={updating}>
+                <Button variant="primary" size='sm' className='px-24 btn-primary-custom' onClick={handleUpdateSemester} disabled={updating}>
+                  <Icon icon="tabler:edit" />
                   {updating ? "Updating..." : "Update"}
                 </Button>
               </div>

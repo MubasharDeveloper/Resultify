@@ -681,14 +681,16 @@ const Batches = () => {
                             </Col>
                         </Row>
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={handleCloseModal}>
+                            <Button variant="secondary" size='sm' onClick={handleCloseModal}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
+                                size='sm' className='btn-primary-custom'
                                 type="submit"
                                 disabled={isLoading}
                             >
+                                <Icon icon='tabler:plus' />
                                 {isLoading ? "Saving..." : "Save Batch"}
                             </Button>
                         </div>
@@ -768,14 +770,16 @@ const Batches = () => {
                             </Col>
                         </Row>
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={handleCloseUpdateModal}>
+                            <Button variant="secondary" size='sm' onClick={handleCloseUpdateModal}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
+                                size='sm' className='btn-primary-custom'
                                 type="submit"
                                 disabled={isLoading}
                             >
+                                <Icon icon="tabler:edit" />
                                 {isLoading ? "Updating..." : "Update Batch"}
                             </Button>
                         </div>

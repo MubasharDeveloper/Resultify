@@ -1023,14 +1023,16 @@ const UsersLayer = () => {
                         </Row>
 
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={handleCloseModal}>
+                            <Button variant="secondary" size='sm' onClick={handleCloseModal}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
                                 type="submit"
+                                size='sm' className='btn-primary-custom'
                                 disabled={isUserLoading}
                             >
+                                <Icon icon='tabler:plus' />
                                 {isUserLoading ? "Saving..." : "Create User"}
                             </Button>
                         </div>
@@ -1163,14 +1165,15 @@ const UsersLayer = () => {
                         </Row>
 
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" onClick={handleCloseUpdateModal}>
+                            <Button variant="secondary" size='sm' onClick={handleCloseUpdateModal}>
                                 Cancel
                             </Button>
                             <Button
                                 variant="primary"
-                                type="submit"
+                                type="submit" size='sm' className='btn-primary-custom'
                                 disabled={isUserLoading}
                             >
+                                <Icon icon="tabler:edit" />
                                 {isUserLoading ? "Updating..." : "Update User"}
                             </Button>
                         </div>

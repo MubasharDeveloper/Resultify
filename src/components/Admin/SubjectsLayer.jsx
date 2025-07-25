@@ -549,15 +549,16 @@ const Subjects = () => {
                             </Col>
                         </Row>
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" className='px-24' onClick={() => handleModalClose()}>
+                            <Button variant="secondary" size='sm' className='px-24' onClick={() => handleModalClose()}>
                                 Cancel
                             </Button>
                             <Button
-                                variant="primary"
-                                className='px-24'
+                                variant="primary" size='sm'
+                                className='px-24 btn-primary-custom'
                                 onClick={handleCreateSubject}
                                 disabled={creating} // ✅ Button disabled while loading
                             >
+                                <Icon icon='tabler:plus' />
                                 {creating ? "Creating..." : "Create"}
                             </Button>
                         </div>
@@ -644,15 +645,16 @@ const Subjects = () => {
                         </Row>
 
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary" className='px-24' onClick={handleEditModalClose}>
+                            <Button variant="secondary" size='sm' className='px-24' onClick={handleEditModalClose}>
                                 Cancel
                             </Button>
                             <Button
-                                variant="primary"
+                                variant="primary" size='sm'
                                 onClick={handleUpdateSubject}
-                                className='px-24'
+                                className='px-24 btn-primary-custom'
                                 disabled={updating}
                             >
+                                <Icon icon="tabler:edit" />
                                 {updating ? "Updating..." : "Update"}
                             </Button>
                         </div>

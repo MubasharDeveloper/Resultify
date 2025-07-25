@@ -358,7 +358,7 @@ const DepartmentsLayer = () => {
                         )}
                     </Form.Group>
                     <div className='d-flex justify-content-end gap-2'>
-                        <Button variant="secondary" onClick={() => {
+                        <Button variant="secondary" size='sm' onClick={() => {
                             setShowCreateModal(false);
                             setDepartmentName('');
                             setNameError('');
@@ -367,9 +367,11 @@ const DepartmentsLayer = () => {
                         </Button>
                         <Button
                             variant="primary"
+                            size='sm' className='btn-primary-custom'
                             onClick={handleCreateDepartment}
                             disabled={isCreating}
                         >
+                            <Icon icon='tabler:plus' />
                             {isCreating ? 'Creating...' : 'Create'}
                         </Button>
                     </div>
@@ -407,6 +409,7 @@ const DepartmentsLayer = () => {
                     <div className='d-flex justify-content-end gap-2'>
                         <Button
                             variant="secondary"
+                            size='sm'
                             onClick={() => {
                                 setShowUpdateModal(false);
                                 setUpdateDepartmentName('');
@@ -417,9 +420,11 @@ const DepartmentsLayer = () => {
                         </Button>
                         <Button
                             variant="primary"
+                            size='sm' className='btn-primary-custom'
                             onClick={handleUpdateDepartment}
                             disabled={isUpdating}
                         >
+                            <Icon icon="tabler:edit" />
                             {isUpdating ? 'Updating...' : 'Update'}
                         </Button>
                     </div>
