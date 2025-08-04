@@ -59,7 +59,15 @@ const ViewStudents = () => {
         subjectIds: semester.subjectIds || []
       }));
 
-      setStudents(studentsData);
+      const filterData = studentsData
+                    .filter(student => student.status === "active")
+                    .sort((a, b) => {
+                        const rollNoA = parseInt(a.rollNumber || '0', 10);
+                        const rollNoB = parseInt(b.rollNumber || '0', 10);
+                        return rollNoA - rollNoB;
+                    });
+
+      setStudents(filterData);
     } catch (error) {
       console.error("Data fetch error:", error);
       toast.error("Failed to load student data");
@@ -281,8 +289,6 @@ const ViewStudents = () => {
                     paginationRowsPerPageOptions={[10, 25, 50, 100]}
                     highlightOnHover
                     pointerOnHover
-                    defaultSortFieldId={1}
-                    defaultSortAsc={true}
                     responsive
                     striped
                   />
@@ -302,8 +308,6 @@ const ViewStudents = () => {
                     paginationRowsPerPageOptions={[10, 25, 50, 100]}
                     highlightOnHover
                     pointerOnHover
-                    defaultSortFieldId={1}
-                    defaultSortAsc={true}
                     responsive
                     striped
                   />
